@@ -1,4 +1,4 @@
-# vue-cli-tamplate
+# vue-cli-ai
 
 > A Vue.js project
 
