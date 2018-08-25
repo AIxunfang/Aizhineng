@@ -1,0 +1,124 @@
+<template>
+  <el-row class="Addproject">
+      <el-col :span='24'>
+             <div class="navigationbar"> 
+              <span class="navigationname">项目管理<i class="el-icon-arrow-right" aria-hidden="true"></i>
+                   新建项目
+              </span>
+            </div>
+      </el-col>
+      <el-col :span="24" >
+               
+            <div class="projectconcent">
+              <el-form  :model="addprojectfrom"  label-width="120px"  class="addprojectfrom" :rules="addprojectrules" ref="addprojectrules">
+                    <el-form-item label="项目中文标题:"  prop="projectNameZh">
+                        <el-input v-model="addprojectfrom.projectNameZh" placeholder="请输入项目中文名称"></el-input>
+                    </el-form-item>
+                    <el-form-item label="项目英文名:" prop="projectNameEn">
+                            <el-input v-model="addprojectfrom.projectNameEn" placeholder="初次可以指定,创建不能修改"></el-input>
+                    </el-form-item>
+                    <el-form-item  label="项目描述:" >
+                              <el-input
+                                      type="textarea"
+                                      :rows="8"
+                                      placeholder="请输入项目功能作用等描述"
+                                      v-model="addprojectfrom.projectDesc">
+                                  </el-input> 
+                    </el-form-item>
+                     <div style="text-align:center"> <el-button  type="primary" size="small"  @click="setupproject" >创建项目</el-button>   </div>
+             </el-form>
+           </div>
+      </el-col>
+  </el-row>
+</template>
+<script>
+import qs from 'qs'
+import {projectadd} from '@/api/api'
+export default {
+            data(){
+              return{
+                 addprojectfrom:{//创建项目表单
+                      projectNameZh:'',
+                      projectNameEn:"",
+                      projectDesc:""
+                 },
+                 tocken:'',
+                 addprojectrules:{
+                     projectNameZh:[{ required: true, message: "输入项目中文名称", trigger: "blur" }],
+                     projectNameEn:[
+                       { required: true, message: "输入项目英文名称", trigger: "blur" },
+                       { pattern: /^[a-zA-Z0-9_]{0,}$/, message: "不能输入中文" }
+                       ]
+                 }
+
+              }
+            },
+            methods:{
+                   setupproject(){//创建项目
+                   console.log(this.tocken )
+                         this.addprojectfrom.token=this.tocken 
+                         var parms=this.addprojectfrom 
+                          console.log("canshu")
+                          console.log(parms)
+                       
+
+               this.$refs['addprojectrules'].validate((valid)=>{
+                    if(valid){
+                          projectadd(qs.stringify(parms)).then(res=>{
+                               console.log(parms)
+                               console.log(res)
+                                if(res.data.code==0){
+                                     this.$message({
+                                          message: '创建成功',
+                                          type: 'success'
+                                        }); 
+                                    setTimeout(()=>{
+                                          this.$router.push('/Uploadpage')
+                                    },2000)                
+                                 }else{
+                                      this.$message({
+                                         message:"创建失败",
+                                         type:'error'
+                                      })
+                                 }
+                           })  
+                       }
+                  })
+               },
+        //  successgono() {
+        //   this.$confirm("添加成功, 是否继续?", "提示", {
+        //     confirmButtonText: "继续添加",
+        //     cancelButtonText: "返回列表",
+        //     type: "warning"
+        //   })
+        //     .then(() => {
+        //             this.addprojectfrom.projectNameZh='';
+        //             this.addprojectfrom.projectNameEn="";
+        //             this.addprojectfrom.projectDesc='';
+        //     })
+        //     .catch(() => {
+        //       this.$router.push("/Uploadpage");
+        //        });
+        //    },  
+        
+            },
+            mounted(){
+                    this.tocken = sessionStorage.getItem('token')
+            }
+}
+</script>
+<style lang="scss" scoped>
+       .Addproject{
+
+
+             .addprojectfrom{
+                   
+                   width: 500px;
+                   height: 400px;
+                   margin: 50px 0px 0px 50px;
+                  
+             }  
+       }
+</style>
+
+

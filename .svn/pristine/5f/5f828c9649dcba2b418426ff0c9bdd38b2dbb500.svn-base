@@ -1,0 +1,172 @@
+<template>
+  <el-row  class='loginConteiner'>
+              <el-col class="backgroundstart">
+                <div id='stars'></div>
+                <div id='stars2'></div>
+                <div id='stars3'></div>
+                <div id='title'></div>
+            <div  class="fromtable"> 
+               
+                <el-form :model="LoginForm" :rules="rules" ref='loginForm'  style="display:inline-block;vertical-align:middle">
+                       <el-form-item>
+                           <span  class="companyName">讯方AI基础云平台</span>
+                       </el-form-item>
+                        <el-form-item prop='name'  :error="showError">
+                            <el-input v-model='LoginForm.name'    @change='showError = null'    placeholder="请输入用户名"  class="inputwidth inputusericon" ></el-input>
+                        </el-form-item>
+                        <el-form-item    prop='pass'  :error='showError'   >
+                            <el-input v-model='LoginForm.pass'  placeholder="请输入密码"    @keyup.native.enter="submitForm()"    @change='showError = null'   type="password"  class="inputwidth inputpassword"></el-input>
+                        </el-form-item>
+                        <el-form-item>
+                             <el-input  type="button"   @click='submitForm' value="登录"   class="Enter"> </el-input>
+                        </el-form-item>
+                </el-form>
+          </div>
+        </el-col>
+  </el-row>
+</template>
+<script>
+import qs from 'qs';
+import {userlogin} from '@/api/api'
+import{prefixfreemin} from '@/assets/js/prefixfreemin'
+export default {
+  data () {
+      return {
+          LoginForm: {
+              name: '',
+              pass: ''
+          },
+           showError:null,
+      }
+  },
+  computed: {
+      rules () {
+          return {
+              name: [
+                  { required: true, message: "输入用户名", trigger: 'blur' }
+              ],
+              pass: [
+                  { required: true, message: '请输入密码', trigger: 'blur' }
+              ]
+          }
+      },
+  },
+  methods: {
+      submitForm () {
+               console.log("denglu")
+             var parms={
+                   userAccount:this.LoginForm.name,
+                   userPassword:this.LoginForm.pass
+             }
+          this.$refs['loginForm'].validate((valid) => {
+              if(valid) {
+                  let user = { name: this.LoginForm.name }
+
+                      console.log("登录")
+                       userlogin(qs.stringify(parms)).then(res=>{
+                            console.log("登录")
+                            console.log(res)
+                            if(res.data.code===0){
+                                     sessionStorage.setItem('user', JSON.stringify(user))//判断是不是在登录
+                                    
+                                 this.$router.push('/Firstpage')    
+                                //   this.$goRoute('/Firstpage')
+                            }else{
+                                 this.showError="用户名或密码错误"
+                            }
+                   })    
+
+
+
+
+
+
+                    // if(this.LoginForm.name !== '') {
+                    //     sessionStorage.setItem('user', JSON.stringify(user));
+
+                        
+                    // }
+
+
+
+
+
+
+              } else {
+                  console.log('err');
+                  return false;
+              }
+          })
+          
+      },
+
+  },
+  mounted() {
+     // console.log(this.$t('message.hello'))
+  }
+}
+</script>
+ 
+<style lang="scss" scoped>
+   .loginConteiner{
+              position: relative; 
+              height: 100%;
+              font-family:sans-serif;
+              -ms-text-size-adjust:100%;
+              -webkit-text-size-adjust:100%;
+                background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
+                overflow: hidden;
+
+         .fromtable{
+               position: absolute;
+                top: 50%;
+                left: 50%;
+                width: 400px;
+                height: 300px;
+                margin-top: -150px;
+                margin-left: -200px;
+                 background-color: rgba(22,24,67,.3);
+                border: 1px solid #f2f2f2;
+                border-radius: 10px;
+                text-align: center;
+                line-height: 300px;
+              .inputwidth{
+                  width:240px;
+                  background: #fff;
+              }
+              .companyName{
+                  color: #fff;
+                  font-size: 20px;
+              }
+       }
+   }
+</style>
+<style  scoped>
+           @import "../../assets/css/normalize.css";  
+
+</style>
+<style>
+       
+      .Enter .el-input__inner{
+                     cursor: pointer;
+                     background:#1cc6e9;
+                    color:#fff;
+         }
+         .inputusericon .el-input__inner{
+             background:url(../../assets/img/usericon.png)  no-repeat 2px 4px;
+             padding-left:45px;
+             z-index:10;
+         } 
+         .inputpassword .el-input__inner{
+              background:url(../../assets/img/userpassword.png)  no-repeat 2px 4px;   
+                padding-left:45px;
+         }
+
+          
+</style>
+
+
+
+
+
+

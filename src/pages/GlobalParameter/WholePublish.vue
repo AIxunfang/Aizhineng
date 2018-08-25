@@ -1,0 +1,127 @@
+<template>
+     <el-row  class="wholepublish">
+        <div class="navigationbar">
+            <span class="navigationname">
+                全局参数管理<i class="el-icon-arrow-right" aria-hidden="true"></i>发布资源管理
+            </span> 
+        </div>
+       <el-col class="elcontent">
+              <div class="modelconfig modelconfigcpu">
+                   <div class="resoureName"><i class="fa fa-circle" aria-hidden="true"></i>  <span>cpu资源</span> </div>
+                      <div  class="datamiddle">
+                        <div class="viewpie">
+                          <ve-ring :data="chartDatacpu"  :settings="chartSettingscpu" ></ve-ring>
+                        </div>
+                         <span class="usedoing">cpu使用:25/128(个)</span>
+                    </div>
+             </div>
+              <div class="modelconfig">
+                    <div class="resoureName"><i class="fa fa-circle" aria-hidden="true"></i>  <span>内存管理</span> </div>
+
+
+             </div>
+            <div style="margin-top:40px;">
+                <el-form  :inline="true"  :model="formInlinecpu" class="demo-form-inline" label-width="80px">
+                        <el-form-item label="cpu限额:">
+                            <el-input v-model="formInlinecpu.cpuamend"  class="cpuinputamend" ></el-input>
+                        </el-form-item>
+
+                        <el-form-item>
+                            <el-button type="primary" size="small">修改</el-button>
+                        </el-form-item>
+                </el-form>
+          </div>  
+      </el-col>  
+  </el-row>  
+</template>
+<script>
+export default {
+       data(){
+
+   return{
+        chartDatacpu: {
+                columns: ['cpu', '使用个数'],
+                rows: [
+                    { 'cpu': '已使用', '使用个数': 1393 },
+                    { 'cpu': '未使用', '使用个数': 3530 },
+
+                 ]
+             },
+            chartSettingscpu:{
+                 radius: 30,
+                 offsetY: 100,
+                       itemStyle:{
+                              color:function(item){
+                                    var colorlist=['#ea0a0a','#19d4ae']
+                                    return colorlist[item.dataIndex];
+                              },
+
+                     }
+              },
+           formInlinecpu:{
+                  cpuamend:''
+           }
+
+
+         }
+        
+    }
+}
+</script>
+<style lang="scss" scoped>
+    .wholepublish{
+         .modelconfig{
+              display: inline-block;
+              width: 414px;
+              height: 242px;
+              border: 1px solid #d8d8d8;
+              border-radius: 10px;
+              vertical-align: top;
+             
+            .viewpie{
+                display: inline-block;
+                width: 200px;
+                height: 182px;
+            }
+            .datamiddle{
+                height: 182px;
+                line-height: 182px;
+                .usedoing{
+                    float: right;
+                    margin-right: 40px;
+                    color: #C9C9C9;
+                    font-family: "Microsoft YaHei";
+                    font-size: 16px;
+
+                }
+            }
+               i{
+                 color: red;
+                 margin-left: 20px;
+             }
+             .resoureName{
+                 height: 60px;
+                 line-height: 60px;
+                 font-family: "Microsoft YaHei";
+                 font-size: 16px;
+                 border-bottom: 1px solid #d8d8d8;
+                 span{
+                     display: inline-block;
+                     margin-left: 8px;
+                     color: red;
+                 }
+             }
+         }
+         .modelconfigcpu{
+             margin-right: 80px;
+
+         }
+    }
+</style>
+<style ccoped>
+         .cpuinputamend .el-input__inner{
+               width: 260px;
+         }
+
+</style>
+

@@ -1,0 +1,137 @@
+<template>
+<el-container>
+            <el-aside :width="adisewidth">
+                <el-menu
+                      :collapse="isCollapse"
+                      :default-active='$router.path' 
+                      active-text-color="#fff"
+                      text-color='#a0a0a0'
+                      router>
+                  <div class="collapseicon"><span  class="logoname"  v-show="this.isCollapse==false" > 讯方AI云平台</span></div>
+                   <el-menu-item index='/Firstpage'>
+                        <span>首页</span>  
+                    </el-menu-item>  
+                    <el-submenu index='1'>
+                        <template slot='title'>
+                            <span>项目管理</span>
+                        </template>
+                        <el-menu-item index='/AddProject'>
+                            添加项目
+                        </el-menu-item>
+                        <el-menu-item index='/Uploadpage'>
+                            项目列表
+                        </el-menu-item>
+                    </el-submenu>
+                </el-menu>
+            </el-aside>
+    <el-container>
+        <el-header>
+               
+                <i class="fa fa-align-justify  " aria-hidden="true"  @click="foldmenu" ></i>
+               <div class='Exitoutfather'>
+                  <el-button  size="mini"  class="Exitoutchidren"    @click="Exitoutfun"  > 退出</el-button>  
+               </div>
+        </el-header>
+        <el-main>
+            <router-view></router-view>
+        </el-main>
+    </el-container>
+</el-container>
+
+
+
+</template>
+<script>
+
+//import ChangeTheme from '@/components/changeTheme/changeTheme'
+export default {
+    data () {
+        return {
+             isCollapse:false,
+             adisewidth:'200px',
+        }
+    },
+   // components: { ChangeTheme }
+   methods:{
+         Exitoutfun(){///退出后返回登录页面
+               this.$router.push('/Login')
+         },
+         //折叠菜单
+         foldmenu(){
+                
+               if(this.isCollapse==false){
+                    this.isCollapse=true
+                    this.adisewidth="65px"
+               }else{
+                   this.isCollapse=false
+                   console.log("2222")
+                   this.adisewidth="200px"
+               }
+         }
+   },
+
+
+
+}
+</script>
+<style lang="scss" scoped>
+.el-container {
+    height: 100%;
+    .el-header {
+        background-color:#3c8dbc;
+        color: #333;
+        height: 60px;
+        line-height: 60px;
+              i{
+                    color: #fff;
+                    cursor: pointer;
+                }
+         .Exitoutchidren{
+                float:right;
+                top: 25%;
+                position: relative;
+           } 
+   .Exitoutfather{
+            float: right;
+            height: 60px;
+            line-height: 60px;
+         }
+    }
+    .el-aside {
+            height: 100%;
+        	background: #3c3c3c;
+			color: #fff;
+        .el-menu {
+              height: 100%;
+            	background-color: #232424;
+
+            .el-submenu {
+					border-bottom: 1px solid #3c3c3c;
+					.el-menu-item {
+						background-color: #353535;
+					}
+				}
+				.el-menu-item.is-active {
+					background:#108de9;
+				}
+            .collapseicon{
+                height: 60px;
+                text-align: center;
+                background: #367fa9;
+                .logoname{
+                    display:inline-block;
+                    height:60px; 
+                    line-height:62px;
+                    font-size: 18px;
+                }
+
+            }
+
+        }
+    }
+
+
+}
+</style>
+
+

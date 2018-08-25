@@ -1,0 +1,121 @@
+<template>
+  <el-row  class='loginConteiner'>
+     
+            <el-form :model="LoginForm" :rules="rules" ref='loginForm'  class="fromtable"  label-width="100px">
+                    <el-form-item label='用户名' prop='name'  :error="showError">
+                        <el-input v-model='LoginForm.name'    @change='showError = null'    placeholder="请输入用户名"  ></el-input>
+                    </el-form-item>
+                    <el-form-item label='登录密码'   prop='pass'  :error='showError'   >
+                        <el-input v-model='LoginForm.pass'  placeholder="请输入密码"    @keyup.native.enter="submitForm()"          @change='showError = null'   type="password"></el-input>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-button @click='submitForm'  type="primary">登录</el-button>
+                    </el-form-item>
+            </el-form>
+  </el-row>
+</template>
+<script>
+import qs from 'qs';
+import {userlogin} from '@/api/api'
+export default {
+  data () {
+      return {
+          LoginForm: {
+              name: '',
+              pass: ''
+          },
+           showError:null,
+      }
+  },
+  computed: {
+      rules () {
+          return {
+              name: [
+                  { required: true, message: "输入用户名", trigger: 'blur' }
+              ],
+              pass: [
+                  { required: true, message: '请输入密码', trigger: 'blur' }
+              ]
+          }
+      },
+  },
+  methods: {
+      submitForm () {
+             
+             var parms={
+                   userAccount:this.LoginForm.name,
+                   userPassword:this.LoginForm.pass
+             }
+          this.$refs['loginForm'].validate((valid) => {
+              if(valid) {
+                  let user = { name: this.LoginForm.name }
+                       userlogin(qs.stringify(parms)).then(res=>{
+                            console.log("登录")
+                            console.log(res)
+                            if(res.data.code===0){
+                                     sessionStorage.setItem('user', JSON.stringify(user))//判断是不是在登录
+                                    
+                                 this.$router.push('/Firstpage')    
+                                //   this.$goRoute('/Firstpage')
+                            }else{
+                                 this.showError="用户名或密码错误"
+                            }
+                   })    
+
+
+
+
+
+
+                    // if(this.LoginForm.name !== '') {
+                    //     sessionStorage.setItem('user', JSON.stringify(user));
+
+                        
+                    // }
+
+
+
+
+
+
+              } else {
+                  console.log('err');
+                  return false;
+              }
+          })
+          
+      },
+
+  },
+  mounted() {
+     // console.log(this.$t('message.hello'))
+  }
+}
+</script>
+ 
+
+
+<style lang="scss" scoped>
+
+   .loginConteiner{
+              position: relative; 
+             
+              height: 100%;
+  
+         .fromtable{
+               position: absolute;
+                top: 50%;
+                left: 50%;
+                width: 400px;
+                height: 240px;
+                margin-top: -120px;
+                margin-left: -200px;
+            
+            
+       }
+   }
+    
+
+</style>
+
+

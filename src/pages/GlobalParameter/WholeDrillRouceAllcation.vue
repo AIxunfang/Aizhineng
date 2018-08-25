@@ -1,0 +1,18 @@
+<template>
+  <el-row>
+           <div class="navigationbar"> 
+              <span class="navigationname">全局参数管理<i class="el-icon-arrow-right" aria-hidden="true"></i>
+                 训练资源配置
+              </span>
+            </div>
+  </el-row>
+</template>
+<script>
+export default {
+
+}
+</script>
+<style lang="scss" scoped>
+         
+</style>
+

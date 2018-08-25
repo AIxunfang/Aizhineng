@@ -1,0 +1,20 @@
+import axios from 'axios'
+import qs from 'qs'
+//axios.defaults.baseURL = 'http://192.168.98.120:9999/api';
+ axios.defaults.baseURL = 'http://192.168.80.63:10005/api';
+// axios.defaults.baseURL ="http://nedn26.natappfree.cc/api"
+//登陆首页
+export const userlogin =(parms) =>{
+      return  axios
+      .post('/user/login',parms)  
+}
+//左侧菜单栏
+export const menulist =(parms) =>{
+       return axios
+       .get('user/permissions/account',{params : parms})
+}
+//创建项目
+export const projectadd =(parms) =>{
+      return axios
+      .post('/project/add', parms)
+}

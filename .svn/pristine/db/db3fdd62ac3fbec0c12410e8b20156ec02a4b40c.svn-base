@@ -1,0 +1,31 @@
+import Vue from 'vue'
+import Router from 'vue-router'
+import Home from '@/components/Home'
+import Login from '@/pages/Login/Login'
+import AddProject from '@/pages/ProiectManagement/AddProject'
+import Uploadpage from '@/pages/ProiectManagement/Uploadpage'
+import Firstpage from '@/pages/Homepage/Firstpage'
+
+Vue.use(Router)
+
+
+
+export default new Router({
+  routes: [
+    {
+      path: '/',
+      name: 'Home',
+      component: Home,
+      children: [
+        { path: 'AddProject', name: 'AddProject', component: AddProject },
+        { path: 'Uploadpage', name: 'Uploadpage', component: Uploadpage },
+        { path: 'Firstpage', name: ' Firstpage', component: Firstpage }
+      ]
+    },
+    {
+      path: '/Login',
+      name: 'Login',
+      component: Login
+    }
+  ]
+})
