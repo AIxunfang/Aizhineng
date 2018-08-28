@@ -50,16 +50,14 @@ export default {
                        ]
                  },
                  editdisabled:false,
-                 addproject:true,
-                 judge:null,
+
               }
             },
             methods:{
              setupproject(){//创建项目
-                       
                          var parms=this.addprojectfrom 
-               if(this.addproject==false){
-                               this.addprojectfrom.projectId=this.judge.id.projectId
+               if(this.$route.params.editjudge==false){
+                               this.addprojectfrom.projectId=this.$route.params.id.projectId
                                this.$refs['addprojectrules'].validate((valid)=>{  
                                     if(valid){
                                           editproject(qs.stringify(parms)).then(res=>{
@@ -72,8 +70,7 @@ export default {
                                                       }); 
                                                       setTimeout(()=>{
                                                             this.$router.push('/Uploadpage')
-                                                      },1000)   
-                                                      sessionStorage.removeItem('judge')             
+                                                      },1000)                
                                                 }else{
                                                       this.$message({
                                                       message:"修改失败",
@@ -83,6 +80,7 @@ export default {
                                       })  
                                }
                          })
+ 
                }
               else{
                this.$refs['addprojectrules'].validate((valid)=>{
@@ -97,8 +95,7 @@ export default {
                                         }); 
                                     setTimeout(()=>{
                                           this.$router.push('/Uploadpage')
-                                    },1000)  
-                                    sessionStorage.removeItem('judge')              
+                                    },1000)                
                                  }else{
                                       this.$message({
                                          message:"创建失败",
@@ -107,27 +104,34 @@ export default {
                                  }
                            })  
                        }
-                   })
+                  })
+
                 }
+
+
+
                },
                getedit(){//编辑
                       console.log("hahhahaha")   
-                     this.judge= JSON.parse(sessionStorage.getItem('judge'))  
-                      this.addprojectfrom.projectNameZh=this.judge.id.projectNameZh//创建项目表单
-                      this.addprojectfrom.projectNameEn=this.judge.id.projectNameEn
-                      this.addprojectfrom.projectDesc=this.judge.id.projectDesc
+                       console.log(this.$route.params)
+                      this.addprojectfrom.projectNameZh=this.$route.params.id.projectNameZh//创建项目表单
+                      this.addprojectfrom.projectNameEn=this.$route.params.id.projectNameEn
+                      this.addprojectfrom.projectDesc=this.$route.params.id.projectDesc
                       this.editdisabled=true
-                     // return judge;
-                 },
+               },
+
+
+
+        
             },
             mounted(){
                     console.log("路由跳转")
-                       this.judge= JSON.parse(sessionStorage.getItem('judge'))  
-                       this.addproject=this.judge.editjudge
-                       if( this.addproject==false){
-                             this.getedit()
-                       }
-      }
+                    console.log(this.$route.params)
+                     if(this.$route.params.editjudge==false){
+                           this.getedit()         
+                     }
+
+            }
 }
 </script>
 <style lang="scss" scoped>

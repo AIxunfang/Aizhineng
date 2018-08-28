@@ -58,6 +58,6 @@ export const deleteprojectId =(parms) =>{
 }
 //项目编辑接口
 export const editproject =(parms) =>{
-    return axios
-    .post('/project/update', parms)
+     return axios
+     post('/project/update',parms)
 }

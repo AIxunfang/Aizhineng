@@ -5,7 +5,6 @@ import Login from '@/pages/Login/Login'
 import AddProject from '@/pages/ProiectManagement/AddProject'//项目管理-->添加项目
 import Uploadpage from '@/pages/ProiectManagement/Uploadpage' //项目管理-->项目列表
 import projectdetail from '@/pages/ProiectManagement/projectdetail'//项目管理-->项目详情
-import  Codeupload from '@/pages/ProiectManagement/Codeupload' //项目-上传
 import Firstpage from '@/pages/Homepage/Firstpage'  //首页
 import  HdfsManagement from '@/pages/CommonData/HdfsManagement'//公共数据管理-->HDfs管理
 import DrillList from '@/pages/ModelManagement/DrillList' //模型管理 -->训练列表
@@ -65,8 +64,7 @@ export default new Router({
         { path: 'ModelCategorySettings', name: 'ModelCategorySettings', component: ModelCategorySettings}, 
         { path: 'ApplyRouceList', name: 'ApplyRouceList', component: ApplyRouceList}, 
         { path: 'HositryRouceList', name: 'HositryRouceList', component: HositryRouceList}, 
-        {path:'projectdetail' ,name:"projectdetail", component:projectdetail},
-        {path:'Codeupload' ,name:"Codeupload", component:Codeupload}
+        {path:'projectdetail' ,name:"projectdetail", component:projectdetail}
       ]
     },
     {

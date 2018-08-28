@@ -22,7 +22,7 @@
                          <div  class="projectdisright">
                             <div  class="projectName">{{item.projectNameZh}}</div>
                             <div class="projectdiecribetion"><span>项目描述:</span>{{item.projectDesc}}</div>
-                               <div class="projectdiecribetion"><span>私有路径:</span>{{item.projectPublicPath}}</div>
+                               <div class="projectdiecribetion"><span>存储目录:</span>{{item.projectPublicPath}}</div>
                          </div>
                   </div>
                    <div class="projectbottom">
@@ -33,7 +33,7 @@
                                   <el-button  size="small"  icon="el-icon-delete"  @click="delectproject(index)">删除</el-button>
                         </div>                        
                           <div class="menukey">
-                             <el-button  size="small"  icon="el-icon-search" @click="Detailelook(index)">详情</el-button>
+                             <el-button  size="small"  icon="el-icon-search" @click="Detailelook">详情</el-button>
                         </div>   
                    </div>
               </div>
@@ -80,12 +80,9 @@ export default {
                 },
                addrouter(){//点击添加,路由跳转
                      this.$router.push('/AddProject')   
-                      sessionStorage.setItem('judge',  JSON.stringify({editjudge:true}))
                },
-               Detailelook(index){//点击进详情页面
+               Detailelook(){//点击进详情页面
                      this.$router.push('/projectdetail')  
-                      sessionStorage.setItem('prodetail',JSON.stringify(this.projectdata[index]))
-
                },
               pageIndexChange(index){//翻页
                     this.currPage=index
@@ -125,11 +122,10 @@ export default {
                                               }); 
                     },
                  edititem(index){//编辑项目
-                           this.$router.push("/AddProject")  
-                           sessionStorage.setItem('judge',  JSON.stringify({id:this.projectdata[index],editjudge:false}))   
+                          this.$router.push({name:"AddProject",params:{id:this.projectdata[index],editjudge:false}})    
                    }
-                     
-                
+
+
 
            },
         mounted(){
@@ -211,11 +207,7 @@ export default {
               }
 
        }
-       .has-gutter {
-          tr{
-            background: red;
-          }
-       }
+
 
     }
 
