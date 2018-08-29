@@ -1,4 +1,4 @@
-# vue-cli-ai-xunfang
+# vue-element-ai-xunfang
 
 > A Vue.js project
 
