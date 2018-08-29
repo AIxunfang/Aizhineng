@@ -12,7 +12,7 @@
               <div class="projectaddbox  projectmodel">
                     <div class="prijectaddpic"  @click="addrouter"></div>
               </div>
-
+ 
                <template  v-for="(item,index) in projectdata"  >
                    <div  :key="item.id"    class="projectmodel">
                   <div  class="projectdiscrb">
@@ -85,12 +85,14 @@ export default {
                Detailelook(index){//点击进详情页面
                      this.$router.push('/projectdetail')  
                       sessionStorage.setItem('prodetail',JSON.stringify(this.projectdata[index]))
+
                },
               pageIndexChange(index){//翻页
                     this.currPage=index
                      console.log("fenyededede")
                      console.log(this.currPage)
-                    this.getprojectlist()    
+                    this.getprojectlist()
+                     
               },
               delectproject(index){//删除项目
                          console.log("删除")
@@ -126,6 +128,9 @@ export default {
                            this.$router.push("/AddProject")  
                            sessionStorage.setItem('judge',  JSON.stringify({id:this.projectdata[index],editjudge:false}))   
                    }
+                     
+                
+
            },
         mounted(){
              this.getprojectlist()
@@ -159,15 +164,11 @@ export default {
                    height: 82px;
                    border-bottom: 1px solid #e4e4e4;
                    .massterpic{
-                      vertical-align: middle;
+                      display: inline-block;
+                      // vertical-align: middle;
                    }
                    .projectdimg{
                             display: inline-block;
-                            vertical-align: top;
-                            width: 97px;
-                            height: 83px;
-                            line-height: 83px;
-                            text-align: center;
                    }
                    .projectName{
                        margin-top: 5px;
@@ -209,6 +210,11 @@ export default {
                   }
               }
 
+       }
+       .has-gutter {
+          tr{
+            background: red;
+          }
        }
 
     }

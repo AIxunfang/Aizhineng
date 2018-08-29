@@ -1,0 +1,80 @@
+<template>
+      <el-row class="projectdetail">
+          <el-col :span='24'>
+             <div class="navigationbar"> 
+              <span class="navigationname">项目管理<i class="el-icon-arrow-right" aria-hidden="true"></i>
+                     项目详情
+              </span>
+            </div>
+           </el-col> 
+            <el-col :span="24">
+                   <div class="codehead"> <div style="vertical-align:middle;float:right;margin-right:20px">  <el-button size="small" type="primary" @click="goback">返回</el-button></div> </div>
+
+                    <div  class="projectdetaildata">
+                      <el-table
+                            :data="projecttableData"
+                            border
+                            style="width: 100%">
+                            <el-table-column
+                            prop="projectNameZh"
+                            label="项目名"
+                           >
+                            </el-table-column>
+                            <el-table-column
+                            prop="projectPublicPath"
+                            label="公共数据"
+                            width="200">
+                            </el-table-column>
+                            <el-table-column
+                            prop="projectDataPath"
+                            label="项目数据">
+                            </el-table-column>
+                            <el-table-column
+                             prop="projectCodePath"
+                             label="项目代码">
+                            </el-table-column>
+                            <el-table-column
+                             width="100"
+                             label="操作">
+                             <template slot-scope="scope">
+                                     <el-button size="mini" @click="uploadcode(scope.$index, scope.row)" type="primary">上传代码</el-button>
+                             </template>
+                            </el-table-column>
+                       </el-table>
+                    </div>
+            </el-col>
+      </el-row>
+</template>
+<script>
+export default {
+       data(){
+           return {
+               projecttableData:[],
+               prodetail:null,
+           }
+       },
+       methods:{
+            uploadcode(){
+                 this.$router.push('/Codeupload')     
+            },
+         goback(){//返回上一页
+                    this.$router.go(-1)
+              },
+       },
+       mounted(){
+              this.prodetail=JSON.parse(sessionStorage.getItem('prodetail'))
+              
+              this.projecttableData.push( this.prodetail)
+              console.log(this.projecttableData)
+       }
+}
+</script>
+<style lang="scss" scoped>
+          .projectdetail{
+               .projectdetaildata{
+                   margin:20px;
+               }
+          }  
+            
+</style>
+
