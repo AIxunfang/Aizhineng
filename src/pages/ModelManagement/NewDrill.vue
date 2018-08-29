@@ -6,7 +6,7 @@
                        新建训练
                 </span>
             </div>
-             <div class="modeldataname"> <span style="margin-left:20px;"> 单机训练模块参数一</span></div>
+             <div class="modeldataname"> <span style="margin-left:20px;">单机训练模块参数一</span></div>
       </el-col>
        <el-col :span="24">
               <el-form :inline="true" :model="modelparameter" class="modelfrom" label-width="120px" :rules="modelrules">
