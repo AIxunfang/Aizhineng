@@ -47,43 +47,6 @@ export default {
                     selectionType:false,
                    },
         treedata: [],
-          // {
-          //   name: 'Jack',
-          //   sex: 'male',
-          //   score: 10,
-          //   children: [
-          //     {
-          //       name: 'Ashley',
-          //       sex: 'female',
-          //       score: 20,
-          //     },
-  
-          //   ],
-          // },
-          // {
-          //   name: 'Tom',
-          //   sex: 'male',
-          //   score: 20,
-          //   children: [
-          //     {
-          //       name: 'Ashley',
-          //       sex: 'female',
-          //       score: 20,
-          //     },
-          //   ],
-          // },
-          // {
-          //   name: 'Tom',
-          //   sex: 'male',
-          //   score: 20,
-          // },
-          // {
-          //   name: 'Tom',
-          //   sex: 'male',
-          //   score: 20,
-
-          // },
-        
         columns: [
           {
             label: '名称',
