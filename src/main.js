@@ -7,19 +7,22 @@ import ElementUI from 'element-ui'
 import VCharts from 'v-charts'
 import vueBeauty from 'vue-beauty'
 import ZkTable from 'vue-table-with-tree-grid'
+import { Button, Table } from 'iview';
 // import './components/changeTheme/theme/index.css'
 import 'element-ui/lib/theme-chalk/index.css'
 import 'element-ui/lib/theme-chalk/reset.css'
 import 'font-awesome/css/font-awesome.css';
 import 'vue-beauty/package/style/vue-beauty.min.css' //vue-beauty 的css样式,做权限管理树状表格
 import './assets/css/common.css'
+import 'iview/dist/styles/iview.css';
 
 Vue.config.productionTip = false
 Vue.use(ElementUI)
 Vue.use(VCharts)
 Vue.use(vueBeauty)//不支持ie浏览器.所以没用
 Vue.use(ZkTable)//树状表格
-
+Vue.component('Button', Button);
+Vue.component('Table', Table);
 /* eslint-disable no-new */
 
 router.beforeEach((to, from, next ) => {

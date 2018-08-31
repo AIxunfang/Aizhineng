@@ -249,9 +249,6 @@ export default {
             margin-right:10px;
          }
 
-         .el-menu-item {
-          /* border-bottom: 1px solid #3c3c3c; */
-         }
 
  
 </style>
