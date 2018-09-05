@@ -1,8 +1,5 @@
 {
-  "plugins": ["transform-runtime",["import", {
-    "libraryName": "iview",
-    "libraryDirectory": "src/components"
-  }]],
+  "plugins": ["transform-runtime"],
   "presets": [
     ["env", {
       "modules": false

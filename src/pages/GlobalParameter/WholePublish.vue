@@ -17,8 +17,6 @@
              </div>
               <div class="modelconfig">
                     <div class="resoureName"><i class="fa fa-circle" aria-hidden="true"></i>  <span>内存管理</span> </div>
-
-
              </div>
             <div style="margin-top:40px;">
                 <el-form  :inline="true"  :model="formInlinecpu" class="demo-form-inline" label-width="80px">

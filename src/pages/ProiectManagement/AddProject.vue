@@ -56,29 +56,38 @@ export default {
             },
             methods:{
              setupproject(){//创建项目
-                       
+                        var _this =this
                          var parms=this.addprojectfrom 
                if(this.addproject==false){
                                this.addprojectfrom.projectId=this.judge.id.projectId
                                this.$refs['addprojectrules'].validate((valid)=>{  
+                                     
                                     if(valid){
                                           editproject(qs.stringify(parms)).then(res=>{
                                                 console.log(parms)
                                                 console.log(res)
                                                 if(res.data.code==0){
-                                                      this.$message({
-                                                            message: '修改成功',
-                                                            type: 'success'
-                                                      }); 
+                                                      // _this.$message({
+                                                      // message: '恭喜你，编辑成功',
+                                                      // type: 'success'
+                                                      // });
+                                                this.$message({
+                                                            type: 'success',
+                                                            message: '添加成功！！！'
+                                                            });
+
+
+                                                      console.log("22222")
                                                       setTimeout(()=>{
                                                             this.$router.push('/Uploadpage')
                                                       },1000)   
                                                       sessionStorage.removeItem('judge')             
                                                 }else{
-                                                      this.$message({
-                                                      message:"修改失败",
-                                                      type:'error'
-                                                      })
+                                                      // _this.$message({
+                                                      // message:"修改失败",
+                                                      // type:'error'
+                                                      // })
+                                                      console.log("111111")
                                                 }
                                       })  
                                }
@@ -91,7 +100,7 @@ export default {
                                console.log(parms)
                                console.log(res)
                                 if(res.data.code==0){
-                                     this.$message({
+                                     _this.$message({
                                           message: '创建成功',
                                           type: 'success'
                                         }); 
@@ -100,7 +109,7 @@ export default {
                                     },1000)  
                                     sessionStorage.removeItem('judge')              
                                  }else{
-                                      this.$message({
+                                      _this.$message({
                                          message:"创建失败",
                                          type:'error'
                                       })

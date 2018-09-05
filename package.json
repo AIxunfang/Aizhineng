@@ -20,13 +20,11 @@
     "echarts": "^4.1.0",
     "element-ui": "^2.0.7",
     "font-awesome": "^4.7.0",
-    "iview": "^3.0.1",
     "jquery": "^3.2.1",
     "object-assign": "^4.1.1",
     "style-loader": "^0.22.1",
     "v-charts": "^1.17.10",
     "vue": "^2.5.2",
-    "vue-beauty": "^2.0.0-beta.19",
     "vue-router": "^3.0.1",
     "vue-table-with-tree-grid": "^0.2.4"
   },

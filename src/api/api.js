@@ -12,9 +12,6 @@ axios.interceptors.request.use(function (config) {
        // 如果是get请求就拼到params里面
             console.log("获取tocken")
              console.log(token)
-
-
-
       if(config.method === 'post') {
           let data = qs.parse(config.data)
           config.data = qs.stringify({
@@ -60,4 +57,14 @@ export const deleteprojectId =(parms) =>{
 export const editproject =(parms) =>{
     return axios
     .post('/project/update', parms)
+}
+//权限管理菜单管理增加
+export const permissionlistfirst =(parms) =>{
+    return axios
+    .get('/permission/list/first',{params : parms})
+}
+//获取目录结构,
+export const dirsAndFiles =(parms) =>{
+    return axios
+    .get('/training/structure/dirsAndFiles',{params : parms})
 }

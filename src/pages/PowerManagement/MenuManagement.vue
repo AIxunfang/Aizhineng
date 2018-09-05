@@ -6,9 +6,10 @@
                     菜单管理
                 </span>
             </div>
+            <div style="margin:20px"> <el-button icon="el-icon-plus" type="primary" size="small" @click="addmenu()" >新增</el-button></div>
          </el-col>
          <el-col :span="24">
-        
+              <div style="margin:20px">
                 <zk-table 
                      ref="table"
                     :data="treedata"
@@ -32,41 +33,72 @@
                            <span slot="reference" style="text-decoration:underline;color:blue;cursor:pointer" @click="editsort(scope.row)">{{scope.row.permissionOrder}}</span>
                           </el-popover>
                    </template>
-
-
-
                     <template slot="action"  slot-scope="scope" >
                          <el-button @click="menudelect(scope.row)" icon="el-icon-delete"  type="danger" size="small"  circle></el-button>
-                         <el-button @click="menuedit(scope.row)"  type="primary" icon="el-icon-edit"  size="small" circle ></el-button>
+                         <el-button @click="menuedit(scope.row)"  type="primary" icon="el-icon-edit"  size="small" circle   ></el-button>
                         
                     </template>
                 </zk-table>  
                 <el-dialog
-                      title="提示"
                       :visible.sync="menudialogVisible"
-                      width="30%"
+                      width="47%"
                     >
-                <el-form :inline="true" :model="formmenu" class="demo-form-inline" >
-                        <el-form-item label="名称">
-                          <el-input v-model="formmenu.projectName" ></el-input>
-                        </el-form-item>
-                        <el-form-item label="父节点">
-                          <el-select v-model="formmenu.region" >
-                            <el-option label="区域一" value="shanghai"></el-option>
-                            <el-option label="区域二" value="beijing"></el-option>
-                          </el-select>
-                        </el-form-item>
+                <el-form :inline="true" :model="formmenu" class="formmenu" label-width="80px" >
+                      <div>
+                            <el-form-item label="名称">
+                              <el-input v-model="formmenu.projectName" ></el-input>
+                            </el-form-item>
+                            <el-form-item label="父节点">
+                              <el-select v-model="formmenu.region" >
+                                <el-option label="区域一" value="shanghai"></el-option>
+                                <el-option label="区域二" value="beijing"></el-option>
+                              </el-select>
+                            </el-form-item>
+                       </div>
+                       <div>
+                           <el-form-item label="类型">
+                                   <el-select v-model="formmenu.region" >
+                                      <el-option label="一级" value="1"></el-option>
+                                      <el-option label="二级" value="2"></el-option>
+                                  </el-select>
+                            </el-form-item>
+                          <el-form-item label="图标" >
+                                 <el-input  v-model="formmenu.iconurl" placeholder="图标参照font awesome,二级无需填写"></el-input>  
+                          </el-form-item>
+                       </div>
+                        <div>
+                         <el-form-item label="顺序">
+                                <el-input v-model="formmenu.projectName"  placeholder="排列序号" ></el-input> 
+                         </el-form-item>
+                         <el-form-item label="是否启用">
+                                      <el-select v-model="formmenu.region" >
+                                      <el-option label="是" value="0"></el-option>
+                                      <el-option label="否" value="1"></el-option>
+                                  </el-select>
+                         </el-form-item>
+                        </div>
+                        <div>
+                            <el-form-item label="后台">
+                              <el-input v-model="formmenu.projectName" ></el-input>
+                            </el-form-item>
+                           <el-form-item label="前端">
+                              <el-input v-model="formmenu.projectName"  ></el-input>
+                            </el-form-item>
+                        </div>
                       </el-form>
-
+                        <span slot="footer" class="dialog-footer">
+                        <el-button size="mini">取 消</el-button>
+                        <el-button type="primary" size="mini">确 定</el-button>
+                      </span>
                 </el-dialog>
-
+           </div> 
          </el-col>
 
        
   </el-row>
 </template>
 <script>
- import {menulist} from '@/api/api'
+ import {menulist,permissionlistfirst} from '@/api/api'
 
 export default {
            data(){
@@ -84,11 +116,11 @@ export default {
                     expandType: false, 
                     selectionType:false,
                    },
-        formmenu:{
-              projectName:"",
-              region:"",
-        },
-
+          formmenu:{
+                projectName:"",
+                region:"",
+                iconurl:"",
+          },
         treedata: [],
         columns: [
           {
@@ -102,7 +134,7 @@ export default {
             minWidth: '50px',
           },
           {
-            label: '类别',
+            label: '级别',
             prop: 'permissionType',
            
           },
@@ -148,31 +180,41 @@ export default {
                         }
                    })    
               },
+             getfristmenu(){//得到父节点的一级菜单
+                   permissionlistfirst().then(res=>{
+                            console.log("父节点")
+                            console.log(res)
+                   })    
+             },
              menudelect(index){
                    console.log(index)
 
              },
-           menuedit(){
+           menuedit(event){//编辑部分
+                   this.menudialogVisible=true
 
            },
            editsort(event){//点击编辑顺序
                  this.visible2=true
                   console.log(event)
-           }
-
+           },
+           addmenu(){
+               this.menudialogVisible=true  
+           },
+           
 
            },
            mounted(){
                   this.Username = JSON.parse(sessionStorage.getItem("user"));
                   this.getmenulist()
+                  this.getfristmenu()
            }           
 }
 </script>
 <style lang="scss" scoped>
         .menuManagement{
-
-                
-        }
+                   
+          }
 </style>
 <style>
      .el-popper .el-input{
@@ -182,5 +224,9 @@ export default {
                 vertical-align: middle;
                color: #409eff;
         }
+        .formmenu  .el-input--suffix{
+               width:202px;
+        }
+
 </style>
 
