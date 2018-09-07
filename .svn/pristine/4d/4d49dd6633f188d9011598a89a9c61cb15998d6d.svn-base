@@ -66,6 +66,8 @@ import{projectupload}from "@/api/api"
 export default {
        data(){
            return{
+
+              
                   prodetail:null,
                   projectNameZh:'',
                   filetype:"",//上传文件的类型
