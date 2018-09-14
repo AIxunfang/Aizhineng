@@ -13,22 +13,22 @@
                       <div class="getback"><el-button  type="primary"  size="small" @click="goback">返回</el-button></div>
                   </div>
                  <div class="uploadfile">
-                          <el-button size="small" type="primary"  @click="uploadcode"  ref="codeUpload"><i class="el-icon-upload el-icon--right"></i>上传代码 </el-button>
+                          <el-button size="small" type="primary"  @click="uploadcode"  ref="codeUpload">上传代码 </el-button>
                           <el-button size="small" type="primary"   @click="updata" ><i class="el-icon-upload el-icon--right"></i>上传数据 </el-button>
                  </div>
                  <el-dialog
                      title="上传"
                     :visible.sync="uploaddialogVisible"
                      width="30%"
-                     @close="closevisble"
                     >
+                    <!-- <input type="file" id="uploadid"> -->
                   
-                    <form enctype="multipart/form-data" method="post" id="fileform">  
-                         <input type="file" id="uploadid" :accept="acceptfile">
+                    <form enctype="multipart/form-data" method="post">  
+                         <input type="file" id="uploadid" accept=".py,.zip">
                     </form>
 
                     <span slot="footer" class="dialog-footer">
-                        <el-button size="small" @click="uploaddialogVisible=false" >取 消</el-button>
+                        <el-button size="small" >取 消</el-button>
                         <el-button type="primary" size="small"  @click="sure" >确 定</el-button>
                     </span>
                  </el-dialog> 
@@ -42,7 +42,7 @@
                                      <span style="margin-left: 10px">{{ scope.row.file }}</span>
                                 </template>
                          </el-table-column>
-                         <el-table-column label="更新时间" prop="time">
+                         <el-table-column label="时间">
 
                          </el-table-column>
                          <el-table-column label="大小(单位/k)" prop="storage">
@@ -53,19 +53,19 @@
                                        <el-button icon="el-icon-delete" type="primary" size="mini"  @click="delectfile(scope.$index,scope.row)"   >删除</el-button>
                                  </template>
                          </el-table-column>
+
                 </el-table>
               </div>
           </el-col>
+
     </el-row>
 </template>
 <script>
 import axios from 'axios'
-import{projectupload,deletefile,getfileSize}from "@/api/api"
+import{projectupload,deletefile}from "@/api/api"
 export default {
        data(){
            return{
-                  acceptfile:'',//接受文件类型
-                  filetreams:'',//发送的文件流
                   prodetail:null,
                   projectNameZh:'',
                   filetype:"",//上传文件的类型
@@ -94,46 +94,23 @@ export default {
               },
               
               uploadcode(){//上传代码
-                    this.filetype='1'   
-                    this.acceptfile=".py,.zip"   
+                    this.filetype='1'      
                     this.uploaddialogVisible=true
                           
               },
              updata(){//上传数据
-                   this.filetype='2' 
-                    this.acceptfile=".zip" 
+                   this.filetype='2'  
                     this.uploaddialogVisible=true
              },
-            getgetfileSize(){//获取文件大小和更新时间
-                    var parms={
-                          projectId:this.prodetail.projectId
-                    }
-                 getfileSize(parms).then(res=>{
-                          
-                          console.log("文件大小")
-                          console.log(res)
-                          if(res.data.code==0){//可能值传了一个值,遍历一遍
-                                 for(var i=0;i<res.data.data.length;i++ ){
-                                         if(res.data.data[i].type==1){
-                                               this.codedata[0].time= res.data.data[i].time;
-                                               this.codedata[0].storage= res.data.data[i].fileSize;
-                                         }else if(res.data.data[i].type==2){
-                                               this.codedata[1].time= res.data.data[i].time;
-                                               this.codedata[1].storage= res.data.data[i].fileSize;
-                                         }
-                                 }
-                          }
-                 })    
-                 
-            },
+
 
 
             sure(){
                   var _this=this
-                 this.filetreams= document.getElementById('uploadid').files[0];
+                  const file= document.getElementById('uploadid').files[0];
                    const token = sessionStorage.getItem('token')
                      let formData = new FormData();
-                        formData.append("file", this.filetreams);
+                        formData.append("file",file);
                         formData.append("projectId",this.prodetail.projectId);
                         formData.append("type", this.filetype);
                         formData.append("token",token);
@@ -145,7 +122,7 @@ export default {
                           contentType: false,
                           async: false,
                           mimeType:"multipart/form-data",
-                          url: "http://192.168.80.63:30005/api/project/upload",
+                          url: "http://192.168.80.63:10005/api/project/upload",
                           data:formData,
                          success:function(res){
                              console.log("=====")
@@ -159,7 +136,6 @@ export default {
                                       message:"上传成功"
 
                                   })
-                                  
                                   _this.uploaddialogVisible=false
                               }else {
                                     _this.$message.error(parseres.message);
@@ -173,65 +149,20 @@ export default {
     
               })
             },
-           closevisble(){//关闭浏览器清空input\
-                console.log("1111")
-                document.getElementById('fileform').reset()
-
-           },
-
-
             delectfile(value){//删除文件 
-                 let type=""
+                console.log("00000")
                 console.log(value)
                 if(value==0){
-                   this.type=1
+                    alert("000000")
                 }else{
-                   this.type=2
+                    alert("11111")
                 }
-                var parms={
-                     projectId:this.prodetail.projectId,
-                     type:this.type
-
-                }
-                console.log(parms)
-                    this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
-                        confirmButtonText: '确定',
-                        cancelButtonText: '取消',
-                        type: 'warning'
-                        }).then(() => {
-                         
-                            deletefile(parms).then(res=>{
-                                    console.log(res)
-                                    if(res.data.code==0){
-                                        this.$message({
-                                                type:'success',
-                                                message:"删除成功" 
-                                        })
-                                        this.getgetfileSize()
-                                    }
-                            })
-
-
-                          
-                         
-                        }).catch(() => {
-                        this.$message({
-                            type: 'info',
-                            message: '已取消删除'
-                        });          
-                        });
-                    }
-
-
-
-
-
-
+                
 
 
                 
 
-            
+            },
 
 
 
@@ -242,7 +173,6 @@ export default {
                 this.projectNameZh= this.prodetail.projectNameZh
                  this.routefile=this.prodetail.projectDataPath
                  this.routefilesubstr=this.routefile.substring(0,this.routefile.length-5)  
-                 this.getgetfileSize()
                 console.log( this.prodetail)
        }
 }

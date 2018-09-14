@@ -1,0 +1,20 @@
+<template>
+  <el-row>
+     <el-col :span='24'>
+             <div class="navigationbar"> 
+                 <span class="navigationname">模块管理<i class="el-icon-arrow-right" aria-hidden="true"></i>
+                        训练详情
+                 </span>
+            </div>
+
+      </el-col>
+  </el-row>
+</template>
+<script>
+export default {
+          
+}
+</script>
+<style lang="scss" scoped>
+
+</style>

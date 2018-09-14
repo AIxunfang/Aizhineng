@@ -9,11 +9,11 @@
              <div class="modeldataname"> <span style="margin-left:20px;">单机训练模块参数一</span></div>
       </el-col>
        <el-col :span="24">
-              <el-form :inline="true" :model="modelparameter"  ref="modelparameter"  class="modelfrom" label-width="130px" :rules="modelrules">
+              <el-form :inline="true" :model="modelparameter" class="modelfrom" label-width="120px" :rules="modelrules">
                      <div>
                           <el-form-item label="模块名称:" prop="modelname">
                                 <el-input v-model="modelparameter.modelname" placeholder="填写模块名称" @blur="verifyname"></el-input>
-                                <div style="height:5px; color:red ;line-height:24px" v-show="Namerepeat" >项目名称重复</div>
+                                <div style="height:15px; color:red" v-show="Namerepeat" >项目名称重复</div>
                           </el-form-item>
                           <el-form-item label="所属项目:">
                             <el-select v-model="modelparameter.pid" placeholder="选择项目"  @change="changedataname"  >
@@ -25,13 +25,15 @@
                                  ></el-option>
                             </el-select>
                           </el-form-item>
-                        <el-form-item prop="radio3">
+                        <el-form-item>
                               <el-radio-group v-model="modelparameter.radio3" @change="chengeradio" >
                               <el-radio-button label="1">CPU</el-radio-button>
                               <el-radio-button label="2">GPU</el-radio-button>
                         </el-radio-group>
-                            <span v-if="modelparameter.radio3==1">CPU:{{projectcpu}}GPU:{{projectgpu}}内存:{{projectmemory}}</span>
-                            <span v-if="modelparameter.radio3==2">GPU:{{projectgpu}}内存:{{projectmemory}}</span>                               
+
+                            <span v-if="modelparameter.radio3==1">CPU:{{projectcpu}}</span>
+                            <span v-if="modelparameter.radio3==2">GPU:{{projectgpu}}</span>
+                                                            
                         </el-form-item>
  
 
@@ -63,10 +65,10 @@
 
                       </div>
                        <div>
-                          <el-form-item label="参数脚本:" prop="selectedOptionsscript">
+                          <el-form-item label="需要训练的脚本:">
                                           <el-cascader
                                               @change="changecodeval"
-                                              v-model="modelparameter.selectedOptionsscript"
+                                              v-model="selectedOptionsscript"
                                               :options="optionsscript"
                                               :show-all-levels="false"
                                                @active-item-change="handleItemChange"
@@ -76,16 +78,6 @@
                           <el-form-item>
                                  <el-button type="primary" size="small"  @click="analysis()">解析参数</el-button>
                           </el-form-item>
-                            <el-form-item label="训练脚本:" prop="selectedOptionsscriptchireden">
-                                          <el-cascader
-                                              @change="changecodevalchirden"
-                                              v-model="modelparameter.selectedOptionsscriptchireden"
-                                              :options="optionsscript"
-                                              :show-all-levels="false"
-                                               @active-item-change="handleItemChange" 
-                                               :clearable="true"
-                                          ></el-cascader>
-                          </el-form-item>
                        </div>
                          <div>
                             <div  v-show="comprehensionshow"   style="margin-left:100px">
@@ -93,19 +85,13 @@
                                        <span>解析无数据!请重新选择python脚本</span>
                                 </el-form-item>
                             </div>
-                            <div    class="variablename"  v-for="(item,index) in modelparameter.comprehensionarry" :key="item.index"  >
-                                <el-form-item label="变量"  >
+                            <div    class="variablename"  v-for="(item,index) in comprehensionarry" :key="item.index"  >
+                                <el-form-item label="变量名称"  >
                                         <el-input readonly="readonly" v-model="item.tfParamKey"> </el-input>
                                 </el-form-item>
- 
-                                <el-form-item  label="值" 
-                                    :rules="{
-                                     required: true, message: '值不能为空', trigger: 'blur'
-                                        }"  
-                                      :prop="'comprehensionarry.' + index + '.tfParamValue'"           
-                                              >
+                                <el-form-item  label="值" >
                                            <el-cascader
-                                                v-if="item.tfParamType"
+                                               v-if="item.tfParamType"
                                                 v-model="item.trandata"
                                                 @change="handleItemChangedata"
                                                 :options="optionsscriptdata"
@@ -113,7 +99,6 @@
                                                 change-on-select  
                                           ></el-cascader>
                                            <el-input v-model="item.tfParamValue" v-else> </el-input>
-
 
                                 </el-form-item>
                                 <el-form-item label="是否为目录">
@@ -148,11 +133,13 @@ export default {
               comprehensionshow:false,//解析无数据的时候显示,
               selectedOptionsscriptdata:[],
               dynamicurl:"",//动态url做比较
+              radio3:"",
               projectcpu:"",//cpu
               projectgpu:'',
               projectmemory:'',
               modelnamedata:[],
               meupath:'',
+               selectedOptionsscript:[],//选择的值.
                sendcodepy:"",//发送给后台的py文件
 
                optionsscript:[
@@ -181,42 +168,18 @@ export default {
                             cpu:"1",
                             memory:'4',
                             gpu:"2",
-                            pid:"",
                             ActionScript:'',
                             resource:'',
                             path:'',
                             radio3:"",
-                            comprehensionarry:[
-                              
-                            ],
-                           
-                            selectedOptionsscript:[],
-                            selectedOptionsscriptchireden:[],
                     },
-                    trainingParamShell:'',//xunliancanhsu
-                   
+
+                    comprehensionarry:[],
                      
                    
 
                  modelrules:{
-                      modelname: [
-                          { required: true, message: "输入模块名称", trigger: 'blur' }
-                         ],
-                       radio3:[
-                            { required: true, message: "选择运行环境", trigger: 'blur' }
-                       ],
-                      selectedOptionsscript:[
-                          {required: true, message: "选择参数定义脚本", trigger: 'blur'}
-                       ],
-                       selectedOptionsscriptchireden:[
-                         {required: true, message: "选择需要训练的脚本", trigger: 'blur'}
-                       ],
-                      tfParamValue:[
-                          {required: true, message: "填写值", trigger: 'blur'}
-                      ], 
-                      addrule:[
-                             {required: true, message: "填写值", trigger: 'blur'}
-                      ]
+
                  }
                }
         },
@@ -232,13 +195,7 @@ export default {
                    }
                  checktrainingName(parms).then(res=>{
                            console.log(res)
-                            if(res.data.code==0){
-                               if(res.data.data==true){
-                                     this.Namerepeat=true
-                                }else{
-                                       this.Namerepeat=false
-                                }
-                            }
+
                  })
 
 
@@ -256,8 +213,6 @@ export default {
                changedataname(index){
                       console.log("xiabiao")
                       console.log(index)
-                     
-                      this.modelparameter.radio3=''
                       let obj={}
                    obj = this.projectdata.find((item)=>{//这里的userList就是上面遍历的数据源
                               return item.projectId === index;//筛选出匹配数据
@@ -266,7 +221,7 @@ export default {
                       this.projectcpu=obj.projectCpu;
                       this.projectgpu=obj.projectGpu;
                       this.projectmemory=obj.projectMemory;
-                      this.modelparameter.projectName=obj.projectNameEn  
+                      this.modelparameter.projectName=obj.projectNameZh    
  
                },
                 getmodeltype(){//获取模型分类
@@ -274,9 +229,7 @@ export default {
                                console.log("--模块类型--")
                                console.log(res)
                                if(res.data.code==0){
-                                     this.modelnamedata=res.data.data
-                                     this.modelparameter.projectsort= this.modelnamedata[0].index
-                                     console.log(this.modelnamedata[0].index)
+                                    this.modelnamedata=res.data.data
                                }
                       })
                 },
@@ -300,18 +253,17 @@ export default {
                     }
                     findprojects(parms).then(res=>{
                            if(res.data.code==0){
-                                    this.projectdata=res.data.data
-                                    this.modelparameter.pid= this.projectdata[0].projectId
-                                   this.modelparameter.projectName=this.projectdata[0].projectNameEn  
-                                  this.projectcpu=this.projectdata[0].projectCpu;
-                                  this.projectgpu=this.projectdata[0].projectGpu;
-                                  this.projectmemory=this.projectdata[0].projectMemory;
-
+                                  this.projectdata=res.data.data
                            }
                     })
-                    
              },
- 
+              handleChangescript(value){//改变选中的值
+                  console.log("--change")
+                  console.log(value)
+                  console.log(this.selectedOptionsscript)
+                  //  children:'optionsscript'
+
+              },
              changecodeval(val){//解析参数选中的值
                     console.log('选中的值')
                     console.log(val)
@@ -320,18 +272,6 @@ export default {
                     this.sendcodepy=val.join('/')
                     console.log(this.sendcodepy)  
              },
-            changecodevalchirden(val){
-                    console.log(val)
-                    console.log("====的饿的的")
-
-                    //  console.log(this.selectedOptionsscriptchireden.join("/"))
-                        this.trainingParamShell=val.join('/')
-                       console.log( this.trainingParamShell)
-
-            },
-
-
-
 
              analysis(){//解析参数
 
@@ -353,7 +293,7 @@ export default {
                            res.data.data.forEach((item,index) => {
                                   item.tfParamType=false
                                   item.trandata=[]
-                                 this.modelparameter.comprehensionarry.push(item) 
+                                 this.comprehensionarry.push(item) 
                            });
                            console.log(this.comprehensionarry)
                        }
@@ -405,10 +345,8 @@ export default {
                          })         
             },
            creatmodel(){//创建模块
-
-                        
                       const uid = sessionStorage.getItem('uid')
-                      this.modelparameter.comprehensionarry.forEach((item,index)=>{
+                      this.comprehensionarry.forEach((item,index)=>{
                                if(item.tfParamType==false){
                                   item.tfParamType=0
                                }else{
@@ -417,6 +355,7 @@ export default {
                                }
                       })  
                   var parms={  
+                                
                                       uid:uid,
                                       pid:this.modelparameter.pid,
                                       projectName:this.modelparameter.projectName,
@@ -424,31 +363,24 @@ export default {
                                       trainingImage:this.modelparameter.projectmirror,
                                       imageType:Number(this.modelparameter.radio3),
                                       trainingExecuteShell:this.sendcodepy,
-                                      trainingParamShell: this.trainingParamShell,
                                       trainingRemind:this.modelparameter.modeldescribe,
                                       trainingType:this.modelparameter.projectsort, 
                                       userAccount:this.Username.name,
-                                      tfParams:this.modelparameter.comprehensionarry               
+                                      tfParams:this.comprehensionarry               
                                }   
-                    this.$refs['modelparameter'].validate((valid)=>{
-                            
-                          if(valid){
-                              createtraining(parms).then(res=>{
-                                  console.log("chuangjian")
-                                  console.log(res)
-                                   if(res.data.code==0){
-                                        this.$message({
-                                               message:"创建模块成功",
-                                               type:"success"
-                                        })
-                                        setTimeout(()=>{
-                                              this.$router.push('/DrillList')    
-                                        },1000 )  
-                                   }
-                             })
-                          }
-                    })  
+                               console.log("888")
+                               console.log(parms)
+                createtraining(parms).then(res=>{
+                      console.log("chuangjian")
+                       console.log(res)
+                 })
+
+
+             
+           
            },
+
+
               handleItemChange(val){
                      console.log("active-change")
                        console.log(val)//我说的是这个
@@ -510,7 +442,14 @@ export default {
 </script>
 <style lang="scss" scoped>
       .NewDrill{
- 
+        .modeldataname{
+              font-family: "Microsoft YaHei";
+              color:#666666;
+              line-height: 40px;
+              border: 1px solid #e4e4e4;
+              height: 40px;
+              background: #efefef;
+        }  
        .modelfrom{
             margin: 20px 0px 0px 20px;
             .el-input{

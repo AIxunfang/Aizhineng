@@ -9,8 +9,7 @@ axios.defaults.baseURL = 'http://192.168.80.63:30005/api';
        // 如果是post请求就把默认参数拼到data里面
        // 如果是get请求就拼到params里面
 axios.interceptors.request.use(function (config) {
-       const token = sessionStorage.getItem('token')
-       const Username = JSON.parse(sessionStorage.getItem("user"));
+      const token = sessionStorage.getItem('token')
       if(config.method === 'post') {
             if(config.url==="/training/create/training"){
                 let data = config.data
@@ -21,6 +20,8 @@ axios.interceptors.request.use(function (config) {
                     ...config.data,
                    token: token
                 }
+                console.log("pan-------------------------------")
+                console.log(config)
                 return config;
             }
           let data = qs.parse(config.data)
@@ -28,15 +29,13 @@ axios.interceptors.request.use(function (config) {
               token: token,
               ...data
           })
-      
+         console.log("===666===")
+          console.log(data)
       } else if(config.method === 'get') {
           config.params = {
-            userAccount: Username.name,
-                token: token,
+              token: token,
               ...config.params
-              
           }
-          
       }
       return config;
     }, function (error) {
@@ -81,11 +80,9 @@ export const editproject =(parms) =>{
     .post('/project/update', parms)
 }
 //获取文件大小
-export const getfileSize =(parms) =>{
-    return axios
-    .get('/project/get/fileSize',{params : parms})
-}
-  
+
+
+
 //权限管理菜单管理增加
 export const permissionlistfirst =(parms) =>{
     return axios
@@ -124,27 +121,12 @@ export const createtraining =(parms) =>{
     .post('/training/create/training', parms,)
 }
 
-// 模块列表
-export const findpage=(parms) =>{
-    return axios
-    .get('/training/find/page',{params : parms})
-}
-
 
 //创建模块的项目列表
 export const findprojects =(parms) =>{
     return axios
     .get('/training/find/projects',{params : parms})
 }
-
-//启动训练模块
-export const trainingstart =(parms) =>{
-    return axios
-    .get('/training/start',{params : parms})
-}
-
-
-
 //上传文件项目 
 // export const projectupload =(parms) =>{
 //     return axios

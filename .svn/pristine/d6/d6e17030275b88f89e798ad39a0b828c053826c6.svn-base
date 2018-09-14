@@ -42,7 +42,7 @@
                                      <span style="margin-left: 10px">{{ scope.row.file }}</span>
                                 </template>
                          </el-table-column>
-                         <el-table-column label="更新时间" prop="time">
+                         <el-table-column label="更新时间">
 
                          </el-table-column>
                          <el-table-column label="大小(单位/k)" prop="storage">
@@ -53,14 +53,16 @@
                                        <el-button icon="el-icon-delete" type="primary" size="mini"  @click="delectfile(scope.$index,scope.row)"   >删除</el-button>
                                  </template>
                          </el-table-column>
+
                 </el-table>
               </div>
           </el-col>
+
     </el-row>
 </template>
 <script>
 import axios from 'axios'
-import{projectupload,deletefile,getfileSize}from "@/api/api"
+import{projectupload,deletefile}from "@/api/api"
 export default {
        data(){
            return{
@@ -104,28 +106,7 @@ export default {
                     this.acceptfile=".zip" 
                     this.uploaddialogVisible=true
              },
-            getgetfileSize(){//获取文件大小和更新时间
-                    var parms={
-                          projectId:this.prodetail.projectId
-                    }
-                 getfileSize(parms).then(res=>{
-                          
-                          console.log("文件大小")
-                          console.log(res)
-                          if(res.data.code==0){//可能值传了一个值,遍历一遍
-                                 for(var i=0;i<res.data.data.length;i++ ){
-                                         if(res.data.data[i].type==1){
-                                               this.codedata[0].time= res.data.data[i].time;
-                                               this.codedata[0].storage= res.data.data[i].fileSize;
-                                         }else if(res.data.data[i].type==2){
-                                               this.codedata[1].time= res.data.data[i].time;
-                                               this.codedata[1].storage= res.data.data[i].fileSize;
-                                         }
-                                 }
-                          }
-                 })    
-                 
-            },
+
 
 
             sure(){
@@ -181,57 +162,19 @@ export default {
 
 
             delectfile(value){//删除文件 
-                 let type=""
+                console.log("00000")
                 console.log(value)
                 if(value==0){
-                   this.type=1
+                    alert("000000")
                 }else{
-                   this.type=2
+                    alert("11111")
                 }
-                var parms={
-                     projectId:this.prodetail.projectId,
-                     type:this.type
-
-                }
-                console.log(parms)
-                    this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
-                        confirmButtonText: '确定',
-                        cancelButtonText: '取消',
-                        type: 'warning'
-                        }).then(() => {
-                         
-                            deletefile(parms).then(res=>{
-                                    console.log(res)
-                                    if(res.data.code==0){
-                                        this.$message({
-                                                type:'success',
-                                                message:"删除成功" 
-                                        })
-                                        this.getgetfileSize()
-                                    }
-                            })
-
-
-                          
-                         
-                        }).catch(() => {
-                        this.$message({
-                            type: 'info',
-                            message: '已取消删除'
-                        });          
-                        });
-                    }
-
-
-
-
-
-
+                
 
 
                 
 
-            
+            },
 
 
 
@@ -242,7 +185,6 @@ export default {
                 this.projectNameZh= this.prodetail.projectNameZh
                  this.routefile=this.prodetail.projectDataPath
                  this.routefilesubstr=this.routefile.substring(0,this.routefile.length-5)  
-                 this.getgetfileSize()
                 console.log( this.prodetail)
        }
 }
