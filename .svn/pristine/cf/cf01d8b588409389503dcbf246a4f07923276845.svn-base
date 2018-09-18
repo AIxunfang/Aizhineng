@@ -2,7 +2,7 @@
   <el-row class="NewDrill"> 
       <el-col :span='24'>
              <div class="navigationbar"> 
-               <span class="navigationname">模块管理<i class="el-icon-arrow-right" aria-hidden="true"></i>
+               <span class="navigationname">训练管理<i class="el-icon-arrow-right" aria-hidden="true"></i>
                        新建训练
                 </span>
             </div>
@@ -153,7 +153,7 @@ export default {
               projectmemory:'',
               modelnamedata:[],
               meupath:'',
-               sendcodepy:"",//发送给后台的py文件
+              sendcodepy:"",//发送给后台的py文件
 
                optionsscript:[
                         {
@@ -175,6 +175,7 @@ export default {
                 modelparameter:{
                             modelname:'',
                             projectName:"", 
+                            projectNameZh:"",
                             projectsort:"",
                             projectmirror:"",
                             modeldescribe:"",
@@ -228,7 +229,8 @@ export default {
                    console.log("shiqu")
                    var parms={
                         userAccount:this.Username.name,
-                        trainingName:this.modelparameter.modelname
+                        trainingName:this.modelparameter.modelname,
+                                     
                    }
                  checktrainingName(parms).then(res=>{
                            console.log(res)
@@ -267,7 +269,7 @@ export default {
                       this.projectgpu=obj.projectGpu;
                       this.projectmemory=obj.projectMemory;
                       this.modelparameter.projectName=obj.projectNameEn  
- 
+                      this.modelparameter.projectNameZh=obj.projectNameZh
                },
                 getmodeltype(){//获取模型分类
                       modeltype().then(res=>{
@@ -323,18 +325,12 @@ export default {
             changecodevalchirden(val){
                     console.log(val)
                     console.log("====的饿的的")
-
                     //  console.log(this.selectedOptionsscriptchireden.join("/"))
                         this.trainingParamShell=val.join('/')
                        console.log( this.trainingParamShell)
 
             },
-
-
-
-
              analysis(){//解析参数
-
                   var parm={
                         pyPath:this.sendcodepy,
                         projectId:this.modelparameter.pid
@@ -405,8 +401,6 @@ export default {
                          })         
             },
            creatmodel(){//创建模块
-
-                        
                       const uid = sessionStorage.getItem('uid')
                       this.modelparameter.comprehensionarry.forEach((item,index)=>{
                                if(item.tfParamType==false){
@@ -420,6 +414,7 @@ export default {
                                       uid:uid,
                                       pid:this.modelparameter.pid,
                                       projectName:this.modelparameter.projectName,
+                                      projectNameZh:this.modelparameter.projectNameZh,
                                       trainingName: this.modelparameter.modelname,
                                       trainingImage:this.modelparameter.projectmirror,
                                       imageType:Number(this.modelparameter.radio3),

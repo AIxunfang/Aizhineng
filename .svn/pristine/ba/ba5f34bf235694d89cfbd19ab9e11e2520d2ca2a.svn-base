@@ -2,7 +2,7 @@
   <el-row class="Drilist" >
       <el-col :span='24'>
              <div class="navigationbar"> 
-               <span class="navigationname">模块管理<i class="el-icon-arrow-right" aria-hidden="true"></i>
+               <span class="navigationname">训练管理<i class="el-icon-arrow-right" aria-hidden="true"></i>
                      列表列表 
                 </span>
             </div>
@@ -28,12 +28,12 @@
                                 </span>
                             </div>
                             <div class="projectdiecribetion"><span>模块描述:</span>{{item.trainingRemind}}</div>
-                               <div class="projectdiecribetion"><span>所属项目:</span>{{item.projectName}}</div>
+                               <div class="projectdiecribetion"><span>所属项目:</span>{{item.projectNameZh}}</div>
                          </div>
                   </div>
                    <div class="projectbottom">
                          <div class="menukey">
-                             <el-button  size="small"  icon="el-icon-caret-right" @click="startmodel(index)" >启用</el-button>
+                              <span     :class='{"startdisabled":modelarry[index].trainingStatus !== 1,}'><el-button   size="small"  icon="el-icon-caret-right" @click="startmodel(index)" >启用</el-button></span>   
                         </div>
                           <div class="menukey">
                                   <el-button  size="small"  icon="el-icon-delete" >删除</el-button>
@@ -66,6 +66,8 @@ export default {
                  pageSize:4,
                  paggtatol:null,
                  modelarry:[],
+                 pageSize:5,
+                 Username:'',
 
            }
        },
@@ -82,9 +84,12 @@ export default {
                       trainingstart(parms).then(res=>{
                             console.log("启动训练")
                             console.log(res)
+                            if(res.data.code==0){
+                               this.$router.push({name:'Trainstart',params:{id:this.modelarry[index].trainingId}}) 
+                            }
                       })
-  
- 
+                    
+                  
                },
                pageIndexChange(index){//翻页
                       console.log(index)
@@ -94,7 +99,9 @@ export default {
                getfindpage(){//训练列表
                    var parms={
                            currentPage:this.currpage,
-                           
+                           pageSize:this.pageSize,
+                           userAccount:this.Username.name
+
                    }
                   findpage(parms).then(res=>{
                         console.log(res)
@@ -107,15 +114,18 @@ export default {
 
                },
 
-               deails(){
-                      this.$router.push("/Trainstart")
+               deails(index){
+
+                     //  console.log(index)
+                      this.$router.push({name:'Trainstart',params:{id:this.modelarry[index].trainingId}}) 
+                   //  this.$router.push("/Trainstart")
                },
 
 
        },
        mounted(){
 
-               
+                this.Username = JSON.parse(sessionStorage.getItem("user"));
                 this.getfindpage()  
        }
 }
@@ -193,9 +203,15 @@ export default {
                        }
 
                   }
+                 .startdisabled{
+                        opacity:0.5;//设置蒙版效果
+                        pointer-events:none;//禁止鼠标事件
+                       // cursor: not-allowed; 
+                 } 
               }
 
        }
+         
 
          } 
 </style>

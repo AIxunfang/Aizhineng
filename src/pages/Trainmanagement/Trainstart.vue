@@ -1,0 +1,244 @@
+<template>
+  <el-row class="modeldatail">
+     <el-col :span='24'>
+             <div class="navigationbar"> 
+                 <span class="navigationname">模块管理<i class="el-icon-arrow-right" aria-hidden="true"></i>
+                        训练详情
+                 </span>
+            </div>
+             <div class="modeldataname">
+                  <span class="modelnameclasstop">训练名称:{{this.tarinmodelobj.trainingName}}</span> 
+                  <span class="modelnameclasstop">创建时间:{{timeFormattershowsecod(this.tarinmodelobj.trainingCreateTime)}}</span>
+                   <span class="modelnameclasstop">训练开始时间:{{timeFormattershowsecod(this.tarinmodelobj.trainingBeginTime)}}</span>
+                    <span class="modelnameclasstop">训练完成时间:{{timeFormattershowsecod(this.tarinmodelobj.trainingEndTime)}}</span>
+             </div>
+      </el-col>
+      <el-col :span="24">
+      <el-col :span="14">
+             <div style="margin:40px">
+                 <el-form :inline="true" label-width="80px"> 
+                     <div  class="delifrom">
+                        <el-form-item label="所属项目:" >
+                                <el-input v-model="this.tarinmodelobj.projectNameZh"></el-input>
+                        </el-form-item>
+                         <el-form-item label="模型类别:" >
+                             <el-select v-model="this.tarinmodelobj.trainingType" placeholder="选择类别" class="trainmodelname">
+                                  <el-option  v-for="item in  modelnamedata"
+                                   :label="item.value" 
+                                   :value="item.index"
+                                   :key="item.index">
+                                   </el-option>
+                          </el-select>  
+                      </el-form-item>
+                      <!-- <span style="display:inline-block;float:right">
+                          <el-button type="primary" size="small" @click="goback">返回</el-button>
+                      </span> -->
+                      </div>
+                       <div class="delifrom">
+                        <el-form-item label="运行内存:" >
+                                <el-input v-model="this.tarinmodelobj.imageType"></el-input>
+                        </el-form-item>
+                         <el-form-item label="镜像名称:" >
+                              <el-input v-model="this.tarinmodelobj.trainingImage"></el-input>
+                      </el-form-item>
+                      </div>                     
+                       <div class="delifrom">
+                        <el-form-item label="参数脚本:" >
+                                <el-input v-model="this.tarinmodelobj.trainingExecuteShell"></el-input>
+                        </el-form-item>
+                         <el-form-item label="训练脚本:" >
+                              <el-input v-model="this.tarinmodelobj.trainingParamShell"></el-input>
+                      </el-form-item>
+                      </div>    
+                       <div class="delifrom">
+                           <el-form-item label="模块描述"  class="discribemodel">
+                                   <el-input
+                                        type="textarea"
+                                        :rows="2"
+                                        placeholder="请输入内容"
+                                        v-model="this.tarinmodelobj.trainingRemind">
+                                        </el-input>
+                           </el-form-item>
+
+                       </div>
+                 </el-form>
+             </div>
+      </el-col>
+      <el-col :span="10">
+             <div style="margin: 40px 20px 0px 0px ;height:240px; overflow:auto ">
+                      <div style="width:800px"> 
+                         <el-collapse accordion>
+                                    <el-collapse-item>
+                                        <template slot="title">
+                                         解析参数详情<i class="header-icon el-icon-info"></i>
+                                        </template>
+                                         <span class="lastborder" v-for="item in tfParams" :key="item.id">
+                                                  <div class="databorder"><span class="variable"> 变量：</span ><span style="width:200px; display:inline-block">{{item.tfParamKey}}</span><span class="variable">值:</span> {{item.tfParamValue}}<span class="variable">是否为目录:</span>{{item.tfParamType==1?"是" :"否"}}</div>
+                                         </span>
+                                    </el-collapse-item>
+                        </el-collapse>
+                        </div>
+                  </div> 
+      </el-col>
+      </el-col>
+      <el-col :span="24">
+              <div class="realtimelog">实时日志</div>
+              <div  >
+                 <div  class="logconctent" id="mylogdoing" >
+                        <div  v-for="(item ) in  logdata" :key="item.id" class="logline" ref="mylogdoing" >{{item}}</div> 
+                     </div>
+              </div>
+               <div style="float:right; margin:20px" > <el-button type="primary" size="small" @click="goback"> 返回上一页</el-button></div>
+      </el-col>
+
+  </el-row>
+</template>
+<script>
+import { timeFormattershowsecod } from "@/assets/js/common";
+import {modeltype,findlog,finddetai} from "@/api/api"
+export default {
+          data(){
+              return{
+                timeFormattershowsecod,
+                taring:'',
+                tarinmodelobj:{},
+                modelnamedata:[],
+                tfParams:[],
+                logdata:[],
+                logdatalength:null,
+              }
+          },
+          methods:{
+             getmodeltype(){//获取模型分类
+                      modeltype().then(res=>{
+                               console.log("--模块类型--")
+                               console.log(res)
+                               if(res.data.code==0){
+                                     this.modelnamedata=res.data.data
+                               }
+                      })
+                },
+
+
+              goback(){
+                     this.$router.go(-1)
+              },
+          getfinddetai(){
+
+                 var params={
+                      trainingId:this.$route.params.id
+                 }
+                 console.log()
+               finddetai(params).then(res=>{
+                        console.log("详情显示")
+                        console.log(res)
+                        if(res.data.code==0){
+                            this.tarinmodelobj=res.data.data.trainingModel
+                            this.tfParams=res.data.data.tfParams
+                            if(this.tarinmodelobj.imageType=="2"){
+                                      this.tarinmodelobj.imageType="GPU"
+                            }else{
+                                  this.tarinmodelobj.imageType="CPU"
+                            }
+
+                        }
+                })
+          },
+          getfindlog(){
+                var params={
+                     trainingId:this.$route.params.id
+                }
+                findlog(params).then(res=>{
+                    console.log(res)
+                          if(res.data.code==0){
+                               this.logdata=res.data.data  ;
+                               this.logdatalength=this.logdata.length ;   
+                          }
+                })
+          },
+       },
+          mounted(){
+              //   const tarin=
+                 this.getmodeltype()
+                this.getfinddetai()  
+                this.getmodeltype()
+               let _this = this
+                console.log(this.$route.params.id)
+
+                 
+                 setInterval(()=>{
+                     if(_this.$route.path ===`/Trainstart/${this.$route.params.id}`){
+                          _this.getfindlog()
+                        }
+                 },3000)
+
+         setInterval(()=>{         
+             if(_this.$route.path ===`/Trainstart/${this.$route.params.id}`){
+                 $("#mylogdoing").scrollTop(_this.logdatalength*20) 
+                  }  
+                },4000)  
+          },
+        
+        
+}
+</script>
+<style lang="scss" scoped>
+     .modeldatail{
+           min-width: 1105px;
+         .modelnameclasstop{
+              margin-left: 20px;
+ 
+         } 
+         .variable{
+             display: inline-block;
+            margin: 0px 20px;
+         } 
+         .databorder{
+             border-bottom: 1px solid #efefef;
+             height: 35px;
+             line-height: 35px;
+         }
+         .delifrom{
+             display: inline-block;
+              width:600px;
+             // border: 1px solid red;
+              border-right: 1px solid  #efefef;
+         }
+         .realtimelog{
+             padding-left: 40px;
+             border-bottom: 1px solid  #e2e2e2;
+             font-size: 18px;
+             font-family:"微软雅黑"
+         }
+         .logconctent{
+              width: 1000px;
+              margin: 20px;
+              height: 400px;
+              background: #000;
+               overflow-x: scroll; 
+              color: #fff;
+              font-size: 16px;   
+              font-family: "微软雅黑" ;          
+             padding:20px;
+             .logline{
+                 width: 1000x;
+                 height: 20px;
+                 white-space: nowrap;
+                
+             }
+         }
+     }   
+</style>
+<style>
+      .discribemodel .el-form-item__content{
+                 width: 202px;
+      }  
+               .lastborder .databorder:last-child{
+               border-bottom: none;
+         }
+         .trainmodelname{
+             width: 202px;
+         }
+
+</style>
+
