@@ -3,7 +3,7 @@
       <el-col :span='24'>
              <div class="navigationbar"> 
               <span class="navigationname">项目管理<i class="el-icon-arrow-right" aria-hidden="true"></i>
-                   新建项目
+                  编辑项目
               </span>
             </div>
       </el-col>
@@ -15,7 +15,7 @@
                         <el-input v-model="addprojectfrom.projectNameZh" placeholder="请输入项目中文名称"></el-input>
                     </el-form-item>
                     <el-form-item label="项目英文名:" prop="projectNameEn">
-                            <el-input v-model="addprojectfrom.projectNameEn" placeholder="初次可以指定,创建不能修改" :disabled="editdisabled"></el-input>
+                            <el-input v-model="addprojectfrom.projectNameEn" placeholder="初次可以指定,创建不能修改"  disabled="disabled"></el-input>
                     </el-form-item>
                     <el-form-item  label="项目描述:" >
                               <el-input
@@ -25,7 +25,7 @@
                                       v-model="addprojectfrom.projectDesc">
                                   </el-input> 
                     </el-form-item>
-                     <div style="text-align:center"> <el-button  type="primary" size="small"  @click="setupproject" >创建项目</el-button>   </div>
+                     <div style="text-align:center"> <el-button  type="primary" size="small"  @click="editpproject" >编辑项目</el-button>   </div>
              </el-form>
            </div>
       </el-col>
@@ -33,14 +33,14 @@
 </template>
 <script>
 import qs from 'qs'
-import {projectadd} from '@/api/api'
+import {editproject} from '@/api/api'
 export default {
             data(){
               return{
                  addprojectfrom:{//创建项目表单
                       projectNameZh:'',
                       projectNameEn:"",
-                      projectDesc:""
+                      projectDesc:"",
                  },
                  addprojectrules:{
                      projectNameZh:[{ required: true, message: "输入项目中文名称", trigger: "blur" }],
@@ -51,43 +51,50 @@ export default {
                  },
                  editdisabled:false,
                  addproject:true,
-                 judge:null,
               }
             },
             methods:{
-             setupproject(){//创建项目
+             editpproject(){//创建项目
                         var _this =this
                          var parms=this.addprojectfrom 
-
+                         var parms={
+                              projectId:this.addprojectfrom.projectId ,
+                              projectNameEn:this.addprojectfrom.projectNameEn,
+                              projectNameZh:this.addprojectfrom.projectNameZh,
+                              projectDesc:this.addprojectfrom.projectDesc
+                         }
                this.$refs['addprojectrules'].validate((valid)=>{
                     if(valid){
-                          projectadd(qs.stringify(parms)).then(res=>{
+                       editproject(parms).then(res=>{
                                console.log(parms)
-                               console.log(res)
+                          console.log(res)
                                 if(res.data.code==0){
                                      _this.$message({
-                                          message: '创建成功',
+                                          message: '编辑成功',
                                           type: 'success'
                                         }); 
                                     setTimeout(()=>{
                                           this.$router.push('/Uploadpage')
-                                    },1000)  
-                                    sessionStorage.removeItem('judge')              
+                                    },1000)              
                                  }else{
                                       _this.$message({
-                                         message:"创建失败",
+                                         message:"编辑失败",
                                          type:'error'
                                       })
                                  }
-                           })  
+                        })  
                        }
                    })
-             
+               
                },
 
             },
             mounted(){
-    
+                    console.log("路由跳转")
+                      this.addprojectfrom= JSON.parse(this.$route.params.id)  
+                        console.log(this.judge)
+                     
+                       
       }
 }
 </script>
