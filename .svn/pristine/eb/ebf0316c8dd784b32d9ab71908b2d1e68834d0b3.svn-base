@@ -30,8 +30,8 @@
                               <el-radio-button label="1">CPU</el-radio-button>
                               <el-radio-button label="2">GPU</el-radio-button>
                         </el-radio-group>
-                            <span v-if="modelparameter.radio3==1">CPU:{{projectcpu}}内存:{{projectmemory}}</span>
-                            <span v-if="modelparameter.radio3==2">GPU:{{projectgpu}}CPU:{{projectcpu}}内存:{{projectmemory}}</span>                               
+                            <span v-if="modelparameter.radio3==1">CPU:{{projectcpu}}GPU:{{projectgpu}}内存:{{projectmemory}}</span>
+                            <span v-if="modelparameter.radio3==2">GPU:{{projectgpu}}内存:{{projectmemory}}</span>                               
                         </el-form-item>
  
 
@@ -290,14 +290,11 @@ export default {
                       })
                },
              getfindprojects(){//项目列表
-               
                        const uid = sessionStorage.getItem('uid')
                     var parms={
                           uid:uid
                     }
                     findprojects(parms).then(res=>{
-                      console.log("项目的列表")
-                         console.log(res)
                            if(res.data.code==0){
                                     this.projectdata=res.data.data
                                     this.modelparameter.pid= this.projectdata[0].projectId
@@ -305,7 +302,6 @@ export default {
                                   this.projectcpu=this.projectdata[0].projectCpu;
                                   this.projectgpu=this.projectdata[0].projectGpu;
                                   this.projectmemory=this.projectdata[0].projectMemory;
-                                  this.modelparameter.projectNameZh=this.projectdata[0].projectNameZh
 
                            }
                     })
@@ -416,8 +412,13 @@ export default {
                                       trainingName: this.modelparameter.modelname,
                                       trainingImage:this.modelparameter.projectmirror,
                                       imageType:Number(this.modelparameter.radio3),
+
+
                                       trainingExecuteShell:this.trainingParamShell,
                                       trainingParamShell: this.sendcodepy,
+
+
+                                      
                                       trainingRemind:this.modelparameter.modeldescribe,
                                       trainingType:this.modelparameter.projectsort, 
                                       userAccount:this.Username.name,

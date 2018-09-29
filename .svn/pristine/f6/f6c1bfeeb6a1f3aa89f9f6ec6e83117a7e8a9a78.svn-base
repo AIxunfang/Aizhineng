@@ -21,7 +21,7 @@ axios.interceptors.request.use(function (config) {
                    token: token
                 }
                 return config;
-            };
+            }
             if(config.url==="/publish/create/model"){
                 let data = config.data
                 config.headers={'Content-type':'application/json;charset=UTF-8' };
@@ -31,16 +31,8 @@ axios.interceptors.request.use(function (config) {
                    token: token
                 }
                 return config;
-            };
-            // if(config.url==="/publish/test/api"){
-            //     let data = config.data
-            //     // console.log(data)
-            //     config.data ={
-            //         ...config.data,
-            //        token: token
-            //     }
-            //     return config;
-            // }
+            }
+
 
           let data = qs.parse(config.data)
           config.data = qs.stringify({
@@ -143,15 +135,6 @@ export const createtraining =(parms) =>{
     return axios
     .post('/training/create/training', parms,)
 }
-//训练模型-->删除接口
-export const trainingdelete =(parms) =>{
-    return axios
-    .get('/training/delete',{params : parms})
-}
-
-
-
-
 
 //启用项目的时候的打印日志
 export const findlog =(parms) =>{
@@ -237,11 +220,6 @@ export const publishcreatemodel =(parms) =>{
     return axios
     .post('/publish/create/model', parms)
 }
-
-
-
-
-
 //模块管理--->发布列表
 export const publishfindpage =(parms) =>{
     return axios
@@ -256,44 +234,4 @@ export const publishfinddetail=(parms) =>{
 export const publishstart=(parms) =>{
     return axios
     .get('/publish/start',{params : parms})
-}
-//资源审批.-->训练列表
-export const approvegetproject=(parms) =>{
-    return axios
-    .get('/approve/get/project',{params : parms})
-}
-//资源审批-->发布列表
-export const approvegetpublish=(parms) =>{
-    return axios
-    .get('/approve/get/publish',{params : parms})
-}
-//资源审批-->提交
-export const approveadd =(parms) =>{
-    return axios
-    .post('/approve/add', parms)
-}
-//资源申请的__>个人列表
-export const approvegethistory=(parms) =>{
-    return axios
-    .get('/approve/get',{params : parms})
-}
-//管理员的(列表展示)
-export const approvelist=(parms) =>{
-    return axios
-    .get('/approve/list',{params : parms})
-}
-//-->发布管理-->发布图片集合列表
-export const publishimglist=(parms) =>{
-    return axios
-    .get('/publish/img/list',{params : parms})
-}
-//发布管理--检测
-export const publishtestapi =(parms) =>{
-    return axios
-    .post('/publish/test/api', parms,)
-}
-//发布模型-->删除接口
-export const publishdelete=(parms) =>{
-    return axios
-    .get('/publish/delete',{params : parms})
 }

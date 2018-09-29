@@ -1,0 +1,235 @@
+<template>
+  <el-row class="ModelDetail">
+      <el-col :span="24">
+          <div class="navigationbar"> 
+               <span class="navigationname">发布管理<i class="el-icon-arrow-right" aria-hidden="true"></i>
+                     发布列表 
+                </span>
+            </div>
+             <div class="modeldataname">
+                  <span class="modelnameclasstop">发布开始时间:{{timeFormattershowsecod(publishfindmodel.publishTime)}}</span> 
+                  <span class="modelnameclasstop">发布名称:{{publishfindmodel.publishName}}</span> 
+                    <span class="modelnameclasstop">所属项目:{{publishfindmodel.trainingName}}</span> 
+                  <span class="modelnameclasstop">训练名称:{{publishfindmodel.trainingName}}</span> 
+             </div>
+      </el-col>
+      <el-col :span="24">
+              <el-col :span="12">
+                      <div style="margin:20px">
+                        <el-carousel  type="card" height="200px" indicator-position="none" :autoplay="autoplay"   ref="carousel" >
+                                <el-carousel-item v-for="(item,index) in picturedata" :key="item.id" trigger="click" name="index" >
+                                          <img  :src=" 'http://192.168.80.63:30005/api/file/'+`${item.resourceUrl}` "   style="width:300px;height:200px" @click="pictrueclick(index)" >
+                                </el-carousel-item> 
+                            
+                            </el-carousel>
+                       </div>
+                      <div style="margin:20px" >
+                              <el-button  type="primary" size="small" @click="uploadpic" >上传图片</el-button>
+                           <div  style="display:inline-block;margin-left:15px">
+                            <el-input placeholder="请输入内容" v-model="pictureurl" class="inputselect" readonly="readonly">
+                                 <el-button slot="append" type="primary"  @click="Detection"  :disabled="fobenbut">检测</el-button>
+                            </el-input>
+                           </div>
+                     </div>
+                 <el-dialog
+                     title="上传"
+                    :visible.sync="uploaddialogVisible"
+                     width="30%"
+                     @close="closevisble"
+                    >
+                  
+                    <form enctype="multipart/form-data" method="post" id="fileform">  
+                         <input type="file" id="uploadid" accept="image/*" > 
+                    </form>
+
+                    <span slot="footer" class="dialog-footer">
+                        <el-button size="small" @click="uploaddialogVisible=false" >取 消</el-button>
+                        <el-button type="primary" size="small"  @click.once="sure" >确 定</el-button>
+                    </span>
+                 </el-dialog> 
+
+              </el-col>
+              <el-col :span="12">
+                      <div style="margin:20px;">
+                           <!-- <div>接口值</div> -->
+                          <!-- <textarea rows="10" cols="30" class="textareavalue" v-model="responcse"  v-loading="loading">
+                                    
+                         </textarea> -->
+                          <pre  class="textareavalue" ><code id="json">{{textjson}}</code></pre>
+                      </div>
+              </el-col>
+
+
+      </el-col>
+
+  </el-row>
+</template>
+<script>
+import { timeFormattershowsecod } from "@/assets/js/common";
+ import {publishfinddetail,publishimglist,publishtestapi,} from "@/api/api"
+export default {
+          data(){
+            return{
+                fobenbut:false,
+                loading:true,
+                 filetreams:'',//发送的文件流
+                uploaddialogVisible:false,
+                 pictureurl:'',
+                 timeFormattershowsecod,
+                 publishfindmodel:{},
+                 publishdata:[],
+                 picturedata:[],
+                 autoplay:true,
+                 textjson:null,
+            }
+
+     },
+    methods:{
+             getpublishfinddetail(){
+                 var parms={
+                        publishId:this.$route.params.id
+                 }
+                 publishfinddetail(parms).then(res=>{
+                        console.log("详情")
+                        console.log(res)
+                        if(res.data.code==0){
+                               this.publishfindmodel=res.data.data.publishModel;
+                               this.publishdata=res.data.data.tfParams
+                        }
+                 })
+             },
+             getpublishimglist(){
+                  var parms={
+                        publishId:this.$route.params.id
+                     }
+                      publishimglist(parms).then(res=>{
+                              console.log("图片表")
+                               console.log(res)
+                               if(res.data.code==0){
+                                     this.picturedata=res.data.data
+                               }
+                      })
+             },
+             pictrueclick(index){
+                  console.log('click')
+                  console.log(index)
+                  this.autoplay=false
+                  this.pictureurl= this.picturedata[index].resourceUri
+
+             },
+
+             uploadpic(){
+                 this.uploaddialogVisible=true
+             },
+             closevisble(){
+
+             },
+            sure(){
+                  var _this=this
+                 this.filetreams= document.getElementById('uploadid').files[0];
+                   const token = sessionStorage.getItem('token')
+                     let formData = new FormData();
+                        formData.append("file", this.filetreams);
+                        formData.append("publishId",this.$route.params.id);
+                        formData.append("token",token);
+                        console.log(formData)
+                   $.ajax({
+                          type: "post",
+                          cache: false,
+                          processData: false,
+                          contentType: false,
+                          headers: {'token':token},
+                          mimeType:"multipart/form-data",
+                          url: "http://192.168.80.63:30005/api//publish/upload/img",
+                          data:formData,                
+                         success:function(res){
+                             console.log("=====")
+                              console.log(res)
+                            console.log(formData)
+                            var parseres= JSON.parse(res)
+                              console.log(parseres)
+                            if(parseres.code ==0){
+                                   console.log("zhengque")
+                                  _this.$message({
+                                       type: 'success',
+                                      message:"上传成功"
+                                  })
+                              //   window.clearInterval(timeid);
+                                
+                                  _this.uploaddialogVisible=false
+                                  _this.getpublishimglist()
+
+                              }else {
+                                    _this.$message.error(parseres.message);
+                              }
+                         },
+                         error:function(res){
+                             console.log("666")
+                         }
+                 })
+            },
+             Detection(){//检测
+               this.fobenbut=true
+             console.log("dinle")
+                      var  parms={
+                           param:this.pictureurl,
+                           publishId:this.$route.params.id
+                      }
+                      publishtestapi(parms).then(res=>{
+                                console.log("--jiance-")
+                                console.log(res)
+                                if(res.data.code==0){
+    
+                                       this.textjson=res.data.data.response
+                                        this.fobenbut=false
+                                }
+                      })
+                     
+             }
+
+    },
+    mounted(){
+            console.log(this.$route.params.id)  
+            this.getpublishfinddetail()
+            this.getpublishimglist()
+    }
+
+}
+</script>
+<style lang="scss" scoped>
+       .ModelDetail{
+               min-width: 1100px;
+                .modelnameclasstop{
+                    margin-left: 20px;
+                } 
+       }   
+     .el-carousel__item h3 {
+            color: #475669;
+            font-size: 14px;
+            opacity: 0.75;
+            line-height: 200px;
+            margin: 0;
+        }
+  
+  .el-carousel__item:nth-child(2n) {
+    background-color: #99a9bf;
+  }
+  
+  .el-carousel__item:nth-child(2n+1) {
+    background-color: #d3dce6;
+  }
+  .inputselect{
+      width: 380px;
+  }
+  .uploaddemo{
+      display: inline-block;
+  }
+  .textareavalue{
+       width: 502px;
+       height: 255px;
+       border: 1px solid #efefef;
+       background: #efefef;
+       overflow-y:auto;
+  }
+
+</style>

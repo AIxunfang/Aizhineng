@@ -11,7 +11,7 @@
              <div class="selectmodelform">
                 <el-form :inline="true" :model="mdoelform" class="addmodelforminline"  ref="mdoelform"  :rules="rules">
                      <div>
-                        <el-form-item label="发布名称" prop="publishName" >
+                        <el-form-item label="发布名称" >
                              <el-input v-model="mdoelform.publishName"></el-input>
                         </el-form-item>
                         <el-form-item label="镜像名称">
@@ -19,7 +19,7 @@
                         </el-form-item>
                      </div>
                      <div> 
-                        <el-form-item label="选择项目"  prop="projectId">
+                        <el-form-item label="选择项目">
                             <el-select v-model="mdoelform.projectId" placeholder="选择项目" @change="changeproject">
                                 <el-option 
                                      v-for="item in projectdata"
@@ -29,7 +29,7 @@
                                  ></el-option>
                             </el-select>
                         </el-form-item>
-                        <el-form-item label="选择模型"  prop="trainingId">
+                        <el-form-item label="选择模型">
                             <el-select v-model="mdoelform.trainingId" placeholder="选择模型">
                             <el-option 
                                 v-for="item in peojectmodeldata"
@@ -52,7 +52,7 @@
                        </el-form-item>
                    </div>
                     <div>
-                         <el-form-item label="选择参数" prop="selectedOptionsscript"> 
+                         <el-form-item label="选择参数"> 
                                            <el-cascader
                                               @change="changecodeval"
                                               v-model="mdoelform.selectedOptionsscript"
@@ -121,10 +121,7 @@ export default {
                 Username:'',
                 uid:'',
                 rules:{
-                       publishName:[{ required: true, message: "输入发布名称", trigger: 'blur' }],
-                       projectId:[{required: true, message: "选择项目", trigger: 'blur' }],
-                       trainingId:[{required: true, message: "选择训练模型", trigger: 'blur' }],
-                       selectedOptionsscript:[{required: true, message: "选择解析参数", trigger: 'blur' }]
+
                 },
                 projectdata:[],
                 peojectmodeldata:[],
@@ -255,22 +252,21 @@ export default {
                     this.mdoelform.tfParams=this.mdoelform.comprehensionarry
                     var parms= this.mdoelform
                     console.log(parms)
-                    this.$refs['mdoelform'].validate((valid) =>{
-                            publishcreatemodel(parms).then(res=>{
-                                    console.log(res)
-                                    if(res.data.code==0){
-                                        this.$message({
-                                                type:'success',
-                                                message:"发布成功"
 
-                                        })
-                                        setTimeout(()=>{
-                                            this.$router.push("/Modelform")  
-                                        },1000)
-                                    }
-                             })
+                    publishcreatemodel(parms).then(res=>{
+                              console.log(res)
+                            if(res.data.code==0){
+                                   this.$message({
+                                           type:'success',
+                                           message:"发布成功"
+
+                                   })
+                                setTimeout(()=>{
+                                     this.$router.push("/Modelform")  
+                                },1000)
+                            }
                     })
-             }
+           }
       },
       mounted(){
                  

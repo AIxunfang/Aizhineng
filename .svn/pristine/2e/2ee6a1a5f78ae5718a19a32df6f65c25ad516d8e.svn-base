@@ -95,7 +95,7 @@ export default {
                        itemStyle:{
                               color:function(item){
                                     var colorlist=['#ea0a0a','#19d4ae']
-                                    return colorlist[item.dataIndex];0
+                                    return colorlist[item.dataIndex];
                               },
 
                      }

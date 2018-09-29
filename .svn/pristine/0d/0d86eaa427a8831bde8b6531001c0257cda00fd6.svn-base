@@ -134,7 +134,7 @@ export default {
                 columns: ['cpu', '使用个数'],
                 rows: [
                     { 'cpu': '已使用', '使用个数': 1393 },
-                    { 'cpu': '未使用', '使用个数': 3000 },
+                    { 'cpu': '未使用', '使用个数': 3530 },
                  ]
              },
             chartSettingscpu:{

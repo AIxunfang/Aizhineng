@@ -142,6 +142,11 @@ export default {
                         formData.append("projectId",this.prodetail.projectId);
                         formData.append("type", this.filetype);
                         formData.append("token",token);
+                //   var timeid=setInterval(()=>{
+                //         this.getprojectprocess()   
+                //      },500)
+
+                    
                    $.ajax({
                           type: "post",
                           cache: false,
@@ -151,6 +156,18 @@ export default {
                           mimeType:"multipart/form-data",
                           url: "http://192.168.80.63:30005/api/project/upload",
                           data:formData,                
+        //                     beforeSend :function () {
+        //                     console.log('发送ajax前')
+        //                     },
+        
+        // xhr :function () {//这里我们先拿到jQuery产生的 XMLHttpRequest对象，为其增加 progress 事件绑定，然后再返回交给ajax使用
+        //   myXhr = $.ajaxSettings.xhr();
+        //   if(myXhr.upload){
+        //     myXhr.upload.addEventListener('progress',progressHandlingFunction, false)//progress事件会在浏览器接收新数据期间周期性地触发。而onprogress事件处理程序会接收到一个event对象，其target属性是XHR对象，但包含着三个额外的属性：lengthComputable、loaded和total。其中，lengthComputable是一个表示进度信息是否可用的布尔值，loaded表示已经接收的字节数，loaded表示根据Content-Length响应头部确定的预期字节数。
+        //   }
+        // }, 
+
+
                          success:function(res){
                              console.log("=====")
                               console.log(res)
@@ -176,7 +193,19 @@ export default {
                          error:function(res){
                              console.log("666")
                          }
+    
               })
+             var xhr = new XMLHttpRequest();
+             xhr.onload = function(){
+            //alert(1);
+            //alert(this.responseText);//后端返回的数据
+
+            //var d = JSON.parse(this.responseText);
+            //alert(d.msg + ' : ' + d.url); //显示上传成功 并且显示文件路径
+            alert('OK 上传完成');
+        }
+
+
             },
            closevisble(){//关闭浏览器清空input\
                 console.log("1111")

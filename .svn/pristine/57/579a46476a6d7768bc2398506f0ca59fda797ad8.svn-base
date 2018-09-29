@@ -21,7 +21,7 @@
          </el-col>
               <el-col :span="24">
               <div class="projectaddbox  projectmodel">
-                    <div class="prijectaddpic"  @click="addpushmode" ></div>
+                    <div class="prijectaddpic"  @click="addpushmode"  ></div>
               </div>
              <div   class="projectmodel" v-for="(item,index) in distributelist" :key="item.id">
                   <div  class="projectdiscrb">
@@ -32,23 +32,23 @@
                             <div  class="projectName">{{item.publishName}}
                                 <span style="display:inline-block;float:right;margin-right:5px;">
                                    <span v-if="item.publishStatus==1" style="color:#409eff">新建</span>
-                                   <span v-if="item.publishStatus==2">发布中</span>
+                                   <span v-if="item.publishStatus==2">训练中</span>
                                     <span v-if="item.publishStatus==3" style="color:#67c23a">成功</span>
                                     <span v-if="item.publishStatus==4" style="color:red">失败</span>
                                     <span v-if="item.publishStatus==5" style="color:#03a9f4">列队中</span>
                                      <span v-if="item.publishStatus==6">已提交</span>
                                 </span>
                             </div>
-                               <div class="projectdiecribetion"><span>训练名称:</span>{{item.trainingName}}</div>
+                            <div class="projectdiecribetion"><span>训练名称:</span>{{item.trainingName}}</div>
                                <div class="projectdiecribetion"><span>所属项目:</span>{{item.projectNameZh}}</div>
                          </div>
                   </div>
                    <div class="projectbottom">
                          <div class="menukey">
-                              <span   :class='{"startdisabled":item.publishStatus !== 1}'  ><el-button   size="small"  icon="el-icon-caret-right" @click.once="startmodel(index)" >发布</el-button></span>   
+                              <span   :class='{"startdisabled":item.publishStatus !== 1}'  ><el-button   size="small"  icon="el-icon-caret-right" @click="startmodel(index)" >发布</el-button></span>   
                         </div>
                           <div class="menukey">
-                                  <el-button  size="small"  icon="el-icon-delete" @click="delectmodel(index)" >删除</el-button>
+                                  <el-button  size="small"  icon="el-icon-delete" >删除</el-button>
                         </div>  
                          <div class="menukey">
                              <el-button  size="small"  icon="el-icon-search" @click="Releasedetails(index)" >接口测试</el-button>
@@ -67,10 +67,13 @@
                   </el-pagination>
               </div>
          </el-col>
+
+
+
   </el-row>
 </template>
 <script>
-   import {publishfindpage,publishstart,publishdelete} from '@/api/api'
+   import {publishfindpage,publishstart} from '@/api/api'
 export default {
       data(){
            return{
@@ -86,8 +89,8 @@ export default {
             seeabout(){
 
             },
-            addpushmode(){//点击添加
-                 this.$router.push("/Addmodel")
+            addpushmode(){
+                // this.$router.push("/")
             },
 
             getpublishfindpage(){
@@ -114,51 +117,14 @@ export default {
                     publishstart(parms).then(res=>{
                       console.log("fabudddddddd")
                                 console.log(res)
-                                if(res.data.code==0){
-                                      this.$message({
-                                            type:'success',
-                                            message:"发布成功"
-                                      })
-                                     this.getpublishfindpage() 
-                                }else{
-                                      this.$message.error(res.data.message)
-                                }
                     })
 
-           },
-           delectmodel(index){
-               var parms={
-                           publishId:this.distributelist[index].publishId
-                    }
-                   this.$confirm('此操作将永久删除该模型, 是否继续?', '提示', {
-                              confirmButtonText: '确定',
-                              cancelButtonText: '取消',
-                              type: 'warning'
-                              }).then(() => {
-                             publishdelete(parms).then(res=>{
-                                        if(res.data.code==0){
-                                               this.$message({
-                                                     type:'success',
-                                                     message:"删除成功"
-                                               })
-                                        }else{
-                                              this.$message.error(res.data.message);
-                                        }      
-                             })
-                              }).catch(() => {
-                              this.$message({
-                                    type: 'info',
-                                    message: '已取消删除'
-                              });          
-                              });
            },
            Releasedetails(index){ 
                  this.$router.push({name:"ModelformDetail",params:{id:this.distributelist[index].publishId}})
            },
 
-            pageIndexChange(index){//翻页
-                    this.currentPage=index
-                    this.getpublishfindpage()  
+            pageIndexChange(){//翻页
 
             },
 

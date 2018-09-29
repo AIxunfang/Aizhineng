@@ -104,5 +104,5 @@
   margin-top: 60px;
 }
 .cpuinputamend .el-input__inner{
-  width: 160px;
+  /* width: 160px; */
 }

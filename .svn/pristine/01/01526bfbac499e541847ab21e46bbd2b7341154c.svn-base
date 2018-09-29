@@ -45,10 +45,10 @@
                   </div>
                    <div class="projectbottom">
                          <div class="menukey">
-                              <span   :class='{"startdisabled":modelarry[index].trainingStatus !== 1}'><el-button   size="small"  icon="el-icon-caret-right" @click.once="startmodel(index)" >启用</el-button></span>   
+                              <span   :class='{"startdisabled":modelarry[index].trainingStatus !== 1}'><el-button   size="small"  icon="el-icon-caret-right" @click="startmodel(index)" >启用</el-button></span>   
                         </div>
                           <div class="menukey">
-                                  <el-button  size="small"  icon="el-icon-delete" @click="delecttaring(index)" >删除</el-button>
+                                  <el-button  size="small"  icon="el-icon-delete" >删除</el-button>
                         </div>  
                          <div class="menukey">
                              <el-button  size="small"  icon="el-icon-search"  @click="deails(index)">详情</el-button>
@@ -70,7 +70,7 @@
   </el-row>
 </template>
 <script>
-import {findpage,trainingstart,trainingdelete} from '@/api/api'
+import {findpage,trainingstart} from '@/api/api'
 export default {
        data(){
            return{
@@ -98,8 +98,6 @@ export default {
                             console.log(res)
                             if(res.data.code==0){
                                this.$router.push({name:'Trainstart',params:{id:this.modelarry[index].trainingId}}) 
-                            }else{
-                                  this.$message.error(res.data.message);
                             }
                       })
                     
@@ -133,34 +131,7 @@ export default {
                       this.$router.push({name:'Trainstart',params:{id:this.modelarry[index].trainingId}}) 
                    //  this.$router.push("/Trainstart")
                },
-               delecttaring(index){
-                   
-                   var parms={
-                         trainingId:his.modelarry[index].trainingId
-                   }
-                this.$confirm('此操作将永久删除该模型, 是否继续?', '提示', {
-                              confirmButtonText: '确定',
-                              cancelButtonText: '取消',
-                              type: 'warning'
-                              }).then(() => {
-                             trainingdelete(parms).then(res=>{
-                                        if(res.data.code==0){
-                                               this.$message({
-                                                     type:'success',
-                                                     message:"删除成功"
-                                               })
-                                        }else{
-                                              this.$message.error(res.data.message);
-                                        }      
-                             })
-                              }).catch(() => {
-                              this.$message({
-                                    type: 'info',
-                                    message: '已取消删除'
-                              });          
-                    });
 
-               }
 
        },
        mounted(){

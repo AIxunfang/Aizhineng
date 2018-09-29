@@ -1,0 +1,129 @@
+<template>
+  <el-row class="ModelDetail">
+      <el-col :span="24">
+          <div class="navigationbar"> 
+               <span class="navigationname">发布管理<i class="el-icon-arrow-right" aria-hidden="true"></i>
+                     发布列表 
+                </span>
+            </div>
+             <div class="modeldataname">
+                  <span class="modelnameclasstop">发布开始时间:{{timeFormattershowsecod(publishfindmodel.publishTime)}}</span> 
+                  <span class="modelnameclasstop">发布名称:{{publishfindmodel.publishName}}</span> 
+                    <span class="modelnameclasstop">所属项目:{{publishfindmodel.trainingName}}</span> 
+                  <span class="modelnameclasstop">训练名称:{{publishfindmodel.trainingName}}</span> 
+             </div>
+      </el-col>
+      <el-col :span="24">
+              <el-col :span="12">
+                      <div style="margin:20px">
+                        <el-carousel :interval="4000" type="card" height="200px" indicator-position="none" >
+                                <el-carousel-item v-for="item in 6" :key="item">
+                                <h3>{{ item }}</h3>
+                                </el-carousel-item>
+                            </el-carousel>
+                       </div>
+                      <div style="margin:20px" >
+                           <el-upload
+                                class="uploaddemo"
+                                action="https://jsonplaceholder.typicode.com/posts/">
+                              <el-button  type="primary" size="small">上传图片</el-button>
+                           </el-upload>
+
+
+                           <div  style="display:inline-block;margin-left:15px">
+                            <el-input placeholder="请输入内容" v-model="pictureurl" class="inputselect">
+                                 <el-button slot="append" type="primary" >检测</el-button>
+                            </el-input>
+                           </div>
+
+                         </div>
+              </el-col>
+              <el-col :span="12">
+                      <div style="margin:20px;">
+                           <!-- <div>接口值</div> -->
+                          <textarea rows="10" cols="30" class="textareavalue">
+                                    
+                         </textarea>
+                      </div>
+              </el-col>
+
+
+      </el-col>
+
+  </el-row>
+</template>
+<script>
+import { timeFormattershowsecod } from "@/assets/js/common";
+ import {publishfinddetail} from "@/api/api"
+export default {
+          data(){
+            return{
+                 pictureurl:'',
+                 timeFormattershowsecod,
+                 publishfindmodel:{},
+                 publishdata:[],
+            }
+
+     },
+    methods:{
+             getpublishfinddetail(){
+                 var parms={
+                        publishId:this.$route.params.id
+                 }
+                 publishfinddetail(parms).then(res=>{
+                        console.log("详情")
+                        console.log(res)
+                        if(res.data.code==0){
+                               this.publishfindmodel=res.data.data.publishModel;
+                               this.publishdata=res.data.data.tfParams
+                        }
+                 })
+
+             } 
+
+
+    },
+    mounted(){
+            console.log(this.$route.params.id)  
+            this.getpublishfinddetail()
+    }
+
+}
+</script>
+<style lang="scss" scoped>
+       .ModelDetail{
+               min-width: 1100px;
+                .modelnameclasstop{
+                    margin-left: 20px;
+                } 
+       }   
+     .el-carousel__item h3 {
+            color: #475669;
+            font-size: 14px;
+            opacity: 0.75;
+            line-height: 200px;
+            margin: 0;
+        }
+  
+  .el-carousel__item:nth-child(2n) {
+    background-color: #99a9bf;
+  }
+  
+  .el-carousel__item:nth-child(2n+1) {
+    background-color: #d3dce6;
+  }
+  .inputselect{
+      width: 380px;
+  }
+  .uploaddemo{
+      display: inline-block;
+  }
+  .textareavalue{
+       width: 502px;
+       height: 255px;
+       border: 1px solid #efefef;
+       background: #efefef;
+       overflow-y:auto;
+  }
+
+</style>
