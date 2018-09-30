@@ -16,9 +16,8 @@
                           <el-button size="small" type="primary"  @click="uploadcode"  ref="codeUpload"><i class="el-icon-upload el-icon--right"></i>上传代码 </el-button>
                           <el-button size="small" type="primary"   @click="updata" ><i class="el-icon-upload el-icon--right"></i>上传数据 </el-button>
                  </div>
-     
                  <el-dialog
-                     :title=" '上传'+data_upload "
+                     title="上传"
                     :visible.sync="uploaddialogVisible"
                      width="30%"
                      @close="closevisble"
@@ -27,9 +26,7 @@
                     <form enctype="multipart/form-data" method="post" id="fileform">  
                          <input type="file" id="uploadid" :accept="acceptfile">
                     </form>
-                        <div style="margin-top:20px;"  v-show="progresshow">
-                           <el-progress :text-inside="true" :stroke-width="18" :percentage="proesswidth" status="success"></el-progress>
-                        </div>
+
                     <span slot="footer" class="dialog-footer">
                         <el-button size="small" @click="uploaddialogVisible=false" >取 消</el-button>
                         <el-button type="primary" size="small"  @click="sure" >确 定</el-button>
@@ -67,9 +64,6 @@ import{projectupload,deletefile,getfileSize,projectprocess}from "@/api/api"
 export default {
        data(){
            return{
-                  data_upload:"",
-                  progresshow:false,
-                  proesswidth:0,
                   acceptfile:'',//接受文件类型
                   filetreams:'',//发送的文件流
                   prodetail:null,
@@ -103,14 +97,12 @@ export default {
                     this.filetype='1'   
                     this.acceptfile=".py,.zip"   
                     this.uploaddialogVisible=true
-                    this.data_upload="code"
                           
               },
              updata(){//上传数据
                    this.filetype='2' 
                     this.acceptfile=".zip" 
                     this.uploaddialogVisible=true
-                    this.data_upload="data"
              },
             getgetfileSize(){//获取文件大小和更新时间
                     var parms={
@@ -134,10 +126,15 @@ export default {
                  })    
                  
             },
+           getprojectprocess(){
+                    projectprocess().then(res=>{
+                             console.log("进度")
+                            console.log(res)
+                    })
+           },
+
             sure(){
-                  this.progresshow=true; 
                   var _this=this
-                 
                  this.filetreams= document.getElementById('uploadid').files[0];
                    const token = sessionStorage.getItem('token')
                      let formData = new FormData();
@@ -145,40 +142,58 @@ export default {
                         formData.append("projectId",this.prodetail.projectId);
                         formData.append("type", this.filetype);
                         formData.append("token",token);
-                          console.log( this.progresshow)
-                      var FileController = "http://192.168.80.63:30005/api/project/upload"; // 接收上传文件的后台地址 
-                      // XMLHttpRequest 对象
-                      var xhr = new XMLHttpRequest();
-                     
-                      xhr.open("post", FileController, true);
-                       xhr.setRequestHeader('token',token);
-                      xhr.onload = function() {
+                   $.ajax({
+                          type: "post",
+                          cache: false,
+                          processData: false,
+                          contentType: false,
+                          headers: {'token':token},
+                          mimeType:"multipart/form-data",
+                          url: "http://192.168.80.63:30005/api/project/upload",
+                          data:formData,                
+                         success:function(res){
+                             console.log("=====")
+                              console.log(res)
+                            console.log(formData)
+                            var parseres= JSON.parse(res)
+                              console.log(parseres)
+                            if(parseres.code ==0){
+                                   console.log("zhengque")
+                                  _this.$message({
+                                       type: 'success',
+                                      message:"上传成功"
+                                  })
+                              //   window.clearInterval(timeid);
+                                 
+                                  _this.getgetfileSize()
+                                  _this.uploaddialogVisible=false
+                              }else {
+                                    _this.$message.error(parseres.message);
+                              }
 
-                      };
-                      xhr.upload.addEventListener("progress", progressFunction, false);
-                      xhr.send(formData);
-                  function progressFunction(evt) {
-                      if (evt.lengthComputable) {
-                          var completePercent = Math.round(evt.loaded / evt.total * 100);
-                          console.log("-------进度-----")
-                         if(completePercent==100){
-                             _this.progresshow=false;
-                             _this.uploaddialogVisible=false;
-                             _this.getgetfileSize()
-
+                        
+                         },
+                         error:function(res){
+                             console.log("666")
                          }
-
-                          _this.proesswidth=completePercent
-                      }
-                  };
-
-
-
-
-
-
+                    })
+                var enent = function(){
+                       projectprocess().then(res=>{
+                                console.log("jindutiao")
+                                console.log(res)
+                       })
+                }
+                    
+                 setTimeout(()=>{
+                        setInterval(enent,1000)
+                 },5000)
+                  
 
             },
+
+  
+
+
            closevisble(){//关闭浏览器清空input\
                 console.log("1111")
                 document.getElementById('fileform').reset()

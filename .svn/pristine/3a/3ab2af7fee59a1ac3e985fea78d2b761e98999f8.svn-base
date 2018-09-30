@@ -33,13 +33,13 @@
                                  </template>
                                 </el-table-column>
                                 <el-table-column
-                                  prop="userAccount"
-                                  label="用户姓名">
-                                </el-table-column>
-                                <el-table-column
                                   prop="projectNameZh"
                                   label="项目名称"
                                 >
+                                </el-table-column>
+                                <el-table-column
+                                  prop="userAccount"
+                                  label="用户姓名">
                                 </el-table-column>
                                 <el-table-column
                                   prop="globalCpu"
@@ -221,9 +221,8 @@ export default {
                                  console.log("jujie")
                                   console.log(res)
                                    if(res.data.code==0){
-                                            this.$message('已经拒绝');
+                                         this.$message('已经拒绝');
                                             this.refousedialogVisible=false;
-                                             this.getapprovelist()
                                     }else{
                                         this.$message.error(res.data.message)
                                     }
