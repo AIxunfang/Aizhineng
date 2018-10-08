@@ -3,22 +3,59 @@
       <el-col :span="24">
           <div class="navigationbar"> 
                <span class="navigationname">发布管理<i class="el-icon-arrow-right" aria-hidden="true"></i>
-                     发布列表 
+                   接口测试
                 </span>
             </div>
              <div class="modeldataname">
                   <span class="modelnameclasstop">发布开始时间:{{timeFormattershowsecod(publishfindmodel.publishTime)}}</span> 
                   <span class="modelnameclasstop">发布名称:{{publishfindmodel.publishName}}</span> 
-                    <span class="modelnameclasstop">所属项目:{{publishfindmodel.trainingName}}</span> 
+                    <span class="modelnameclasstop">所属项目:{{publishfindmodel.projectName}}</span> 
                   <span class="modelnameclasstop">训练名称:{{publishfindmodel.trainingName}}</span> 
              </div>
       </el-col>
-      <el-col :span="24">
-              <el-col :span="12">
+     <el-col :span="24">
+          <div>
+              <el-button size="mini" type="primary" style="float:right;margin:20px;50px; 0px ;0px;" @click="Creat_share"> 
+                     创建分享
+              </el-button>
+          </div>
+         <el-dialog
+                title="分享描述"
+                :visible.sync="sharedialogVisible"
+                width="30%"
+                >
+               <el-form :model="describeValidateForm" ref="describeValidateForm" label-width="50px" class="demo-dynamic">
+                        <el-form-item
+                            prop="shareDescribe"
+                            label="描述"
+                            :rules="[
+                            { required: true, message: '请输入分享描述', trigger: 'blur' },
+                            ]"
+                        >
+                            <el-input
+                                type="textarea"
+                                :rows="2"
+                                placeholder="请输入内容"
+                                v-model="describeValidateForm.shareDescribe">
+                            </el-input>
+                            <!-- <el-input v-model="dynamicValidateForm.email"></el-input> -->
+                        </el-form-item>
+               </el-form>
+                <span slot="footer" class="dialog-footer">
+                    <el-button  size="mini">取 消</el-button>
+                    <el-button  type="primary" size="mini" @click="Share_Project"  >确 定</el-button>
+                </span>
+         </el-dialog>
+
+
+
+     </el-col>
+      <el-col :span="24"  >
+              <el-col :span="16">
                       <div style="margin:20px">
-                        <el-carousel  type="card" height="200px" indicator-position="none" :autoplay="autoplay"   ref="carousel" >
-                                <el-carousel-item v-for="(item,index) in picturedata" :key="item.id" trigger="click" name="index" >
-                                          <img  :src=" 'http://192.168.80.63:30005/api/file/'+`${item.resourceUrl}` "   style="width:300px;height:200px" @click="pictrueclick(index)" >
+                        <el-carousel  type="card" height="200px" indicator-position="none" :autoplay="autoplay"   ref="carousel"   @change="pictrueclick">
+                                <el-carousel-item v-for="(item,index) in picturedata" :key="item.id" trigger="click"  >
+                                          <img  :src=" 'http://192.168.80.63:30005/api/file/'+`${item.resourceUrl}` "   style="width:330px;height:200px" @click="changepic(index)"  >
                                 </el-carousel-item> 
                             
                             </el-carousel>
@@ -26,9 +63,9 @@
                       <div style="margin:20px" >
                               <el-button  type="primary" size="small" @click="uploadpic" >上传图片</el-button>
                            <div  style="display:inline-block;margin-left:15px">
-                            <el-input placeholder="请输入内容" v-model="pictureurl" class="inputselect" readonly="readonly">
-                                 <el-button slot="append" type="primary"  @click="Detection"  :disabled="fobenbut">检测</el-button>
-                            </el-input>
+                                <el-input placeholder="请输入内容" v-model="pictureurl" class="inputselect" readonly="readonly">
+                                    <el-button slot="append" type="primary"  @click="Detection"  :disabled="fobenbut">检测</el-button>
+                                </el-input>
                            </div>
                      </div>
                  <el-dialog
@@ -49,7 +86,7 @@
                  </el-dialog> 
 
               </el-col>
-              <el-col :span="12">
+              <el-col :span="8">
                       <div style="margin:20px;">
                            <!-- <div>接口值</div> -->
                           <!-- <textarea rows="10" cols="30" class="textareavalue" v-model="responcse"  v-loading="loading">
@@ -58,29 +95,31 @@
                           <pre  class="textareavalue" ><code id="json">{{textjson}}</code></pre>
                       </div>
               </el-col>
-
-
       </el-col>
-
   </el-row>
 </template>
 <script>
 import { timeFormattershowsecod } from "@/assets/js/common";
- import {publishfinddetail,publishimglist,publishtestapi,} from "@/api/api"
+ import {publishfinddetail,publishimglist,publishtestapi,projectShareadd} from "@/api/api"
 export default {
           data(){
             return{
+                sharedialogVisible:false,
                 fobenbut:false,
                 loading:true,
                  filetreams:'',//发送的文件流
                 uploaddialogVisible:false,
                  pictureurl:'',
+                 imgUrl:'',//创建的时候发给后台
                  timeFormattershowsecod,
                  publishfindmodel:{},
                  publishdata:[],
                  picturedata:[],
                  autoplay:true,
                  textjson:null,
+                 describeValidateForm:{
+                         shareDescribe:'',
+                 }
             }
 
      },
@@ -113,9 +152,16 @@ export default {
              pictrueclick(index){
                   console.log('click')
                   console.log(index)
+                  console.log(this.picturedata[index])
                   this.autoplay=false
                   this.pictureurl= this.picturedata[index].resourceUri
+                  this.imgUrl=this.picturedata[index].resourceUrl
+             },
 
+
+             changepic(index){
+                 console.log("点中")
+                    console.log(this.picturedata[index].resourceUri)
              },
 
              uploadpic(){
@@ -181,16 +227,51 @@ export default {
                                 console.log(res)
                                 if(res.data.code==0){
     
-                                       this.textjson=res.data.data.response
+                                       this.textjson=JSON.parse(res.data.data.response)
                                         this.fobenbut=false
                                 }
                       })
                      
-             }
+             },
+            Creat_share(){
+                     this.sharedialogVisible=true
+            },
+            Share_Project(){
+                  var parms={
+                        
+                        projectId: this.$route.params.projectId,
+                        imgUrl: this.pictureurl,
+                        detail: this.describeValidateForm.shareDescribe 
+                  }
+                  if( this.imgUrl==""){
+                            this.$message.error('请先上传图片')
+                  }else{
+                     this.$refs['describeValidateForm'].validate((valid)=>{
+                         if(valid){ 
+                            projectShareadd(parms).then(res=>{
+                                        console.log("===")
+                                        console.log(res)
+                                        if(res.data.code==0){
+                                            this.$message({
+                                                type:'success',
+                                                message:'创建分享成功'
+                                            })
+                                            this.sharedialogVisible=false;
+                                           this.$refs['describeValidateForm'].resetFields();       
+                                        }else{
+                                             this.$message.error(res.data.message)
+                                        }
+                             })
+                         }
+                    })
+                  }
+            }
+
 
     },
     mounted(){
-            console.log(this.$route.params.id)  
+            console.log("项目ID")
+            console.log(this.$route.params.projectId)  
             this.getpublishfinddetail()
             this.getpublishimglist()
     }
@@ -199,7 +280,7 @@ export default {
 </script>
 <style lang="scss" scoped>
        .ModelDetail{
-               min-width: 1100px;
+   
                 .modelnameclasstop{
                     margin-left: 20px;
                 } 
@@ -212,13 +293,8 @@ export default {
             margin: 0;
         }
   
-  .el-carousel__item:nth-child(2n) {
-    background-color: #99a9bf;
-  }
-  
-  .el-carousel__item:nth-child(2n+1) {
-    background-color: #d3dce6;
-  }
+ 
+
   .inputselect{
       width: 380px;
   }
@@ -226,7 +302,7 @@ export default {
       display: inline-block;
   }
   .textareavalue{
-       width: 502px;
+       width: 222px;
        height: 255px;
        border: 1px solid #efefef;
        background: #efefef;

@@ -37,8 +37,8 @@
           <div> 
               <el-button size="small" type="primary" style="float:right;margin-right: 50px ;50px;50px;" @click="submitappliction" > 
                   提交申请
-                  </el-button>
-                </div>
+              </el-button>
+            </div>
       </el-col>
   </el-row>
 </template>

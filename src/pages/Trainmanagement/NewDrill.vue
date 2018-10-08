@@ -513,8 +513,6 @@ export default {
                  width:217px;
             }
        }
-        .variablename{
-            
-         }
+
       }
 </style>

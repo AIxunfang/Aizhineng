@@ -1,9 +1,60 @@
 <template>
-  <div>新建分享</div>
+      <el-row>
+          <el-col :span='24'>
+                  <div class="navigationbar"> 
+                    <span class="navigationname">项目分享<i class="el-icon-arrow-right" aria-hidden="true"></i>
+                          公共资源
+                      </span>
+                  </div>
+          </el-col>
+          <el-col  :span="24">
+                   <el-col :span="24">
+                            <div style="margin:20px">
+                              <!-- <el-radio-group v-model="SelectType"  v-for="item in modelnamedata" :key="item.index">
+                                        <el-radio-button   :label="item.value"></el-radio-button>
+                              </el-radio-group> -->
+                             <el-tabs v-model="SelectType" @tab-click="Select_handleClick" >
+                                  <el-tab-pane    
+                                     v-for="item in  modelnamedata"
+                                     :key="item.index"
+                                     :label="item.value"></el-tab-pane>
+
+                             </el-tabs>
+
+                          </div>
+                   </el-col>
+
+          </el-col>
+
+      </el-row>
 </template>
 <script>
+import{modeltype} from "@/api/api"
 export default {
-
+         data(){
+            return{
+                  SelectType:'',
+                  modelnamedata:[],
+            }
+         },
+         methods:{
+                  getmodeltype(){//获取模型分类
+                      modeltype().then(res=>{
+                               console.log("--模块类型--")
+                               console.log(res)
+                               if(res.data.code==0){
+                                     this.modelnamedata=res.data.data
+                               }
+                      })
+                 },
+                 Select_handleClick(tab){
+                            console.log(tab)
+                             
+                 },
+         },
+         mounted(){
+             this.getmodeltype()
+         }
 }
 </script>
 <style lang="scss" scoped>

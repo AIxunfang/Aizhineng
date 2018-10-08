@@ -288,6 +288,17 @@ export const publishtestapi =(parms) =>{
     return axios
     .post('/publish/test/api', parms,)
 }
+//项目分享创建
+export const projectShareadd =(parms) =>{
+    return axios
+    .post('/projectShare/add', parms,)
+}
+//项目分享.用户分享列表
+export const projectSharelist=(parms) =>{
+    return axios
+    .get('/projectShare/list',{params : parms})
+}
+
 //发布模型-->删除接口
 export const publishdelete=(parms) =>{
     return axios

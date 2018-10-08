@@ -171,13 +171,6 @@ export default {
                           _this.proesswidth=completePercent
                       }
                   };
-
-
-
-
-
-
-
             },
            closevisble(){//关闭浏览器清空input\
                 console.log("1111")

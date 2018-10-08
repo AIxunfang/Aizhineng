@@ -22,7 +22,7 @@ import ShareList from '@/pages/ProjectShare/ShareList'//项目分享--->项目�
 import Userinfo from '@/pages/PersonalCenter/Userinfo'//个人中心--用户资料\
 import NoticeManagement from '@/pages/PersonalCenter/NoticeManagement' //个人中心--通知管理
 import LogManagement from '@/pages/PersonalCenter/LogManagement' //个人中心--日志管理
-import FormationDrill from '@/pages/Modeldispatch/FormationDrill'//模块调度管理-训练队列
+import FormationDrill from '@/pages/Modeldispatch/FormationDrill'//模块调度管理-调度列表
 import Releasequeue from '@/pages/Modeldispatch/Releasequeue'//模块调度管理-发布队列
 import MenuManagement from '@/pages/PowerManagement/MenuManagement'//权限管理-->菜单管理
 import CharacterManagement from '@/pages/PowerManagement/CharacterManagement'//权限管理-->角色管理
@@ -33,9 +33,8 @@ import SharedHistory from '@/pages/ProjectSharingManagement/SharedHistory'//管�
 import WholePublish from '@/pages/GlobalParameter/WholePublish' //全局参数管理-->发布资源配置
 import WholeDrillRouceAllcation from '@/pages/GlobalParameter/WholeDrillRouceAllcation' //全局参数管理-->训练资源配置
 import ModelCategorySettings from '@/pages/GlobalParameter/ModelCategorySettings' //全局参数管理-->模块类别配置
-
+import DispatchingList from '@/pages/DispatchingManagement/DispatchingList'//调度管理-->调度列表
 import ApplyRouceList from '@/pages/ResoureApprovingManagement/ApplyRouceList' //资源审批管理--> 申请列表
-
 import HositryRouceList from '@/pages/ResoureApprovingManagement/HositryRouceList' //资源审批管理--> 历史列表
 import trainingResourceApply from '@/pages/ResourceApplication/trainingResourceApply' //资源审批-->训练申请
 import publishResourceApply from '@/pages/ResourceApplication/publishResourceApply' //资源审批-->发布申请
@@ -82,11 +81,12 @@ export default new Router({
         {path:'projectdetail' ,name:"projectdetail", component:projectdetail},
         {path:'Codeupload' ,name:"Codeupload", component:Codeupload},
         {path:'/Trainstart/:id' ,name:"Trainstart", component:Trainstart},
-        {path:"/ModelformDetail/:id",name:"ModelformDetail",component:ModelformDetail},
+        {path:"/ModelformDetail/:id/:projectId",name:"ModelformDetail",component:ModelformDetail},
         {path:'trainingResourceApply',name:"trainingResourceApply",component:trainingResourceApply},
         {path:"publishResourceApply",name:'publishResourceApply',component:publishResourceApply},
         {path:'/trainingResourceApplyedit/:id/:cpu/:gpu/:memory',name:"trainingResourceApplyedit",component:trainingResourceApplyedit},
         {path:"/publishResourceApplyedit/:id/:cpu/:gpu/:memory",name:'publishResourceApplyedit',component:publishResourceApplyedit},
+        {path:'DispatchingList',name:"DispatchingList",component:DispatchingList}
       ]
     },
     {

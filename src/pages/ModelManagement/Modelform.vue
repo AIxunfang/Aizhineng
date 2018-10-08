@@ -40,7 +40,7 @@
                                 </span>
                             </div>
                                <div class="projectdiecribetion"><span>训练名称:</span>{{item.trainingName}}</div>
-                               <div class="projectdiecribetion"><span>所属项目:</span>{{item.projectNameZh}}</div>
+                               <div class="projectdiecribetion"><span>所属项目:</span>{{item.projectName}}</div>
                          </div>
                   </div>
                    <div class="projectbottom">
@@ -153,7 +153,8 @@ export default {
                               });
            },
            Releasedetails(index){ 
-                 this.$router.push({name:"ModelformDetail",params:{id:this.distributelist[index].publishId}})
+               //  console.log(this.distributelist[index])
+                 this.$router.push({name:"ModelformDetail",params:{id:this.distributelist[index].publishId,projectId:this.distributelist[index].projectId}})
            },
 
             pageIndexChange(index){//翻页
