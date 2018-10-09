@@ -1,0 +1,274 @@
+<template>
+    <el-row class="Codeupload">
+         <el-col :span='24'>
+             <div class="navigationbar"> 
+              <span class="navigationname">项目管理<i class="el-icon-arrow-right" aria-hidden="true"></i>
+                     项目上传
+              </span>
+            </div>
+         </el-col>
+          <el-col :span="24">
+                  <div class="codehead"> 
+                      <span class="Codeprojectname">   {{ projectNameZh}}: {{this.routefilesubstr}}   </span>  
+                      <div class="getback"><el-button  type="primary"  size="small" @click="goback">返回</el-button></div>
+                  </div>
+                 <div class="uploadfile">
+                          <el-button size="small" type="primary"  @click="uploadcode"  ref="codeUpload"><i class="el-icon-upload el-icon--right"></i>上传代码 </el-button>
+                          <el-button size="small" type="primary"   @click="updata" ><i class="el-icon-upload el-icon--right"></i>上传数据 </el-button>
+                 </div>
+     
+                 <el-dialog
+                     :title=" '上传'+data_upload "
+                    :visible.sync="uploaddialogVisible"
+                     width="30%"
+                     @close="closevisble"
+                    >
+                  
+                    <form enctype="multipart/form-data" method="post" id="fileform">  
+                         <input type="file" id="uploadid" :accept="acceptfile">
+                    </form>
+                        <div style="margin-top:20px;"  v-show="progresshow">
+                           <el-progress :text-inside="true" :stroke-width="18" :percentage="proesswidth" status="success"></el-progress>
+                        </div>
+                    <span slot="footer" class="dialog-footer">
+                        <el-button size="small" @click="uploaddialogVisible=false" >取 消</el-button>
+                        <el-button type="primary" size="small"  @click="sure" >确 定</el-button>
+                    </span>
+                 </el-dialog> 
+          </el-col>
+          <el-col :span="24">
+                <div class="uploaddata">
+                <el-table border style="widtth:100%"  :data="codedata"  >
+                         <el-table-column label="名称">
+                                <template slot-scope="scope">
+                                    <i class="fa fa-file" aria-hidden="true"></i>
+                                     <span style="margin-left: 10px">{{ scope.row.file }}</span>
+                                </template>
+                         </el-table-column>
+                         <el-table-column label="更新时间" prop="time">
+
+                         </el-table-column>
+                         <el-table-column label="大小(单位/k)" prop="storage">
+
+                         </el-table-column>
+                         <el-table-column label="操作">
+                                 <template slot-scope="scope">
+                                       <el-button icon="el-icon-delete" type="primary" size="mini"  @click="delectfile(scope.$index,scope.row)"   >删除</el-button>
+                                 </template>
+                         </el-table-column>
+                </el-table>
+              </div>
+          </el-col>
+    </el-row>
+</template>
+<script>
+import axios from 'axios'
+import{projectupload,deletefile,getfileSize,projectprocess}from "@/api/api"
+export default {
+       data(){
+           return{
+                  data_upload:"",
+                  progresshow:false,
+                  proesswidth:0,
+                  acceptfile:'',//接受文件类型
+                  filetreams:'',//发送的文件流
+                  prodetail:null,
+                  projectNameZh:'',
+                  filetype:"",//上传文件的类型
+                  routefile:'',
+                  routefilesubstr:"",
+                  uploaddialogVisible:false,
+                  codedata:[
+                       {
+                          file:'code',
+                          time:"",
+                          storage:"0"   
+                       },
+                     {
+                          file:'data',
+                          time:"",
+                          storage:"0"   
+                       },
+
+                  ]
+           }
+       },
+       methods:{
+              goback(){//返回上一页
+                    this.$router.go(-1)
+
+              },
+              
+              uploadcode(){//上传代码
+                    this.filetype='1'   
+                    this.acceptfile=".py,.zip"   
+                    this.uploaddialogVisible=true
+                    this.data_upload="code"
+                          
+              },
+             updata(){//上传数据
+                   this.filetype='2' 
+                    this.acceptfile=".zip" 
+                    this.uploaddialogVisible=true
+                    this.data_upload="data"
+             },
+            getgetfileSize(){//获取文件大小和更新时间
+                    var parms={
+                          projectId:this.prodetail.projectId
+                    }
+                 getfileSize(parms).then(res=>{
+                          
+                          console.log("文件大小")
+                          console.log(res)
+                          if(res.data.code==0){//可能值传了一个值,遍历一遍
+                                 for(var i=0;i<res.data.data.length;i++ ){
+                                         if(res.data.data[i].type==1){
+                                               this.codedata[0].time= res.data.data[i].time;
+                                               this.codedata[0].storage= res.data.data[i].fileSize;
+                                         }else if(res.data.data[i].type==2){
+                                               this.codedata[1].time= res.data.data[i].time;
+                                               this.codedata[1].storage= res.data.data[i].fileSize;
+                                         }
+                                 }
+                          }
+                 })    
+                 
+            },
+            sure(){
+                  this.progresshow=true; 
+                  var _this=this
+                 
+                 this.filetreams= document.getElementById('uploadid').files[0];
+                   const token = sessionStorage.getItem('token')
+                     let formData = new FormData();
+                        formData.append("file", this.filetreams);
+                        formData.append("projectId",this.prodetail.projectId);
+                        formData.append("type", this.filetype);
+                        formData.append("token",token);
+                          console.log( this.progresshow)
+                      var FileController = "http://192.168.80.63:30005/api/project/upload"; // 接收上传文件的后台地址 
+                      // XMLHttpRequest 对象
+                      var xhr = new XMLHttpRequest();
+                     
+                      xhr.open("post", FileController, true);
+                       xhr.setRequestHeader('token',token);
+                      xhr.onload = function() {
+
+                      };
+                      xhr.upload.addEventListener("progress", progressFunction, false);
+                      xhr.send(formData);
+                  function progressFunction(evt) {
+                      if (evt.lengthComputable) {
+                          var completePercent = Math.round(evt.loaded / evt.total * 100);
+                          console.log("-------进度-----")
+                         if(completePercent==100){
+                             _this.progresshow=false;
+                             _this.uploaddialogVisible=false;
+                             _this.getgetfileSize()
+
+                         }
+
+                          _this.proesswidth=completePercent
+                      }
+                  };
+            },
+           closevisble(){//关闭浏览器清空input\
+                console.log("1111")
+                document.getElementById('fileform').reset()
+
+           },
+
+
+            delectfile(value){//删除文件 
+                 let type=""
+                console.log(value)
+                if(value==0){
+                   this.type=1
+                }else{
+                   this.type=2
+                }
+                var parms={
+                     projectId:this.prodetail.projectId,
+                     type:this.type
+
+                }
+                console.log(parms)
+                    this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                        }).then(() => {
+                         
+                            deletefile(parms).then(res=>{
+                                    console.log(res)
+                                    if(res.data.code==0){
+                                        this.$message({
+                                                type:'success',
+                                                message:"删除成功" 
+                                        })
+                                        this.getgetfileSize()
+                                    }
+                            })
+
+
+                          
+                         
+                        }).catch(() => {
+                        this.$message({
+                            type: 'info',
+                            message: '已取消删除'
+                        });          
+                        });
+                    }
+       },
+       mounted(){
+                this.prodetail=JSON.parse(sessionStorage.getItem('prodetail'))   
+                this.projectNameZh= this.prodetail.projectNameZh
+                 this.routefile=this.prodetail.projectDataPath
+                 this.routefilesubstr=this.routefile.substring(0,this.routefile.length-5)  
+                 this.getgetfileSize()
+                console.log( this.prodetail)
+       }
+}
+</script>
+<style lang="scss" scoped>
+         .Codeupload{
+            .codehead{
+                .Codeprojectname{
+                       display: inline-block;
+                       width:620px;
+                       height: 40px;
+                       background: #f7f5f5;
+                       margin-left: 20px;
+                       vertical-align: middle;
+                       line-height: 40px;
+                       font-family: "Microsoft YaHei";
+                       padding-left: 12px;
+                }
+
+               
+             .getback{
+                 float: right;
+                 margin-right: 20px;
+                }  
+             }
+             .uploadfile{
+                  padding: 20px;
+             }
+             .uploaddata{
+                 text-align: center;
+                 padding: 20px;
+                  i{
+                      color:#409eff,
+                  }
+
+             }
+
+         }
+</style>
+<style>
+       .uploaddata  .is-leaf{
+            background: #e7edff;
+            text-align: center
+       }
+</style>
