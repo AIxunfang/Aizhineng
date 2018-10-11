@@ -55,15 +55,7 @@
             </div>
          </el-col>
          <el-col :span="24">
-                <div class="paagenumber" >
-                   <el-pagination
-                        background
-                        layout="prev, pager, next, total"
-                        :page-size='pageSize'
-                        @current-change="pageIndexChange"
-                        :total="paggtatol">
-                  </el-pagination>
-              </div> 
+                 
          </el-col>
            
 
@@ -78,7 +70,6 @@ export default {
                     currPage:1,
                     pageSize:10,
                     sharetableData:[],
-                    paggtatol:null,
                 }
             },
             methods:{
@@ -91,11 +82,10 @@ export default {
                         }
                       
                       projectSharelist(parms).then(res=>{
-                               this.sharetableData=[]
                               if(res.data.code==0){
                                    console.log("=========")
                                     console.log(res)
-                                    this.paggtatol=res.data.data.total
+                                    
                                     res.data.data.list.forEach((item,index) =>{
                                            item.status=String(item.status)
                                            this.sharetableData.push(item)
@@ -115,8 +105,7 @@ export default {
                                  console.log(res)
                                  if(res.data.code==0){
                                       this.$message({
-                                          type:'success',
-                                          message:'设置成功'
+                                          type:'设置成功'
                                       })
                                      this.getprojectSharelist() 
                                  }else{
@@ -124,10 +113,7 @@ export default {
                                  }
                             
                         })
-                },
-                pageIndexChange(index){
-
-                },
+                }
 
 
             },

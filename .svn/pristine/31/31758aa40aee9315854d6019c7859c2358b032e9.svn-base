@@ -14,7 +14,7 @@
              </div>
       </el-col>
      <el-col :span="24">
-          <div v-show="shareprojectpub">
+          <div>
               <el-button size="mini" type="primary" style="float:right;margin:20px;50px; 0px ;0px;" @click="Creat_share"> 
                      创建分享
               </el-button>
@@ -61,7 +61,7 @@
                             </el-carousel>
                        </div>
                       <div style="margin:20px" >
-                              <el-button  type="primary" size="small" @click="uploadpic"  v-show="shareprojectpub">上传图片</el-button>
+                              <el-button  type="primary" size="small" @click="uploadpic" >上传图片</el-button>
                            <div  style="display:inline-block;margin-left:15px">
                                 <el-input placeholder="请输入内容" v-model="pictureurl" class="inputselect" readonly="readonly">
                                     <el-button slot="append" type="primary"  @click="Detection"  :disabled="fobenbut">检测</el-button>
@@ -104,7 +104,6 @@ import { timeFormattershowsecod } from "@/assets/js/common";
 export default {
           data(){
             return{
-                shareprojectpub:true,
                 sharedialogVisible:false,
                 fobenbut:false,
                 loading:true,
@@ -120,8 +119,7 @@ export default {
                  textjson:null,
                  describeValidateForm:{
                          shareDescribe:'',
-                 },
-                 sendpicturedata:[],
+                 }
             }
 
      },
@@ -228,9 +226,9 @@ export default {
                                 console.log("--jiance-")
                                 console.log(res)
                                 if(res.data.code==0){
-                                         this.fobenbut=false
-                                         this.textjson=JSON.parse(res.data.data.response)
-                                       
+    
+                                       this.textjson=JSON.parse(res.data.data.response)
+                                        this.fobenbut=false
                                 }
                       })
                      
@@ -239,19 +237,14 @@ export default {
                      this.sharedialogVisible=true
             },
             Share_Project(){
-                //    this.sendpicturedata=[]
-                //    this.picturedata.forEach((item,index)=>{
-                //           this.sendpicturedata.push(item.resourceUrl)  
-                //    })
-                //   var stringdata= this.sendpicturedata.join(",")
                   var parms={
                          publishId:this.$route.params.id,
-                         projectId: this.$route.params.projectId,
-                         imgUrl:this.imgUrl,
-                         detail: this.describeValidateForm.shareDescribe 
+                        projectId: this.$route.params.projectId,
+                        imgUrl: this.pictureurl,
+                        detail: this.describeValidateForm.shareDescribe 
                   }
                   if( this.imgUrl==""){
-                            this.$message.error('请先上传图片或选择列表图片')
+                            this.$message.error('请先上传图片')
                   }else{
                      this.$refs['describeValidateForm'].validate((valid)=>{
                          if(valid){ 
@@ -270,16 +263,15 @@ export default {
                                         }
                              })
                          }
-                      })
-                 }
-         } 
+                    })
+                  }
+            }
+
+
     },
     mounted(){
             console.log("项目ID")
-            console.log(this.$route.params.projectId)  
-            if(this.$route.params.projectId==false){
-                    this.shareprojectpub=false
-            }
+            console.log(this.$route.params.publishId)  
             this.getpublishfinddetail()
             this.getpublishimglist()
     }

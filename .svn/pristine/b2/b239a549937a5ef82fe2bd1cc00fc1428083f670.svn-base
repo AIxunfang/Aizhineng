@@ -46,11 +46,13 @@
   border-bottom : 1px solid #d8d8d8;
   margin: 20px 20px 0px 20px;
   line-height: 60px;
+
 }
 .formdata{
    display: inline-block;
    height: 40px;
    vertical-align: middle;
+   margin-left: 40px;
 }
 /* 全局资源的头部 */
 .modelconfig{

@@ -4,17 +4,12 @@ import qs from 'qs'
 axios.defaults.baseURL = 'http://192.168.80.63:30005/api';
 // axios.defaults.baseURL ="http://nedn26.natappfree.cc/api"
 
-
-
-
 // 请求的拦截器
        // 判断请求的类型
        // 如果是post请求就把默认参数拼到data里面
        // 如果是get请求就拼到params里面
 axios.interceptors.request.use(function (config) {
        const token = sessionStorage.getItem('token')
-        console.log("=====token=====")
-        console.log(token)
       const Username = JSON.parse(sessionStorage.getItem("user"));
       if(config.method === 'post') {
             if(config.url==="/training/create/training"){
@@ -70,7 +65,6 @@ export const userlogin =(parms) =>{
       .post('/user/login',parms)  
 }
 //左侧菜单栏
-var _this=this
 export const menulist =(parms) =>{
        return axios
        .get('user/permissions/account',{params : parms})
@@ -336,14 +330,4 @@ export const deletequeue=(parms) =>{
 export const queueupdateorder=(parms) =>{
     return axios
     .get('/queue/update/order',{params : parms})
-}
-//管理员新增用户
-export const userAdd =(parms) =>{
-    return axios
-    .post('/user/add', parms,)
-}
-//用户列表
-export const userlistpage =(parms) =>{
-    return axios
-    .get('/user/list/page',{params : parms})
 }

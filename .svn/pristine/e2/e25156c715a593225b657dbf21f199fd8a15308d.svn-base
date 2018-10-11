@@ -116,7 +116,7 @@ export default {
                                  if(res.data.code==0){
                                       this.$message({
                                           type:'success',
-                                          message:'设置成功'
+                                          message:'分享成功'
                                       })
                                      this.getprojectSharelist() 
                                  }else{

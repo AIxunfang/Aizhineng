@@ -17,6 +17,11 @@ import 'font-awesome/css/font-awesome.css';
 Vue.config.productionTip = false
 Vue.use(ElementUI)
 Vue.use(VCharts)
+ 
+
+
+
+
 
 Vue.use(ZkTable)//树状表格
 

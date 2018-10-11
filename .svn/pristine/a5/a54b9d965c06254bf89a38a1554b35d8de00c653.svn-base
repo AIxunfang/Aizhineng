@@ -228,9 +228,9 @@ export default {
                                 console.log("--jiance-")
                                 console.log(res)
                                 if(res.data.code==0){
-                                         this.fobenbut=false
-                                         this.textjson=JSON.parse(res.data.data.response)
-                                       
+    
+                                       this.textjson=JSON.parse(res.data.data.response)
+                                        this.fobenbut=false
                                 }
                       })
                      

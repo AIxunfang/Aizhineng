@@ -135,10 +135,13 @@ export default {
                     userAccount:this.Username.name,
               }
                menulist(parms).then(res=>{
+                    
                         if(res.data.code==0){
                             console.log("菜单栏")
                              console.log(res)
                              this.routerurl= res.data.data
+                        }else if(res.data.code==103) {
+                              this.$router.push('/Login')  
                         }
                })    
        },

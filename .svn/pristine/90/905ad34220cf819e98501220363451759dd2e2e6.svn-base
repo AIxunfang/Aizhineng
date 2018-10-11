@@ -8,25 +8,24 @@
             </div>
             <div class="seachframe">
                  <div  class="formdata">
-                        <el-form :inline="true"  size="mini" >
+                        <el-form :inline="true" >
                               <el-form-item  >
                                     <el-input v-model="roleseach"></el-input>         
                               </el-form-item>
                               <el-form-item>
-                                <el-button type="primary" icon="el-icon-search"   size="mini"  >查询</el-button>
+                                <el-button type="primary" icon="el-icon-search"  size="small" >查询</el-button>
                               </el-form-item>
                         </el-form>
                    </div>
             </div>
-            <div style="margin:20px 0px 0px 20px"> <el-button icon="el-icon-plus" type="primary"  size="mini"  @click="addrole"  >新增</el-button></div>
+            <div style="margin:20px"> <el-button icon="el-icon-plus" type="primary" size="small" @click="addrole"  >新增</el-button></div>
          </el-col>
           <el-col :span="24">
-                   <div style="margin:20px" >
+                   <div style="margin:20px">
                     <el-table
                         :data="tableData"
                         style="width: 100%"
                         border
-                         size="mini" 
                         >
                         <el-table-column
                           header-align="center"
