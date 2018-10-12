@@ -49,7 +49,7 @@
                title="个人信息"
                :visible.sync="dialogmessage"
                 width="30%">
-                  <el-form :model="formInline" :rules="passwordrules"  ref="passwordrules"    class="demo-form-inline" label-width="100px">
+                  <el-form :model="formInline" :rules="passwordrules"  ref="passwordrules"   class="demo-form-inline" label-width="100px">
                     <el-form-item label="用户名">
                         <el-input  v-model="formInline.UserName" :disabled="true" ></el-input>
                     </el-form-item>
@@ -135,12 +135,13 @@ export default {
                     userAccount:this.Username.name,
               }
                menulist(parms).then(res=>{
-                    
+                        console.log("cifan")
+                        console.log(res)
                         if(res.data.code==0){
                             console.log("菜单栏")
                              console.log(res)
                              this.routerurl= res.data.data
-                        }else if(res.data.code==103) {
+                        }else {
                               this.$router.push('/Login')  
                         }
                })    

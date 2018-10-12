@@ -50,9 +50,9 @@
                           width="300px"
                           > 
                            <template slot-scope="scope">
-                                 <el-button size="mini" type="danger" @click="delectrole(scope.$index)">删除</el-button> 
-                                  <el-button size="mini" type="primary" @click="editrole(scope.$index)">编辑</el-button>       
-                                  <el-button size="mini" type="success" @click="distribute(scope.$index)">分配</el-button>    
+                                 <el-button size="mini"  round  type="danger" @click="delectrole(scope.$index)">删除</el-button> 
+                                  <el-button size="mini"  round  type="primary" @click="editrole(scope.$index)">编辑</el-button>       
+                                  <el-button size="mini"  round  type="success" @click="distribute(scope.$index)">分配</el-button>    
                            </template>
                         </el-table-column>
                     </el-table>      
@@ -103,6 +103,7 @@
                       </span>
                  </el-dialog>
           </el-col>
+          
         </el-row>
 </template>
 <script>
@@ -189,7 +190,6 @@ export default {
                                 this.tableData=res.data.data
                         }
                     })
-
              },
              delectrole(index){//角色删除
                     var parms={

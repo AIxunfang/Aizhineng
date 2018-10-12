@@ -34,8 +34,8 @@
                           </el-popover>
                    </template>
                     <template slot="action"  slot-scope="scope" >
-                         <el-button @click="menudelect(scope.row)" icon="el-icon-delete"  type="danger" size="small"  circle></el-button>
-                         <el-button @click="menuedit(scope.row)"  type="primary" icon="el-icon-edit"  size="small" circle   ></el-button>
+                         <el-button @click="menudelect(scope.row)"   type="danger" size="small"   round>删除</el-button>
+                         <el-button @click="menuedit(scope.row)"  type="primary"   size="small"  round  >编辑</el-button>
                         
                     </template>
                 </zk-table>  
@@ -220,9 +220,7 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-        .menuManagement{
-                   
-          }
+
 </style>
 <style>
      .el-popper .el-input{

@@ -142,6 +142,7 @@ export const checktrainingName =(parms) =>{
 }
 
 
+
 //创建模块数据
 export const createtraining =(parms) =>{
     return axios
@@ -179,12 +180,6 @@ export const trainingstart =(parms) =>{
     return axios
     .get('/training/start',{params : parms})
 }
-
-//上传文件项目 
-// export const projectupload =(parms) =>{
-//     return axios
-//     .post('/project/upload',  parms,{headers: {'Content-Type': 'multipart/form-data'}})
-// }
 //删除文件,
 export const deletefile =(parms) =>{
     return axios
@@ -346,4 +341,14 @@ export const userAdd =(parms) =>{
 export const userlistpage =(parms) =>{
     return axios
     .get('/user/list/page',{params : parms})
+}
+//用户删除
+export const deleteuid =(parms) =>{
+    return axios
+    .get('/user/delete/uid',{params : parms})
+}
+//验证是否存在登录用户
+export const usercheck =(parms) =>{
+    return axios
+    .get('/user/check',{params : parms})
 }

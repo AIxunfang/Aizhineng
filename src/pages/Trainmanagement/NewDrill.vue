@@ -409,19 +409,19 @@ export default {
                                }
                       })  
                   var parms={  
-                                      uid:uid,
-                                      pid:this.modelparameter.pid,
-                                      projectName:this.modelparameter.projectName,
-                                      projectNameZh:this.modelparameter.projectNameZh,
-                                      trainingName: this.modelparameter.modelname,
-                                      trainingImage:this.modelparameter.projectmirror,
-                                      imageType:Number(this.modelparameter.radio3),
-                                      trainingExecuteShell:this.trainingParamShell,
-                                      trainingParamShell: this.sendcodepy,
-                                      trainingRemind:this.modelparameter.modeldescribe,
-                                      trainingType:this.modelparameter.projectsort, 
-                                      userAccount:this.Username.name,
-                                      tfParams:this.modelparameter.comprehensionarry               
+                                uid:uid,
+                                pid:this.modelparameter.pid,
+                                projectName:this.modelparameter.projectName,
+                                projectNameZh:this.modelparameter.projectNameZh,
+                                trainingName: this.modelparameter.modelname,
+                                trainingImage:this.modelparameter.projectmirror,
+                                imageType:Number(this.modelparameter.radio3),
+                                trainingExecuteShell:this.trainingParamShell,
+                                trainingParamShell: this.sendcodepy,
+                                trainingRemind:this.modelparameter.modeldescribe,
+                                trainingType:this.modelparameter.projectsort, 
+                                userAccount:this.Username.name,
+                                tfParams:this.modelparameter.comprehensionarry               
                                }   
                     this.$refs['modelparameter'].validate((valid)=>{
                             
@@ -437,6 +437,8 @@ export default {
                                         setTimeout(()=>{
                                               this.$router.push('/DrillList')    
                                         },1000 )  
+                                   }else{
+                                       this.$message.error(res.data.message)
                                    }
                              })
                           }

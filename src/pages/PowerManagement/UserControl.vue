@@ -9,11 +9,19 @@
             <div class="seachframe">
                  <div  class="formdata">
                         <el-form :inline="true"  size="mini">
-                              <el-form-item  >
-                                    <el-input v-model="roleseach"></el-input>         
+                       <el-form-item >
+                            <el-select v-model="searchType" placeholder="选择用户身份">
+                                <el-option label="登录名" value="1"></el-option>
+                                <el-option label="用户名" value="2"></el-option>
+                                <el-option label="邮箱" value="3"></el-option>
+                               <el-option label="手机号" value="4"></el-option>
+                            </el-select>
+                        </el-form-item>
+                         <el-form-item  >
+                                    <el-input v-model="keyWord"  placeholder="输入搜索的相关字节" ></el-input>         
                               </el-form-item>
                               <el-form-item>
-                                <el-button type="primary" icon="el-icon-search"   size="mini"  >查询</el-button>
+                                <el-button type="primary" icon="el-icon-search" size="mini"   @click="Seach_user"  >查询</el-button>
                               </el-form-item>
                         </el-form>
                    </div>
@@ -25,14 +33,15 @@
                     title="提示"
                     :visible.sync="UserdialogVisible"
                     width="600px"
+                    @close="closeuserdislog"
                     >
                     <el-form  :model="formuserAdd"  ref="formuserAdd"   :inline="true"  class="adduserform" size="mini" label-width="80px" :rules="rules">
                         <el-form-item label="登录帐号" prop="userAccount">
-                            <el-input v-model="formuserAdd.userAccount" placeholder="用户名"></el-input>
+                            <el-input v-model="formuserAdd.userAccount"  :disabled="Diseditsfalse"    placeholder="用户名"  @blur="check_user_acount" ></el-input>
+                            <div style="height:5px; color:red ;line-height:24px" v-show="Namerepeat" >登录账号已存在</div>
                         </el-form-item>
                         <el-form-item label="密码">
                                  <el-input v-model="formuserAdd.password" placeholder="默认密码admin"></el-input>
-
                         </el-form-item>
                           <el-form-item label="真实姓名">
                             <el-input v-model="formuserAdd.username" placeholder="真实姓名"></el-input>
@@ -50,10 +59,17 @@
                                 <el-option label="其他" value="2"></el-option>
                             </el-select>
                         </el-form-item>
-                         <el-form-item label="用户类型" prop="userType">
-                              <el-select v-model="formuserAdd.userType" placeholder="选择用户状态">
-                                  <el-option label="普通用户" value="0"></el-option>
-                                  <el-option label="管理员" value="1"></el-option>
+                         <el-form-item label="角色" prop="userType">
+                              <el-select v-model="formuserAdd.roleIds"  multiple    placeholder="选择用户状态">
+                                  <el-option 
+                                    v-for="item in tableData"
+                                    v-show="item.roleType !==1"
+                                   :key="item.id"
+                                   :label="item.roleName"
+                                   :value="item.id">
+
+                                  </el-option>
+                       
                             </el-select>
                         </el-form-item>
                         <el-form-item label="邮箱" prop="userEmail">
@@ -64,7 +80,6 @@
                         </el-form-item>  
                       </el-form>
                     <span slot="footer" class="dialog-footer">
-                      <el-button  size="mini">取消</el-button>
                       <el-button type="primary" size="mini" @click="savadata">保存</el-button>
                     </span>
                  </el-dialog>
@@ -72,37 +87,98 @@
          <el-col :span="24">
                 <div  style="margin:20px">
                        <el-table
+                           size="mini"
+                           border
                           :data="usertableData"
                           stripe
                           style="width: 100%">
                           <el-table-column
-                            prop="date"
-                            label="日期"
-                            width="180">
+                            prop="userAccount"
+                            label="登录账号"
+                            width="140">
                           </el-table-column>
                           <el-table-column
-                            prop="name"
-                            label="姓名"
-                            width="180">
+                            prop="username"
+                            label="真实姓名"
+                            width="120">
+                          </el-table-column>
+                          <el-table-column label="手机号" prop="userMobile" width="120px">
+                          </el-table-column>
+                          <el-table-column label="邮箱" prop="userEmail">
+                          </el-table-column>
+
+                          <el-table-column
+                            width="160px"
+                            label="创建时间">
+                           <template slot-scope="scope">
+                                {{timeFormattershowsecod(scope.row.userCreateTime)}}   
+                           </template>
                           </el-table-column>
                           <el-table-column
-                            prop="address"
-                            label="地址">
+                            width="60px"
+                            label="身份">
+                             <template slot-scope="scope">
+                                <span v-if="scope.row.userIdentity==1">学生</span>
+                                <span v-else>老师</span>
+                            </template>
+                          </el-table-column>
+                          <el-table-column
+                           width="60px"
+                            label="状态">
+                            <template slot-scope="scope">
+                                    <span v-if="scope.row.userStatus==0">正常</span>
+                                    <span v-if="scope.row.userStatus==1">禁用</span>
+                                    <span v-if="scope.row.userStatus==2">其他</span>
+                          </template>
+                          </el-table-column>
+                           <el-table-column
+                           width="100px"
+                            label="用户类型">
+                             <template slot-scope="scope">
+                                <span v-if="scope.row.userType==0">普通用户</span>
+                                <span v-else>超级管理员</span>
+                            </template>
+
+                          </el-table-column>
+                          <el-table-column label="操作" width="160px">
+                               <template slot-scope="scope">
+                                  <el-button  type="danger"   round  size="mini" @click="delect_user(scope.row)">删除</el-button>
+                                   <el-button type="primary"  round  size="mini" @click="edit_user(scope.row)">编辑</el-button>
+                               </template>
                           </el-table-column>
                     </el-table> 
 
                 </div>
          </el-col>
+         <el-col :span="24">
+              <div class="paagenumber">
+                   <el-pagination
+                        background
+                        layout="prev, pager, next, total"
+                        :page-size='pageSize'
+                        @current-change="pageIndexChange"
+                        :total="paggtatol">
+                  </el-pagination>
+              </div>
+         </el-col>
      </el-row>
 </template>
 <script>
-import{userAdd,userlistpage} from '@/api/api'
+import{timeFormattershowsecod} from '@/assets/js/common'
+import{userAdd,userlistpage,deleteuid,usercheck,rolelist} from '@/api/api'
 export default {
            data(){
                return{
-                   usertableData:[],
-                    searchType:1,
+                    Diseditsfalse:false,
+                   tableData:[],
+                   Namerepeat:false,
+                    paggtatol:null,
+                    timeFormattershowsecod,
+                    pageSize:10,
+                    currentPage:1,
+                    searchType:'1',
                     keyWord:"",
+                    usertableData:[],
                      roleseach:'',
                      UserdialogVisible:false,
                      formuserAdd:{
@@ -112,6 +188,9 @@ export default {
                               userStatus:'0',
                               userType:"0",
                               password:"",
+                              roleIds:[],
+                              userMobile:'',
+                              userEmail:'',
 
                      },
                      rules:{
@@ -126,47 +205,144 @@ export default {
                                   {pattern:/^1(3|4|5|6|7|8)\d{9}$/,message:"手机号码格式错误"}
                            ]
                      }
-
-
-
                }
            },
          methods:{
+             closeuserdislog(){//关闭弹框
+                    this.formuserAdd.userAccount='';
+                    this.formuserAdd.username="";
+                    this.formuserAdd.userIdentity='1';
+                    this.formuserAdd.userStatus='0';
+                    this.formuserAdd.userType="0";
+                    this.formuserAdd.password="";
+                    this.Namerepeat=false;
+                    this.Diseditsfalse=false;
+                    this.formuserAdd.userMobile=""
+                    this.formuserAdd.userEmail=""
+
+                    this.formuserAdd.roleIds=[];
+             },
+          edit_user(index){
+                   console.log(index)
+                  this.UserdialogVisible=true
+                  this.Diseditsfalse=true
+                  this.formuserAdd.userAccount=index.userAccount
+                  this.formuserAdd.username=index.username
+                  this.formuserAdd.userIdentity=String(index.userIdentity)
+                  this.formuserAdd.userStatus=String(index.userStatus)
+                  this.formuserAdd.userType=String(index.userType)
+                  //this.formuserAdd.roleIds=index.roleIds
+                 this.formuserAdd.userMobile=index.userMobile
+                 this.formuserAdd.userEmail=index.userEmail
+
+          },
+           getrolelist(){//角色列表
+                    rolelist().then(res=>{
+                        console.log("jiaose")
+                        console.log(res)
+                        if(res.data.code==0){
+                                this.tableData=res.data.data
+                        }
+                    })
+             },
+
+
              addueser(){
                  this.UserdialogVisible=true 
                },
               savadata(){
-                       this.formuserAdd.userIdentity=Number(this.formuserAdd.userIdentity)
+                   if( this.Namerepeat==false){
+                      this.formuserAdd.userIdentity=Number(this.formuserAdd.userIdentity)
                        this.formuserAdd.userStatus=Number(this.formuserAdd.userStatus) 
                        this.formuserAdd.userType=Number(this.formuserAdd.userType) 
                        var parms=this.formuserAdd
-                    this.$refs['formuserAdd'].validate((valid)=>{
+                          this.$refs['formuserAdd'].validate((valid)=>{
                              if(valid){
+                                  console.log("发给后台的数据")
+                                  console.log(parms)
                                   userAdd(parms).then(res=>{
                                         console.log("-zengjia--")
                                         console.log(res)
                                         if(res.data.code==0){
                                               this.UserdialogVisible=false
-                                              
+                                              this.getuserlistpage()
+                                        }else{
+                                             this.$message.error(res.data.message)
                                         }
                                   })   
                              }
-
-
-                    })
+                      })
+                   }
               },
+            check_user_acount(){//验证登录名
+                    console.log("验证")
+
+                    var parms={
+                          userAccount:this.formuserAdd.userAccount
+                    }
+                    usercheck(parms).then(res=>{
+                               console.log(res)
+                               if(res.data.data===true){
+                                    this.Namerepeat=true
+                               }else{
+                                    this.Namerepeat=false 
+                               }
+                    })
+            },
+
+
             getuserlistpage(){
                   var parms={
-                          searchType:this.searchType,
-                          keyWord:"",
-
+                          searchType:Number(this.searchType),
+                          keyWord:this.keyWord,
+                          pageSize:this.pageSize,
+                          currentPage:this.currentPage,
                   }
-            }
+                 userlistpage(parms).then(res=>{
+                          console.log("-用户列表--")
+                          console.log(res)
+                          if(res.data.code==0){
+                                 this.usertableData=res.data.data.list 
+                                 this.paggtatol=res.data.data.total
+                          }
+                 })
+            },
+           pageIndexChange(index){
+                        this.currentPage=index
+                        this.getuserlistpage()   
 
+           },
+           delect_user(index){//删除
+                  console.log(index)
+                  var parms={
+                          uid:index.uid
+                  }
+                this.$confirm('此操作将永久删除该用户所有信息和数据, 是否继续?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                        }).then(() => {
+                            deleteuid(parms).then(res=>{
+                                        if(res.data.code==0){
+                                            this.getuserlistpage()
+                                        }  
+                                })
+                                }).catch(() => {
+                                this.$message({
+                                    type: 'info',
+                                    message: '已取消删除'
+                                });          
+                                });
+          },
+           Seach_user(){//查询
+                  this.getuserlistpage()   
+           },
 
          },
          mounted(){
-
+                this.getrolelist()
+                this.getuserlistpage()
+                
          }
   
 
