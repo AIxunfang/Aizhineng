@@ -201,13 +201,13 @@ export default {
                           { required: true, message: "输入模块名称", trigger: 'blur' }
                          ],
                        radio3:[
-                            { required: true, message: "选择运行环境", trigger: 'change' }
+                            { required: true, message: "选择运行环境", trigger: 'blur' }
                        ],
                       selectedOptionsscript:[
-                          {required: true, message: "选择参数定义脚本", trigger: 'change'}
+                          {required: true, message: "选择参数定义脚本", trigger: 'blur'}
                        ],
                        selectedOptionsscriptchireden:[
-                         {required: true, message: "选择需要训练的脚本", trigger: 'change'}
+                         {required: true, message: "选择需要训练的脚本", trigger: 'blur'}
                        ],
                       tfParamValue:[
                           {required: true, message: "填写值", trigger: 'blur'}

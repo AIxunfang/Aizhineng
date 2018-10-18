@@ -73,12 +73,8 @@ export default {
                             if(res.data.code ==0){
                                       sessionStorage.setItem('user', JSON.stringify(user))//判断是不是在登录
                                       sessionStorage.setItem('token',res.data.data.token) 
-                                      sessionStorage.setItem('uid',res.data.data.user.uid)  
-                                   if(res.data.data.user.userType===0){
-                                        this.$router.push('/Firstpage')   //方便扩展
-                                   }else if(res.data.data.user.userType===1){
-                                          this.$router.push('/Managefristpage')   
-                                   }
+                                      sessionStorage.setItem('uid',res.data.data.user.uid)
+                                      this.$router.push('/Firstpage')    
                             }else{
                                   this.showError="用户名或密码错误"
                             }

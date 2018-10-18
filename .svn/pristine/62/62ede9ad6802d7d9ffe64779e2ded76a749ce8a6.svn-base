@@ -3,6 +3,10 @@ import qs from 'qs'
 //axios.defaults.baseURL = 'http://192.168.98.120:9999/api';
 axios.defaults.baseURL = 'http://192.168.80.63:30005/api';
 // axios.defaults.baseURL ="http://nedn26.natappfree.cc/api"
+
+
+
+
 // 请求的拦截器
        // 判断请求的类型
        // 如果是post请求就把默认参数拼到data里面
@@ -51,8 +55,10 @@ axios.interceptors.request.use(function (config) {
           config.params = {
                userAccount: Username.name,
                 token: token,
-              ...config.params   
+              ...config.params
+              
           }
+          
       }
       return config;
     }, function (error) {
@@ -200,10 +206,10 @@ export const configget =(parms) =>{
     .get('/config/get',{params : parms})
 }
 //全局资源配置发布资源管理
-// export const configgetpublish =(parms) =>{
-//     return axios
-//     .get('/config/get',{params : parms})
-// }
+export const configgetpublish =(parms) =>{
+    return axios
+    .get('/config/get',{params : parms})
+}
 
 
 //修改全局资源配置
@@ -336,13 +342,6 @@ export const userAdd =(parms) =>{
     return axios
     .post('/user/add', parms,)
 }
-//用户编辑
-export const updateaccountedit =(parms) =>{
-    return axios
-    .post('/user/update/account', parms,)
-}
-
-
 //用户列表
 export const userlistpage =(parms) =>{
     return axios
@@ -372,14 +371,4 @@ export const permissionlistsort =(parms) =>{
 export const findresource =(parms) =>{
     return axios
     .get('/monitor/find/resource',{params : parms})
-}
-//资源分页接口
-export const monitorfindpage =(parms) =>{
-    return axios
-    .get('/monitor/find/page',{params : parms})
-}
-//个人用户查询
-export const user_fing_account =(parms) =>{
-    return axios
-    .get('/user/find/account',{params : parms})
 }

@@ -145,13 +145,13 @@ export default {
                           }).then(() => {
                                projectSharedelete(parms).then(res=>{
                                       if(res.data.code==0){
-                                          this.$message({
+                                          this.message({
                                               type:"success",
                                               message:'删除成功'
                                           })
                                         this.getprojectSharelist() 
                                       }else{
-                                         this.$message.error(res.dara.message)
+                                         this.message.error(res.dara.message)
                                  }
                               })
                           }).catch(() => {

@@ -98,7 +98,7 @@
   </el-row>
 </template>
 <script>
- import {permissionlistsort,permissionlistfirst,permissiondelete} from '@/api/api'
+ import {menulist,permissionlistfirst,permissiondelete} from '@/api/api'
 
 export default {
            data(){
@@ -164,7 +164,7 @@ export default {
               var parms={
                     userAccount:this.Username.name,
               }
-               permissionlistsort(parms).then(res=>{
+               menulist(parms).then(res=>{
                         if(res.data.code==0){
                             console.log("菜单栏权限")
                              console.log(res)

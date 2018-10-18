@@ -58,7 +58,7 @@
   </el-row>  
 </template>
 <script>
-
+import { configgetpublish, configupdate } from "@/api/api";
 export default {
   data() {
     return {
@@ -135,7 +135,7 @@ export default {
     }
   },
   mounted() {
- 
+    this.getconfiggetpublish();
   }
 };
 </script>

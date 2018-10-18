@@ -242,7 +242,6 @@ export default {
                 //           this.sendpicturedata.push(item.resourceUrl)  
                 //    })
                 //   var stringdata= this.sendpicturedata.join(",")
-             
                   var parms={
                          publishId:this.$route.params.id,
                          projectId: this.$route.params.projectId,
@@ -262,11 +261,10 @@ export default {
                                                 type:'success',
                                                 message:'创建分享成功'
                                             })
-                                            this.$router.push('/ShareList')
                                             this.sharedialogVisible=false;
-                                            this.$refs['describeValidateForm'].resetFields();       
+                                           this.$refs['describeValidateForm'].resetFields();       
                                         }else{
-                                             this.$message.error("已经创建过分享,请在分享列表查看")
+                                             this.$message.error(res.data.message)
                                         }
                              })
                          }

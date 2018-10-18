@@ -42,6 +42,7 @@
                           align="center"
                          >
                         </el-table-column>
+
                         <el-table-column
                           header-align="center"
                           align="center"
@@ -60,13 +61,10 @@
                       title="提示"
                       :visible.sync="EditdialogVisible"
                       width="60%"
-                   
                       >
-                
                   <zk-table 
                      ref="table"
                     :data="treedata"
-                  
                     :columns="columns"
                     :border="props.border"
                     :show-header="props.showHeader"
@@ -104,9 +102,6 @@
                         <el-button size="small" @click="addvisibledialog= false">取 消</el-button>
                         <el-button type="primary" size="small"  @click="sendrole" >确 定</el-button>
                       </span>
-
-
-                 
                  </el-dialog>
           </el-col>
           
@@ -237,17 +232,17 @@ export default {
               },
            getmenulist(){
                permissionlistsort().then(res=>{
-                          console.log("菜单栏权限------------")
+                          console.log("菜单栏权限")
                              console.log(res)
                         if(res.data.code==0){
 
                              this.routerurl= res.data.data
-                            this.routerurl.forEach((item ,index) => {
-                                      // console.log("==")
-                                      // console.log(item) 
+                            // this.routerurl.forEach((item ,index) => {
+                            //           // console.log("==")
+                            //           // console.log(item) 
 
-                                      this.treedata.push(item[0])
-                            });   
+                            //           this.treedata.push(item[0])
+                            // });   
 
                            console.log("666")
                            console.log( this.treedata)

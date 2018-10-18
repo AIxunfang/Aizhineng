@@ -3,19 +3,25 @@
         <el-col :span="24">
            <div class="navigationbar"> 
               <span class="navigationname">全局参数管理<i class="el-icon-arrow-right" aria-hidden="true"></i>
-                资源配置
+                 训练资源配置
               </span>
             </div>
          </el-col>
          <el-col :span="24"  style="padding:20px;height:300px">
+
+             <!-- <ve-bar  
+             :data="chartData_vebar" 
+             :extend="chartExtend" 
+             :settings="chartSettings">
+             </ve-bar> -->
             <el-col :span="8">
-                <ve-pie :data="chartData_vebarcpu"  :settings="chartSettings"  ></ve-pie>
+                <ve-pie :data="chartData_vebarcpu"  :settings="chartSettings" ></ve-pie>
             </el-col>
             <el-col :span="8">
-                     <ve-pie :data="chartData_vebargpu"  :settings="chartSettings"  :legend-visible="false" ></ve-pie> 
+                     <ve-pie :data="chartData_vebargpu"  :settings="chartSettings" ></ve-pie> 
             </el-col>
             <el-col :span="8">
-                      <ve-pie :data="chartData_vebarmeory"  :settings="chartSettings"  :legend-visible="false"></ve-pie> 
+                      <ve-pie :data="chartData_vebarmeory"  :settings="chartSettings" ></ve-pie> 
             </el-col>
 
          </el-col>
@@ -26,60 +32,57 @@
                                   :data="usetableData"
                                   style="width: 100%">
                                   <el-table-column
+                                    prop="date"
                                     label="资源类型"
                                     width="180">
-                                 <template slot-scope="scope">
-                                      <span v-if="scope.row.type==1">训练</span>
-                                      <span v-else>发布</span>
-                                 </template>
                                   </el-table-column>
                                   <el-table-column
-                                    prop="resource"
-                                    label="资源占比"
-                                    width="180">
-                                  </el-table-column>                    
-                                  <el-table-column
-                                    prop="cpu"
+                                    prop="CPU"
                                     label="使用中CPU"
                                     width="180">
                                   </el-table-column>
                                   <el-table-column
-                                    prop="gpu"
+                                    prop="address"
                                     label="使用中GPU">
                                   </el-table-column>
                                   <el-table-column
-                                    prop="memory"
+                                    prop="address"
                                     label="使用中内存">
                                   </el-table-column>
                                   <el-table-column
                                     label="操作">
                                     <template slot-scope="scope">
-                                            <el-button size="mini" type="primary" @click="amend_data(scope.row)" >修改</el-button>  
+                                         <button size="mini" type="primary">修改</button>
                                     </template>
+
+
                                   </el-table-column>
 
                               </el-table>
-                        <el-dialog 
-                         :title="titleName"
-                         :visible.sync="amendVisible" >
-                        <el-form    :model="formmemory" class="demo-form-inline" label-width="120px" ref="formmemory" :rules="rules">
-                                  <el-form-item label="资源占比" prop="resource" >
-                                    <el-input v-model="formmemory.resource"  class="cpuinputamend" ></el-input>
-                                </el-form-item>
+                       
+
+                         <!-- <el-form  :inline="true"  :model="formmemory" class="demo-form-inline" label-width="120px" ref="formmemory" :rules="rules">
                                 <el-form-item label="CPU限额:" prop="cpuamend" >
                                     <el-input v-model="formmemory.cpuamend"  class="cpuinputamend" ></el-input>
                                 </el-form-item>
-                                <el-form-item label="GPU限额:"  prop="gpuamend" v-show="this.formmemory.type ===1">
-                                    <el-input v-model="formmemory.gpuamend"  class="cpuinputamend" ></el-input>
+                                 <el-form-item>
+                                          <span style=" opacity: 0;" >66666</span>
                                 </el-form-item>
-                                 <el-form-item label="内存限额:" prop="memoryamend" >
+                           <el-form-item label="内存限额:" prop="memoryamend" >
                                     <el-input v-model="formmemory.memoryamend"  class="cpuinputamend" ></el-input>
                                 </el-form-item>
-                        </el-form>
-                           <span slot="footer" class="dialog-footer">
-                              <el-button type="primary" size="mini"  @click="savememoryamend">保存</el-button>
-                            </span>
-                        </el-dialog>
+                                <el-form-item>
+                                      <span style=" opacity: 0;" >66666</span>
+                                </el-form-item>
+                                <el-form-item label="GPU限额:"  prop="gpuamend">
+                                    <el-input v-model="formmemory.gpuamend"  class="cpuinputamend" ></el-input>
+                                </el-form-item>
+                            <el-form-item>
+                             </el-form-item> 
+                        </el-form
+                        <div style="float:right;margin:40px;height:60px; position:relative">
+                             <el-button type="primary" size="small" @click="savememoryamend">保存</el-button>
+                         </div>  -->
                  </div>
          </el-col>
   </el-row>
@@ -89,8 +92,6 @@ import { configget, configupdate, findresource } from "@/api/api";
 export default {
   data() {
     return {
-      titleName:null,
-      amendVisible:false,
       usetableData:[],
       chartSettings: {
         radius: 50,
@@ -114,9 +115,7 @@ export default {
       formmemory: {
         cpuamend: "",
         gpuamend: "",
-        memoryamend: "",
-        type:'',
-        resource:''
+        memoryamend: ""
       },
 
       rules: {
@@ -130,7 +129,7 @@ export default {
         ],
         gpuamend: [
           { required: true, message: "不能为空", trigger: "blur" },
-          { pattern: /^([1-9]\d*|[0]{1,1})$/, message: "大于-1的正整数" }
+          { pattern: /^[1-9]+\d*$/, message: "大于0的正整数" }
         ]
       },
 
@@ -146,7 +145,9 @@ export default {
         columns: ["类型", "使用情况"],
         rows: []
       },
-
+      formInlinecpu: {
+        cpuamend: ""
+      }
     };
   },
   methods: {
@@ -155,29 +156,15 @@ export default {
         console.log("------资源数据----");
         console.log(res);
         if (res.data.code == 0) {
-             this.usetableData=res.data.data
+          this.formmemory.cpuamend = res.data.data.cpu;
+          this.formmemory.gpuamend = res.data.data.gpu;
+          this.formmemory.memoryamend = res.data.data.memory;
         }
       });
     },
-  amend_data(index){
-         console.log(index)
-         if(index.type==1){
-            this.titleName="训练资源配置"
-         }else{
-             this.titleName="发布资源配置"
-         }
-         this.amendVisible=true 
-         this.formmemory.memoryamend=index.memory
-         this.formmemory.gpuamend=index.gpu
-         this.formmemory.cpuamend=index.cpu
-         this.formmemory.type=index.type 
-         this.formmemory.resource=index.resource
-  },
-
     savememoryamend() {
       var params = {
-        resource:this.formmemory.resource,
-        type: this.formmemory.type,
+        type: 1,
         memory: this.formmemory.memoryamend,
         gpu: this.formmemory.gpuamend,
         cpu: this.formmemory.cpuamend
@@ -190,7 +177,6 @@ export default {
                 message: "修改成功",
                 type: "success"
               });
-              this.amendVisible=false
               this.$refs["formmemory"].resetFields();
               setTimeout(() => {
                 this.getconfigget();
@@ -288,7 +274,7 @@ export default {
             //     res.data.data.all_publish_used_memory,
             // }
         
-            }
+        }
       });
     }
   },

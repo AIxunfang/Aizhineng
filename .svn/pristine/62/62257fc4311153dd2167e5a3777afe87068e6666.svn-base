@@ -48,7 +48,7 @@
                               <span   :class='{"startdisabled":item.publishStatus !== 1}'  ><el-button   size="small"  icon="el-icon-caret-right" @click.once="startmodel(index)" >发布</el-button></span>   
                         </div>
                           <div class="menukey">
-                                  <el-button  size="small"  icon="el-icon-delete" @click="delectmodel(index);" >删除</el-button>
+                                  <el-button  size="small"  icon="el-icon-delete" @click="delectmodel(index)" >删除</el-button>
                         </div>  
                          <div class="menukey">
                              <el-button  size="small"  icon="el-icon-search" @click="Releasedetails(index)" >接口测试</el-button>
@@ -117,7 +117,7 @@ export default {
                                 if(res.data.code==0){
                                       this.$message({
                                             type:'success',
-                                            message:"提交发布成功"
+                                            message:"发布成功"
                                       })
                                      this.getpublishfindpage() 
                                 }else{
@@ -126,16 +126,6 @@ export default {
                     })
 
            },
-      
-        delectshare(index){
-                console.log("fenxiang")
-                console.log(index)
-                
-        },
-
-
-
-
            delectmodel(index){
                var parms={
                            publishId:this.distributelist[index].publishId
@@ -150,19 +140,19 @@ export default {
                                    console.log("----shanchu---")
                                      console.log(res)
                                     //     if(res.data.code==0){
-                                    if(res.data.code==0){
-                                          _this.getpublishfindpage()
-                                    }else{
-                                 this.$alert('检测到该模型已分享请先删除分享才可删除模块', '温馨提示', {
-                                          confirmButtonText: '确定',
-                                          callback: action => {
-                                                this.$router.push('/ShareList')
-                                             }
-                                          });
-                                    }
-                               
-                          })
+                                          projectSharedelete(parms).then(res=>{
+                                                console.log("----shanchufernxiang---")
+                                                           console.log(res)
+                                                           if(res.data.code===0){                  
+                                                                  this.$message({
+                                                                        type:'success',
+                                                                        message:"删除成功"
+                                                                  })
+                                                                  _this.getpublishfindpage()
+                                            }
+                               })    
 
+                          })
                    }).catch(() => {
                               this.$message({
                                     type: 'info',

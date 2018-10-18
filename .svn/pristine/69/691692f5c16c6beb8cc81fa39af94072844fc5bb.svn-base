@@ -336,13 +336,6 @@ export const userAdd =(parms) =>{
     return axios
     .post('/user/add', parms,)
 }
-//用户编辑
-export const updateaccountedit =(parms) =>{
-    return axios
-    .post('/user/update/account', parms,)
-}
-
-
 //用户列表
 export const userlistpage =(parms) =>{
     return axios
@@ -377,9 +370,4 @@ export const findresource =(parms) =>{
 export const monitorfindpage =(parms) =>{
     return axios
     .get('/monitor/find/page',{params : parms})
-}
-//个人用户查询
-export const user_fing_account =(parms) =>{
-    return axios
-    .get('/user/find/account',{params : parms})
 }
