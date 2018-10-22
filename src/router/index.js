@@ -40,7 +40,13 @@ import HositryRouceList from '@/pages/ResoureApprovingManagement/HositryRouceLis
 import trainingResourceApply from '@/pages/ResourceApplication/trainingResourceApply' //资源审批-->训练申请
 import publishResourceApply from '@/pages/ResourceApplication/publishResourceApply' //资源审批-->发布申请
 import trainingResourceApplyedit from '@/pages/ResourceApplication/trainingResourceApplyedit' //资源审批-->训练编辑申请
-import publishResourceApplyedit from '@/pages/ResourceApplication/publishResourceApplyedit' //资源审批-->发布编辑申请
+import publishResourceApplyedit from '@/pages/ResourceApplication/publishResourceApplyedit' //资源审批-->发布编辑申请i
+import CourseStructure from "@/pages/CourseResoureces/CourseStructure"//课程体系
+import CourseClassification from "@/pages/CourseResoureces/CourseClassification"//课程分类
+import CourseContent from "@/pages/CourseResoureces/CourseContent"//课程内容
+import VideoResource from "@/pages/CourseResoureces/VideoResource"//课程视频
+import CourseMaterial from "@/pages/CourseResoureces/CourseMaterial"//课程资料
+
 Vue.use(Router)
 export default new Router({
   routes: [
@@ -89,6 +95,11 @@ export default new Router({
         {path:'/trainingResourceApplyedit/:id/:cpu/:gpu/:memory',name:"trainingResourceApplyedit",component:trainingResourceApplyedit},
         {path:"/publishResourceApplyedit/:id/:cpu/:gpu/:memory",name:'publishResourceApplyedit',component:publishResourceApplyedit},
         {path:'DispatchingList',name:"DispatchingList",component:DispatchingList},
+        {path:'CourseStructure',name:"CourseStructure",component:CourseStructure},
+        {path:'CourseClassification',name:"CourseClassification",component:CourseClassification},
+        {path:"CourseContent",name:"CourseContent",component:CourseContent},
+        {path:"VideoResource",name:"VideoResource",component:VideoResource},
+        {path:'CourseMaterial',name:"CourseMaterial",component:CourseMaterial}
       ]
     },
     {

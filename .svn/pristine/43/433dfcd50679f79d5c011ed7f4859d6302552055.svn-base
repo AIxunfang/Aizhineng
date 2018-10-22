@@ -25,30 +25,6 @@
                                  ></el-option>
                             </el-select>
                           </el-form-item>
-                           <el-form-item label="运行内存:" prop="resource">
-                                   <el-radio-group v-model="modelparameter.resource" size="small">
-    
-                                       <el-radio label="1"   style="width:80px">CPU</el-radio>
-                                          
-                                            <div class="selectshow"  v-if="modelparameter.resource==1">
-                                                  <div>CPU:{{projectcpu}}</div>  
-                                                    <div>内存:{{projectmemory}}</div> 
-                                                  </div>
-                                         
-
-  
-                                       <el-radio label="2">GPU</el-radio>
-                                        <div class="selectshow"   :class="{'selectgpu': modelparameter.resource==2}"  v-if="modelparameter.resource==2" >
-                                          <div>  GPU:{{projectgpu}}</div>
-                                           <div> CPU:{{projectcpu}}</div>
-                                          <div>  内存:{{projectmemory}}</div>
-                                        </div> 
-                                  </el-radio-group>
-                       </el-form-item>
-
-
-
-
                         <!-- <el-form-item prop="resource">
                               <el-radio-group v-model="modelparameter.resource" @change="chengeradio" >
                               <el-radio-button label="1">CPU</el-radio-button>
@@ -82,7 +58,14 @@
                                     v-model="modelparameter.modeldescribe">
                                   </el-input>
                         </el-form-item>
-
+                       <el-form-item label="运行内存:" prop="resource">
+                                   <el-radio-group v-model="modelparameter.resource" size="small">
+                                       <span class="selectshow"  v-if="modelparameter.resource==1">CPU:{{projectcpu}}内存:{{projectmemory}}</span>
+                                       <el-radio label="1"   style="width:120px">CPU</el-radio>
+                                      <span class="selectshow"   v-if="modelparameter.resource==2">GPU:{{projectgpu}}CPU:{{projectcpu}}内存:{{projectmemory}}</span>   
+                                       <el-radio label="2">GPU</el-radio>
+                                  </el-radio-group>
+                       </el-form-item>
                        <el-form-item>
                              <el-popover placement="right"  width="200" trigger="hover"  
                               content="如需申请,请前往资源申请页面">
@@ -564,19 +547,17 @@ export default {
  .selectshow{
      line-height: 25px;
     border: 1px solid #ebebeb;
-    font-size: 12px;
-    height: 80px;
-    width: 50px;
-    top: 41px;
+    font-size: 14px;
+    height: 25px;
+    width: 140px;
+    top: -17px;
     position: absolute;
     text-align: center;
     font-family: "微软雅黑";
     z-index: 100;
     border-radius: 10px;
  }
-  .selectgpu{
-     left: 140px;
-  }
+
 
 }
 </style>

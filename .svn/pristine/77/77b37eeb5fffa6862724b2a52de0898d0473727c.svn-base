@@ -2,14 +2,12 @@ import axios from 'axios'
 import qs from 'qs'
 //axios.defaults.baseURL = 'http://192.168.98.120:9999/api';
 axios.defaults.baseURL = 'http://192.168.80.63:30005/api';
-const getip = sessionStorage.getItem('getip')
 // axios.defaults.baseURL ="http://nedn26.natappfree.cc/api"
 // 请求的拦截器
        // 判断请求的类型
        // 如果是post请求就把默认参数拼到data里面
        // 如果是get请求就拼到params里面
 axios.interceptors.request.use(function (config) {
-    
        const token = sessionStorage.getItem('token')
         console.log("=====token=====")
         console.log(token)
@@ -63,7 +61,7 @@ axios.interceptors.request.use(function (config) {
 //登陆首页
 export const userlogin =(parms) =>{
       return  axios
-      .post('/user/login',parms,{"headers":{"ip":getip}})  
+      .post('/user/login',parms)  
 }
 //左侧菜单栏
 var _this=this

@@ -76,7 +76,7 @@ export default {
                                       sessionStorage.setItem('token',res.data.data.token) 
                                       sessionStorage.setItem('uid',res.data.data.user.uid)  
                                    if(res.data.data.user.userType===0){
-                                        this.$router.push('/Firstpage')   //方便扩展
+                                      this.$router.push('/Firstpage')   //方便扩展
                                    }else if(res.data.data.user.userType===1){
                                         this.$router.push('/Managefristpage')   
                                    }

@@ -7,7 +7,8 @@
               </span>
             </div>
       </el-col>
-      <el-col :span="24" > 
+      <el-col :span="24" >
+               
             <div class="projectconcent">
               <el-form  :model="addprojectfrom"  label-width="120px"  class="addprojectfrom" :rules="addprojectrules" ref="addprojectrules">
                     <el-form-item label="项目中文标题:"  prop="projectNameZh">

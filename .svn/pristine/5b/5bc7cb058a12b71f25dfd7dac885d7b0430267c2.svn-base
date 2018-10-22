@@ -1,0 +1,9 @@
+<template>
+    <el-row>课程体系</el-row>
+</template>
+<script>
+export default {
+    
+}
+</script>
+
