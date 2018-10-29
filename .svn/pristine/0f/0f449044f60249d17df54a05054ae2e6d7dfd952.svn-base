@@ -47,6 +47,18 @@
                             <i class="el-icon-info" slot="reference"></i>
                           </el-popover>
                        </el-form-item>
+
+
+
+
+                        <!-- <el-form-item prop="resource">
+                              <el-radio-group v-model="modelparameter.resource" @change="chengeradio" >
+                              <el-radio-button label="1">CPU</el-radio-button>
+                              <el-radio-button label="2">GPU</el-radio-button>
+                        </el-radio-group>
+                            <span v-if="modelparameter.resource==1">CPU:{{projectcpu}}内存:{{projectmemory}}</span>
+                            <span v-if="modelparameter.resource==2">GPU:{{projectgpu}}CPU:{{projectcpu}}内存:{{projectmemory}}</span>                               
+                        </el-form-item> -->
                       </div>
                       <div>
                         <el-form-item label="模型类别:">
@@ -72,6 +84,11 @@
                                     v-model="modelparameter.modeldescribe">
                                   </el-input>
                         </el-form-item>
+
+
+
+
+
                       </div>
                        <div>
                           <el-form-item label="参数脚本:" prop="selectedOptionsscript">

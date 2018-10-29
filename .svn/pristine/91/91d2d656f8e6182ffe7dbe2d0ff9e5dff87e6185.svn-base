@@ -29,10 +29,14 @@
                                    <el-radio-group v-model="modelparameter.resource" size="small">
     
                                        <el-radio label="1"   style="width:80px">CPU</el-radio>
+                                          
                                             <div class="selectshow"  v-if="modelparameter.resource==1">
-                                                    <div>CPU:{{projectcpu}}</div>  
+                                                  <div>CPU:{{projectcpu}}</div>  
                                                     <div>内存:{{projectmemory}}</div> 
-                                              </div>
+                                                  </div>
+                                         
+
+  
                                        <el-radio label="2">GPU</el-radio>
                                         <div class="selectshow"   :class="{'selectgpu': modelparameter.resource==2}"  v-if="modelparameter.resource==2" >
                                           <div>  GPU:{{projectgpu}}</div>
@@ -41,12 +45,18 @@
                                         </div> 
                                   </el-radio-group>
                        </el-form-item>
-                          <el-form-item>
-                             <el-popover placement="top"  width="200" trigger="hover"  
-                              content="如需申请,请前往资源申请页面">
-                            <i class="el-icon-info" slot="reference"></i>
-                          </el-popover>
-                       </el-form-item>
+
+
+
+
+                        <!-- <el-form-item prop="resource">
+                              <el-radio-group v-model="modelparameter.resource" @change="chengeradio" >
+                              <el-radio-button label="1">CPU</el-radio-button>
+                              <el-radio-button label="2">GPU</el-radio-button>
+                        </el-radio-group>
+                            <span v-if="modelparameter.resource==1">CPU:{{projectcpu}}内存:{{projectmemory}}</span>
+                            <span v-if="modelparameter.resource==2">GPU:{{projectgpu}}CPU:{{projectcpu}}内存:{{projectmemory}}</span>                               
+                        </el-form-item> -->
                       </div>
                       <div>
                         <el-form-item label="模型类别:">
@@ -72,6 +82,16 @@
                                     v-model="modelparameter.modeldescribe">
                                   </el-input>
                         </el-form-item>
+
+                       <el-form-item>
+                             <el-popover placement="right"  width="200" trigger="hover"  
+                              content="如需申请,请前往资源申请页面">
+                            <i class="el-icon-info" slot="reference"></i>
+                          </el-popover>
+                       </el-form-item>
+
+
+
                       </div>
                        <div>
                           <el-form-item label="参数脚本:" prop="selectedOptionsscript">

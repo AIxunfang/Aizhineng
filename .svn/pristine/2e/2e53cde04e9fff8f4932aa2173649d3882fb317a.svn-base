@@ -26,20 +26,17 @@
                         </div>  
                         <div class="block" style="margin-top:15px">
                         <el-tree
+                          :data="data5"
+                          node-key="createTime"
                           :accordion="true"
-                           lazy
-                          :props="props"
-                          :load="loadNode1"
-                          >
+                          @node-expand="handleNodeClick"
+                          :expand-on-click-node="false">
                           <span class="custom-tree-node" slot-scope="{ node, data }">
-                            <span>
-                               {{data.name}}
-                             </span>
+                            <span>{{ node.label}}</span>
                             <span style="float:right">
                               <el-button
                                 type="text"
                                 size="mini"
-                                v-show="data.type !=3"
                                 @click="() => editconcent(data)">
                                  编辑
                               </el-button>
@@ -50,7 +47,7 @@
                                 删除
                               </el-button>
                             </span>
-                          </span> 
+                          </span>
                         </el-tree>
                       </div>   
  
@@ -121,23 +118,46 @@
     </el-row>
 </template>
 <script>
-import{courseaddcourse,courseStructurepage,courseClassificationpage,courseContentpage } from "@/api/api"
+import{courseaddcourse,courseStructurepage,courseClassificationpage } from "@/api/api"
 export default {
   data() {
     return {
 
+      datachirtwo:[],
+          data5:[
+
+              // {
+              //   id: 1,
+              //   label: '一级 1',
+              //   children: [{
+              //     id: 4,
+              //     label: '二级 1-1',
+              //     children: [{
+              //       id: 9,
+              //       label: '三级 1-1-1'
+              //     }, {
+              //       id: 10,
+              //       label: '三级 1-1-2'
+              //     }]
+              //   }]
+              // },
+             
+            ],
 
 
 
-       props: {
-          label: 'name',
-          children: 'zones',
-          isLeaf: 'leaf'
-        },
-          datachirtwo:[],
+
+
+
+
+
+
+
+
+
+
       datamodel:[],
       optionstixi:[],
-      optioncontent:[],
 
       dataform:{
          token:"",   
@@ -226,7 +246,47 @@ export default {
                       pageSize:10000,
                       courseStructureId:data.courseStructureId
                    }  
-  
+           courseClassificationpage(parms).then(res=>{
+            
+                         console.log(res)
+                         if(res.data.data.list.length==0){
+                              //   data.filter(function(){
+                              //       return item.id.match(没有小孩)
+                              //  })
+                           //   data.children.splice(0,1)
+                         //  data.remove('children')
+                              return;
+                         }else{
+                             res.data.data.list.forEach( (item,index) =>{
+
+
+                               data.children.splice(0,1)
+                               data.children.push({
+                                          id:item.id,
+                                          courseStructureId:item.courseStructureId,
+                                          courseStructureOrder:item.courseClassificationOrder,
+                                          courseClassificationDesc:item.courseClassificationDesc,
+                                          label:item.courseClassificationName,
+                                          courseClassificationId:item.courseClassificationId
+                                  })  
+                                                             console.log("fenlei")
+                            console.log(data)
+                             })
+                         }
+
+
+
+
+
+                            // if(res.data.code==0){
+                            //       data.children.push(res.data.data.list) 
+                            // }
+
+                        this.datamodel.forEach(item=>{
+                                  item.type=2
+                                   
+                        })
+                })   
 
 
              }
@@ -234,89 +294,8 @@ export default {
       },
 
 
-          getcourseStructurepage(){
-               var params={
-                     currentPage:1,
-                     pageSize:100
-
-               }
-             courseStructurepage(params).then(res=>{
-                       if(res.data.code==0){
-                            this.optionstixi=res.data.data.list   
-                            this.optionstixi.forEach((item,index)=>{
-                                     item.type=1
-                                     item.name=item.courseStructureName
-                            })
-                       }
 
 
-             })
-
-      },
-       loadNode1(node, resolve){
-             console.log("lodaing")
-              console.log(node)
-              console.log(resolve)
-             setTimeout(()=>{
-              if(node.level === 0){
-                         return resolve(this.optionstixi)
-                        }
-                },500)
-            if(node.level > 2) return resolve([]);
-                if(node.data !==undefined){
-                    console.log("jisudue")
-                   if(node.data.type==1){
-                              var parms={
-                                  currentPage:1,
-                                  pageSize:10000,
-                                  courseStructureId:node.data.courseStructureId
-                            }
-                    courseClassificationpage(parms).then(res=>{
-                            console.log("二级的菜单")
-                            console.log(res)
-
-                          if(res.data.code==0){
-                            this.optionfenlei=res.data.data.list
-                               res.data.data.list.forEach((item,index)=>{
-                                       item.type=2
-                                       item.name=item.courseClassificationName
-                               })
-                              setTimeout(() =>{
-                                  resolve(this.optionfenlei)
-                              },500)  
-                             
-
-                          }
-                   }) 
-               }else if(node.data.type==2){
-                    console.log("sanjide neirong ")
-                    var parms={
-                                 currentPage:1,
-                                  pageSize:10000,
-                                  courseClassificationId:node.data.courseStructureId
-                    }
-                    courseContentpage(parms).then(res=>{
-                                   console.log("三级")
-                                   console.log(res)    
-                                   if(res.data.code==0){
-                                       this.optioncontent=res.data.data.list
-                                      res.data.data.list.forEach((item,index)=>{
-                                          item.type=3
-                                          item.name=item.courseContentName
-                                         })
-                            setTimeout(() =>{
-                                  resolve( this.optioncontent)
-                                
-                              },500)  
-
-                                 
-                                   }
-                          
-                    })
-
-               }   
-           }
-       },
       editconcent(data){
          console.log(data)
 
@@ -381,7 +360,39 @@ export default {
 
              console.log(parms)
       },
+      getcourseStructurepage(){
+               var params={
+                     currentPage:1,
+                     pageSize:100
 
+               }
+             courseStructurepage(params).then(res=>{
+                       console.log(res)
+                       if(res.data.code==0){
+                            this.optionstixi=res.data.data.list   
+
+                            this.optionstixi.forEach((item,index)=>{
+                                   this.data5.push({
+                                          label:item.courseStructureName,
+                                          type:1,
+                                          id:item.id,
+                                          courseStructureOrder: item.courseStructureOrder,
+                                          courseStructureId:item.courseStructureId, 
+                                          children:[
+                                                   {
+                                                      id:"没有小孩"
+                                                   }
+                                              ]
+                                   })
+                            })
+
+
+                            console.log("==========666666===============")
+                            console.log( this.data5)
+                       }
+             })
+
+      }
 
 
   },

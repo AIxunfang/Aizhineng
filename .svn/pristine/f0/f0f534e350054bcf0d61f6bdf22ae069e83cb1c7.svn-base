@@ -405,18 +405,4 @@ export const courseStructurepage =(parms) =>{
     return axios
     .get('/course/courseStructure/page',{params : parms})
 }
-//查询体系下面的分类
-export const courseClassificationpage =(parms) =>{
-    return axios
-    .get('/course/courseClassification/page',{params : parms})
-}
-//查询课程内容
-export const courseContentpage =(parms) =>{
-    return axios
-    .get('/course/courseContent/page',{params : parms})
-}
-//上传视频资源
-export const addvideoResource =(parms) =>{
-    return axios
-    .post('/course/add/videoResource', parms,)
-}
+

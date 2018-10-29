@@ -75,14 +75,14 @@ export default {
                                       sessionStorage.setItem('user', JSON.stringify(user))//判断是不是在登录
                                       sessionStorage.setItem('token',res.data.data.token) 
                                       sessionStorage.setItem('uid',res.data.data.user.uid)  
-                                   if(res.data.data.user.userType ===0){
+                                   if(res.data.data.user.userType===0){
                                         this.$router.push('/Firstpage')   //方便扩展
                                    }else if(res.data.data.user.userType===1){
                                         this.$router.push('/Managefristpage')   
                                    }
                             }else{
                                   this.showError="用户名或密码错误"
-                            } 
+                            }
                    })    
               } else {
                   console.log('err');
@@ -166,7 +166,7 @@ export default {
               background:url(../../assets/img/userpassword.png)  no-repeat 2px 4px;   
                 padding-left:45px;
          }
-  
+
           
 </style>
 

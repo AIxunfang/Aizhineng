@@ -43,7 +43,7 @@
                                              :options="optionselect"
                                               v-model="selectedOptions" 
                                               @change="changeval"
-                                              @active-item-change="handleChangeslect"  
+                                            @active-item-change="handleChangeslect"  
                                         >
                                       </el-cascader>
                                     </div>
@@ -98,7 +98,6 @@ export default {
       methods:{
              handleChangeslect(val){
                        console.log("-------")
-                       console.log(val)
                       console.log(val.length)
                  if(val.length==1){
                       if(val[0][1]=='1'){
@@ -108,30 +107,35 @@ export default {
                                 courseStructureId:val[0][0]
                           }
                    courseClassificationpage(parms).then(res=>{
-                                    let cascChid = []
                                      if(res.data.code==0){
-                                          this.courseClassificationdata=res.data.data.list;  
-                                          for(let child of this.courseClassificationdata) {
-                                            cascChid.push({
-                                              label: child.courseClassificationName,
-                                              value: [child.courseStructureId,'2'],
-                                              children: []
-                                            })
-                                          }
+                                          console.log("二级")
+                                          console.log(res)
+
+                                          this.courseClassificationdata=res.data.data.list
+                                       this.courseClassificationdata.forEach((item,index)=>{
+                                                item.label=item.courseClassificationName;
+                                                item.children=[];
+                                                item.value=[item.courseStructureId,'2'];
+                                             })
                                      }
                                for(var i=0;i<this.optionselect.length;i++){
-                                    if(this.optionselect[i].value[0]==val[0][0]) {
-                                    this.optionselect[i].children= cascChid    ;
+                                    if(this.optionselect[i].courseStructureId==val[0][0]) {
+                                                  console.log("55555555")
+                                    this.optionselect[i].children= this.courseClassificationdata    ;
+                                             
                                               this.arryindex=i
+                                              
                                               console.log( this.optionselect)
                                          }
 
                                   }
-  
                          })
                     }
-               }   
+               } 
+                 
+                 
                else if(val.length==2){
+                        
                          if(val[1][1]==2){
                               var parms={
                                   currentPage:1,
@@ -139,24 +143,44 @@ export default {
                                   courseClassificationId:val[1][0]
                                 }
                             courseContentpage(parms).then(res=>{
+                                        console.log('三级')
+                                        console.log(res)
+                                        
+                                       console.log(this.arryindex)
                                        if(res.data.code==0){
-                                         res.data.data.list.forEach((item,index)=>{
-                                             this.courseContentdata=[]
-                                             this.courseContentdata.push({
-                                                     label:item.courseContentName,
-                                                     value:[item.courseContentId,'3']
-                                             })
+                                            
+                                           this.courseContentdata=res.data.data.list
+                                          this.courseContentdata.forEach((item,index)=>{
+                                                item.label=item.courseContentName;
+                                                item.value=[item.courseContentId,'3'];
+                                               
                                           })
+                                           //  this.optionselect[this.arryindex].cities  
+
+
                                              for(var k=0;k<this.optionselect[this.arryindex].children.length;k++){
-                                                    if(this.optionselect[this.arryindex].children[k].value[0]== val[1][0]){
+                                               console.log("第一个")
+                                                     console.log(this.optionselect[this.arryindex].children[k])
+                                                     console.log("第二个")
+                                                     console.log(val[1][0])
+                                                    if(this.optionselect[this.arryindex].children[k].courseStructureId== val[1][0]){
+
+                                                      console.log("进来了")
                                                           this.optionselect[this.arryindex].children[k].children =   this.courseContentdata
+                                                       
+                                                          this.formvideo.courseContentId=this.optionselect[this.arryindex].children[k].courseContentId
                                                     }
                                              }
                                        }    
                             })
 
                          }
-                 }  
+                 }else {
+
+                     console.log("zuihouyuiji")
+
+
+                 }   
              },
                   handleAvatarSuccess(res, file) {
                       this.loading=false
@@ -183,19 +207,21 @@ export default {
                     }
                   courseStructurepage(params).then(res=>{
                             if(res.data.code==0){
-                              let lists = res.data.data.list
-                              for(let item of lists) {
-                                this.optionselect.push({
-                                  label:item.courseStructureName,
-                                  value: [item.courseStructureId,'1'],
-                                  children: []
-                                })
-                              }      
+                              this.optionselect=res.data.data.list
+                              return   res.data.data.list.forEach((item,index)=>{
+                                         item.label=item.courseStructureName;
+                                         item.children=[];
+                                         item.value=[item.courseStructureId,'1'];
+
+                                  })
+
                         }
                   })
                 },
             changeval(val){
-                   this.formvideo.courseContentId=this.selectedOptions[2][0]
+                  console.log("change")
+                  console.log(val)
+                console.log(this.selectedOptions)
 
             },
 

@@ -1,0 +1,230 @@
+<template>
+    <el-row>
+          <div class="navigationbar"> 
+               <span class="navigationname">课程管理<i class="el-icon-arrow-right" aria-hidden="true"></i>
+                      课程资源
+                </span>
+           </div>
+          <el-col :span="24">
+               <el-col :span="24"   style="padding: 10px 0px 10px 20px">
+                     <el-dropdown    @command="selecty">
+                              <el-button type="primary" class="el-icon-plus" size="mini">
+                                       添加
+                              </el-button>
+                              <el-dropdown-menu slot="dropdown">
+                              <el-dropdown-item  command="1">体系</el-dropdown-item>
+                              <el-dropdown-item command="2">分类</el-dropdown-item>
+                               <el-dropdown-item command="3">内容</el-dropdown-item>
+                              </el-dropdown-menu>
+                         </el-dropdown>
+               </el-col>
+                 <el-col :span="12" style="padding:20px;border:1px solid #ededed">
+                     <div >
+                        <el-input placeholder="请输入内容" v-model="searchName"  size="small" class="input-with-select">
+                            <el-button slot="append" icon="el-icon-search"></el-button>
+                        </el-input>
+                        </div>  
+                 </el-col>
+                 <el-col :span="12"  style="padding:20px ;border:1px solid #ededed"  v-show="this.formStructuredata.type !=null ">
+                    <div>
+                          <div style="text-align:center">新增{{titlename}}</div>
+                         <el-form  :model="formStructuredata" class="formStructureclass" size="small" label-position="top">
+
+                          <el-form-item label="所属体系"  v-show=" this.formStructuredata.type==2">
+                                      <el-select v-model="selectType" placeholder="请选择所属体系">
+                                                <el-option
+                                                      v-for="item in optionstixi"
+                                                      :key="item.createTime"
+                                                      :label="item.courseStructureName"
+                                                      :value="item.courseStructureId">
+                                                </el-option>
+                                          </el-select> 
+
+
+                          </el-form-item>
+
+
+                            <el-form-item :label=" titlename + '名称' ">
+                                <el-input v-model="formStructuredata.name" placeholder="输入名称"></el-input>
+                            </el-form-item>
+                            <el-form-item  :label=" titlename+'排序'" >
+                                  <el-input v-model="formStructuredata.order" placeholder="请输入数字"></el-input>
+                            </el-form-item>
+                            <el-form-item :label="titlename+ '名称' ">
+                                     <el-input
+                                            type="textarea"
+                                            :rows="2"
+                                            placeholder="请输入内容"
+                                            v-model="formStructuredata.desc">
+                                     </el-input>
+                               </el-form-item>
+                             <el-form-item label="上传封面图">
+                                  <el-upload
+                                    class="avatar-uploader"
+                                    action="http://192.168.80.63:30005/api/course/upload/img"
+                                    :show-file-list="false"
+                                    :on-success="handleAvatarSuccess"
+                                    :before-upload="beforeAvatarUpload"
+                                    :data="dataform"
+                                     accept="image/*"
+                                    >
+                                    <img  v-if="imageUrlshow" :src="imageUrlshow" class="avatar">
+                                    <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                                 </el-upload>
+                            </el-form-item>
+                            <el-form-item>
+                                  <el-button type="primary" size="mini"  style="float:right"  @click="savedata" >保存</el-button>
+                            </el-form-item>   
+                     </el-form>
+                   </div>
+
+                 </el-col>
+
+          </el-col>
+
+
+    </el-row>
+</template>
+<script>
+import{courseaddcourse,courseStructurepage } from "@/api/api"
+export default {
+  data() {
+    return {
+      optionstixi:[],
+      selectType:null,
+      dataform:{
+         token:"",   
+      },
+      titlename:null,
+      imageUrlshow: "",
+      searchName: "",
+      formStructuredata: {
+                  name:'',
+                  desc:'',
+                  order:'',
+                  uri:'',
+                  url:'',
+                  type:null,
+      }
+    };
+  },
+  methods: {
+      selecty(val){
+            console.log(val)
+            this.formStructuredata.type=val
+            switch(val){
+                   case '1':
+                   this.titlename="体系"
+                   
+                   break;
+                   case '2':
+                   this.titlename="分类"
+                   break;
+                   case '3':
+                  this.titlename="内容"
+                  break;
+
+            }
+
+      },
+      handleAvatarSuccess(res, file) {
+            console.log(file.raw)
+            this.imageUrlshow = URL.createObjectURL(file.raw);
+                              console.log("上传");
+                              console.log(res);
+                              if(res.code==0){
+                                  this.formStructuredata.uri=res.data.imageUri
+                                  this.formStructuredata.url=res.data.imageUrl    
+                              }else{
+                                     this.$message.error(res.data.message)
+                              }
+      },
+      beforeAvatarUpload(file) {//上传前加一个参数.
+            const token = sessionStorage.getItem("token");
+            this.dataform.token = token;
+      },
+      savedata(){
+             
+             this.formStructuredata.order=Number(this.formStructuredata.order)
+             this.formStructuredata.type=Number( this.formStructuredata.type)
+             var parms=this.formStructuredata
+             courseaddcourse(parms).then(res=>{
+                      console.log(res)
+                      if(res.data.code==0){
+                              this.$message({
+                                     type:"success",
+                                     message:'保存成功'
+                              })
+                              
+
+
+                      }else{
+                             this.$message.error(res.data.message)
+                      }
+             })
+
+             console.log(parms)
+      },
+      getcourseStructurepage(){
+               var params={
+                     currentPage:1,
+                     pageSize:100
+
+               }
+             courseStructurepage(params).then(res=>{
+                       console.log(res)
+                       if(res.data.code==0){
+                            this.optionstixi=res.data.data.list   
+                       }
+             })
+
+      }
+
+
+  },
+  mounted() {
+        this.getcourseStructurepage()
+  }
+};
+</script>
+  <style  lang="scss"   scoped>
+
+ 
+</style>
+ <style>
+.formStructureclass .el-form-item {
+  margin-bottom:5px;
+}
+.formStructureclass  .el-form-item__label{
+       padding:0px 0px 0px ;
+}
+
+
+
+.avatar-uploader .el-upload {
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+
+}
+.avatar-uploader .el-upload:hover {
+  border-color: #409eff;
+}
+.avatar-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 178px;
+  height: 178px;
+  line-height: 178px;
+  text-align: center;
+}
+.avatar {
+  width: 178px;
+  height: 178px;
+  display: block;
+}
+</style>
+ 
+
