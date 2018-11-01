@@ -18,7 +18,7 @@
                               </el-dropdown-menu>
                          </el-dropdown>
                </el-col>
-                 <el-col :span="14" style="padding:20px;border:1px solid #ededed">
+                 <el-col :span="12" style="padding:20px;border:1px solid #ededed">
                         <div >
                             <el-input placeholder="请输入内容" v-model="searchName"  size="small" class="input-with-select">
                                 <el-button slot="append" icon="el-icon-search"></el-button>
@@ -39,8 +39,8 @@
                               <el-button
                                 type="text"
                                 size="mini"
-                                v-show="data.type !== 4"
-                                @click="() => editconcent(node,data)">
+                                v-show="data.type !=3"
+                                @click="() => editconcent(data)">
                                  编辑
                               </el-button>
                               <el-button
@@ -56,13 +56,13 @@
  
 
                  </el-col>
-                 <el-col :span="10"  style="padding:20px ;border:1px solid #ededed"  v-if="this.formStructuredata.type !=null ">
+                 <el-col :span="12"  style="padding:20px ;border:1px solid #ededed"  v-if="this.formStructuredata.type !=null ">
                     <div>
-                          <div style="text-align:center"> <span v-if="this.isadd==true"> 新增</span> <span v-else>编辑</span>       {{titlename}}</div>
+                          <div style="text-align:center">新增{{titlename}}</div>
                          <el-form  :model="formStructuredata"   ref="formStructuredata"    class="formStructureclass" size="small" label-position="top" :rules="rules">
 
                           <el-form-item label="所属体系"  prop="selectType"  v-if=" this.formStructuredata.type==2 || this.formStructuredata.type==3">
-                                      <el-select v-model="formStructuredata.selectType" placeholder="请选择所属体系" @change="changeseleval"   :disabled="selectdisabledfelei" >
+                                      <el-select v-model="formStructuredata.selectType" placeholder="请选择所属体系" @change="changeseleval" >
                                                 <el-option
                                                       v-for="item in optionstixi"
                                                       :key="item.createTime"
@@ -70,13 +70,13 @@
                                                       :value="item.courseStructureId">
                                                 </el-option>
                                           </el-select> 
-                                        <el-form-item   prop="selectTypemodel" v-if="this.formStructuredata.type==3"  style="display:inline-block" >
-                                          <el-select v-model="formStructuredata.selectTypemodel" placeholder="请选择分类"  :disabled="selectdisbledfenlei" >
+                                        <el-form-item   prop="selectTypemodel" v-if="this.formStructuredata.type==3"  style="display:inline-block">
+                                          <el-select v-model="formStructuredata.selectTypemodel" placeholder="请选择分类"  >
                                                   <el-option
                                                          v-for="item in datamodel"
                                                         :key="item.createTime"
                                                         :label="item.courseClassificationName"
-                                                        :value="item.courseClassificationId">
+                                                        :value="item.courseStructureId">
                                                   </el-option>
                                             </el-select>  
                                         </el-form-item>
@@ -121,29 +121,26 @@
     </el-row>
 </template>
 <script>
-import{courseaddcourse,courseStructurepage,courseClassificationpage,courseContentpage,delectcourseStructure,delectcourseClassification,delectcourseContent,delectvideoResource,videoResourcepage,updatecourse,listparentStructure } from "@/api/api"
+import{courseaddcourse,courseStructurepage,courseClassificationpage,courseContentpage,delectcourseStructure,delectcourseClassification,delectcourseContent,delectvideoResource } from "@/api/api"
 export default {
   data() {
     return {
-        selectdisbledfenlei:false,
-        selectdisabledfelei:false,
        props: {
             label: 'name',
             children: 'zones',
             isLeaf: 'leaf'
         },
-       datachirtwo:[],
+          datachirtwo:[],
       datamodel:[],
       optionstixi:[],
       optioncontent:[],
-       isadd:true,
+
       dataform:{
          token:"",   
       },
       titlename:null,
       imageUrlshow: "",
       searchName: "",
-      optionvideo:[],
       formStructuredata: {
                   name:'',
                   desc:'',
@@ -152,7 +149,7 @@ export default {
                   url:'',
                   type:null,
                 selectType:"",
-                selectTypemodel:"",
+               selectTypemodel:"",
           },
        rules:{
             selectType:[
@@ -182,7 +179,6 @@ export default {
       selecty(val){ 
             console.log(val)
             this.formStructuredata.type=val
-            this.isadd=true
             switch(val){
                    case '1':
                    this.titlename="体系"
@@ -198,8 +194,6 @@ export default {
       handleAvatarSuccess(res, file) {
             console.log(file.raw)
             this.imageUrlshow = URL.createObjectURL(file.raw);
-
-          //  console.log(this.imageUrlshow)
                               console.log("上传");
                               console.log(res);
                               if(res.code==0){
@@ -231,11 +225,6 @@ export default {
                      pageSize:100
                }
              courseStructurepage(params).then(res=>{
-                     console.log("tixi")
-                     console.log(res)
-
-
-
                        if(res.data.code==0){
                             this.optionstixi=res.data.data.list   
                             this.optionstixi.forEach((item,index)=>{
@@ -254,7 +243,7 @@ export default {
                          return resolve(this.optionstixi)
                         }
                 },500)
-            if(node.level > 3) return resolve([]);
+            if(node.level > 2) return resolve([]);
                 if(node.data !==undefined){
                     console.log("jisudue")
                    if(node.data.type==1){
@@ -278,12 +267,12 @@ export default {
                               },500)   
                           }
                    }) 
-               } else  if(node.data.type==2){
+               }else if(node.data.type==2){
                     console.log("sanjide neirong ")
                     var parms={
                                  currentPage:1,
-                                  pageSize:100,
-                                  courseClassificationId:node.data.courseClassificationId
+                                  pageSize:10000,
+                                  courseClassificationId:node.data.courseStructureId
                     }
                     courseContentpage(parms).then(res=>{
                                    console.log("三级")
@@ -305,108 +294,35 @@ export default {
                           
                     })
                } else if(node.data.type==3){
+                           console.log("3333333333333333333333333333333333")
                           var parms={
                              currentPage:1,
                               pageSize:100,
                               courseContentId:node.data.courseContentId
                           }
                         
-                      videoResourcepage(parms).then(res=>{
+                      delectvideoResource(parms).then(res=>{
                               if(res.data.code==0){
                                     console.log("视频")
                                     console.log(res)
-                                    this.optionvideo=res.data.data.list
-                                  this.optionvideo.forEach((item,index)=>{
-                                          item.name=item.videoName
-                                          item.type=4
-                                  })   
 
 
-                             setTimeout(() =>{
-                                  resolve( this.optionvideo)
-                                
-                              },500)  
-                                 }        
-                         })   
+                              }        
+                          })   
                }
+               
+               
+
            }
        },
-      editconcent(node,data){
+      editconcent(data){
          console.log("bianji")
          console.log(data)
-         console.log(node)
-          this.isadd=false
-        this.formStructuredata.uri=data.imageUri
-        this.formStructuredata.url=data.imageUrl
-        this.imageUrlshow ="http://192.168.80.63:30005/api/file/"+`${data.imageUrl}`
-
-         this.formStructuredata.type=data.type
-                    switch(String(data.type)){
-                   case '1':
-                   this.titlename="体系"
-                   break;
-                   case '2':
-                   this.titlename="分类"
-                   break;
-                   case '3':
-                  this.titlename="模块"
-                  break;
-            }
-           if(data.type==1){
-                this.formStructuredata.name=data.courseStructureName
-                this.formStructuredata.desc=data.courseStructureDesc
-                this.formStructuredata.order=data.courseStructureOrder
-             
-               // this.formStructuredata.parentId=data.courseStructureId
-                this.formStructuredata.id=data.courseStructureId
-             }else if(data.type==2){
-                      this.formStructuredata.selectType=data.courseStructureId
-                        this.selectdisabledfelei=true
-                        this.formStructuredata.name=data.courseClassificationName
-                         this.formStructuredata.order=data.courseClassificationOrder
-                          this.formStructuredata.desc=data.courseClassificationDesc
-                          this.formStructuredata.id=data.courseClassificationId
-                }
-                else {
-                        this.selectdisbledfenlei=true
-                        this.selectdisabledfelei=true
-                       // this.imageUrlshow ="http://192.168.80.63:30005/api/file/"+`${data.imageUri}` 
-                        this.formStructuredata.name=data.courseContentName
-                        this.formStructuredata.id=data.courseContentId
-                        this.formStructuredata.desc=data.courseContentDesc
-                        this.formStructuredata.order=data.courseContentOrder
-                             
-
-                        var parms={
-                                   type:data.type,
-                                   id:data.courseContentId
-                        } 
-                      listparentStructure(parms).then(res=>{
-                             console.log("zhuji")
-                            console.log(res)
-                            if(res.data.code==0){
-                                 this.formStructuredata.selectType=res.data.data[0].courseStructureId     
-                                 this.datamodel.push(
-                                       {
-                                           courseClassificationName:res.data.data[1].courseClassificationName,
-                                           courseClassificationId:res.data.data[1].courseClassificationId
-                                       }
-                                 )
-                                        this.formStructuredata.selectTypemodel= data.courseClassificationId 
-                            }
-                      })
-                }
-
 
       },
      removecon(node,data){
             console.log(node)
             console.log(data)
-            // const parent = node.parent;
-            // const children = parent.data.children || parent.data;
-            // const index = children.findIndex(d => d.id === data.id);
-            // children.splice(index, 1);
-            
             if(data.type==1){
                     var parms={
                            courseStructureId:data.courseStructureId
@@ -418,8 +334,6 @@ export default {
                                     type:'success',
                                     message:'删除成功'
                                 })
-
-                               
                        }else{
                             this.$message.error(res.data.message)
                        }
@@ -451,28 +365,12 @@ export default {
                                     type:'success',
                                     message:'删除成功'
                                 })
-                               
                             }else{
                                   this.$message.error(res.data.message)
                             }     
                       
                  })
                         
-            }else if(data.type==4){
-                   console.log(data)
-                   var parms={
-                          courseResourceId:data.videoId
-                   }
-                   delectvideoResource(parms).then(res=>{
-                         if(res.data.code==0){
-                               this.$message({
-                                    type:'success',
-                                    message:"删除成功"
-                               })
-                             
-                               this.getcourseStructurepage()
-                         }
-                   })
             }
 
 
@@ -497,57 +395,30 @@ export default {
      },
       savedata(){
              if(this.formStructuredata.type==2){
-              
                  this.formStructuredata.parentId=this.formStructuredata.selectType
-
              }else if(this.formStructuredata.type==3){
                     this.formStructuredata.parentId= this.formStructuredata.selectTypemodel
-               }
-        this.formStructuredata.order=Number(this.formStructuredata.order)
-        this.formStructuredata.type=Number( this.formStructuredata.type)
-        var parms=this.formStructuredata
-              console.log(parms)
-             if(this.isadd){
-                // deletethis.formStructuredata.parentId;
-                this.$refs['formStructuredata'].validate((valid)=>{
-                        if(valid){
-                            courseaddcourse(parms).then(res=>{
-                                 console.log(parms)
-                                    console.log(res)
-                                    if(res.data.code==0){
-                                            this.$message({
-                                                    type:"success",
-                                                    message:'保存成功'
-                                            })
-                                            this.$refs['formStructuredata'].resetFields();
-                                                this.imageUrlshow="";
-                                                
+             }
+                        this.formStructuredata.order=Number(this.formStructuredata.order)
+                          this.formStructuredata.type=Number( this.formStructuredata.type)
+                          var parms=this.formStructuredata
+              this.$refs['formStructuredata'].validate((valid)=>{
+                    if(valid){
 
-                                        }else{
-                                            this.$message.error(res.data.message)
-                                        }
-                            })
-                        }
-                })
-           }else{
-                 console.log("编辑")
-                console.log(this.formStructuredata) 
-                updatecourse(this.formStructuredata).then(res=>{
-                             console.log(res)
+                        courseaddcourse(parms).then(res=>{
+                                  console.log(res)
                                   if(res.data.code==0){
                                           this.$message({
-                                               type:"success",
-                                               message:"编辑成功"
+                                                type:"success",
+                                                message:'保存成功'
                                           })
-                                  }
-                      
-                })   
-
-
-           }
-  
-
-
+                                           this.$refs['formStructuredata'].resetFields();
+                                      }else{
+                                        this.$message.error(res.data.message)
+                                     }
+                           })
+                    }
+              })
       },
   },
   mounted() {

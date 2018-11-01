@@ -455,13 +455,3 @@ export const delectcourseContent=(parms) =>{
     return axios
     .get('/course/delete/courseContent',{params : parms})
 }
-//获取父级结构
-export const listparentStructure=(parms) =>{
-    return axios
-    .get('/course/list/parentStructure',{params : parms})
-}
-//编辑课程体系分类内容
-export const updatecourse =(parms) =>{
-    return axios
-    .post('/course/update/course', parms,)
-}

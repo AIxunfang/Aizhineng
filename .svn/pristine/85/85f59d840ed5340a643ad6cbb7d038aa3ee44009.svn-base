@@ -1,0 +1,96 @@
+<template>
+    <el-row>
+        <el-col :span="24">
+                <div  class="videoplaystyle">
+                  <video   
+                        :src=" 'http://192.168.80.63:30005/api/file/'+`${videourlshowdata[select].videoUrl}`  " 
+                        class="videoplayer" 
+                        controls="controls"
+                    >
+                   </video>
+                 </div>
+                   <div class="videoplaystyle" style="margin-top:20px;">
+                        <div v-for="(item,index) in videourlshowdata " :key="item.index">
+                         <div style="height:76px;width:730px">
+                             <p style="height:20px;margin-bottom:10px;" @click="current(index)"  :class="{'active': select===index }" class="activehover">
+                                 <span>{{index+1}}、</span>
+                                  <span >{{item.videoName}}</span>
+                                  <span style="float:right;display:inline-block">{{item.videoDuration}}分</span>
+                             </p> 
+                             <p class="videodec">{{item.videoDesc}}</p>
+                         </div>
+                           
+                       </div>
+                   </div> 
+        </el-col>
+    </el-row>
+</template>
+<script>
+import{videoResourcepage}from "@/api/api"
+export default {
+    data(){
+          return{
+              videourlshowdata:[],
+              videoUrl:null,
+              select:0,
+          }
+    },
+    methods:{
+        getvideo(){
+            var parms={
+                         currentPage:1,
+                         pageSize:100, 
+                         courseContentId:this.$route.params.index
+            }
+            videoResourcepage(parms).then(res=>{
+                    console.log("视频资源")
+                    console.log(res)
+                    if(res.data.code==0){
+                           this.videourlshowdata=res.data.data.list
+                    }
+                
+            })
+        },
+       current(index){
+               console.log(this)  
+               this.select=index
+       }
+
+
+    },
+    mounted(){
+
+         this. getvideo()
+    }
+
+}
+</script>
+<style scoped>
+    .videoplayer{
+         width: 100%;
+         height: 400px;
+       
+      
+    }
+    .videoname{
+             font-size: 14px;
+             color: #333;
+    }
+
+    .videoplaystyle{
+         margin: 0px 100px 0px 100px;
+    }
+    .videodec{
+         margin-left: 40px;
+         font-size: 12px;
+         color: #999;
+    }
+    .active{
+        color: #35b558;
+        cursor: pointer;
+    }
+
+
+</style>
+
+

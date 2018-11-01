@@ -430,38 +430,3 @@ export const videoResourcepage =(parms) =>{
     return axios
     .get('/course/videoResource/page',{params : parms})
 }
-//删除单个视频的资源
-export const delectvideoResource=(parms) =>{
-    return axios
-    .get('/course/delete/videoResource',{params : parms})
-}
-//编辑视频
-export const updatevideoResource =(parms) =>{
-    return axios
-    .post('/course/update/videoResource', parms,)
-}
-//删除课程体系
-export const delectcourseStructure=(parms) =>{
-    return axios
-    .get('/course/delete/courseStructure',{params : parms})
-}
-//删除课程分类
-export const delectcourseClassification=(parms) =>{
-    return axios
-    .get('/course/delete/courseClassification',{params : parms})
-}
-//删除课程内容
-export const delectcourseContent=(parms) =>{
-    return axios
-    .get('/course/delete/courseContent',{params : parms})
-}
-//获取父级结构
-export const listparentStructure=(parms) =>{
-    return axios
-    .get('/course/list/parentStructure',{params : parms})
-}
-//编辑课程体系分类内容
-export const updatecourse =(parms) =>{
-    return axios
-    .post('/course/update/course', parms,)
-}

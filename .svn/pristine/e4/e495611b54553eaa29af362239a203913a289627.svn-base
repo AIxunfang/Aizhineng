@@ -1,0 +1,86 @@
+<template>
+    <el-row>
+        <el-col :span="24">
+            <div class="navigationbar"> 
+                <span class="navigationname">首页<i class="el-icon-arrow-right" aria-hidden="true"></i>
+                    课程体系<i class="el-icon-arrow-right" aria-hidden="true"></i>课程分类<i class="el-icon-arrow-right" aria-hidden="true"></i>课程模块
+                </span>
+            </div>
+        </el-col>
+
+        <el-col :span="24">
+          
+
+            <div   class="stytemstyle"      v-for="item in  systemdata" :key="item.id" @click="stytemclick(item.courseContentId)">
+
+                    <img  :src=" 'http://192.168.80.63:30005/api/file/'+`${item.imageUri}`" alt="" class="stytemcover">
+                    <div class="courseStructureName">{{item.courseContentName}}</div>
+                <el-popover
+                     placement="bottom"
+                      width="210"
+                      trigger="hover"
+                     :content="item.courseContentDesc">
+                    <div class="coursename" slot="reference" >{{item.childrenlength}}个章节</div> 
+                 </el-popover>
+            </div> 
+        </el-col>
+
+    </el-row>
+</template>
+<script>
+import{courseContentpage,videoResourcepage} from "@/api/api"
+export default {
+    data(){
+         return{
+              itemsystem:"",   
+             systemdata:[],
+         }
+    },
+    methods:{
+            getcontent(){
+                    var parms={
+                                currentPage:1,
+                                pageSize:100,
+                                courseClassificationId:this.$route.params.id
+                        }
+                        courseContentpage(parms).then(res=>{
+                                    console.log("内容")
+                                    console.log(res) 
+                                    if(res.data.code==0){
+                                           this.systemdata=res.data.data.list      
+                                            this.systemdata.forEach((item,index)=>{
+                                                    var parms={
+                                                            currentPage:1,
+                                                             pageSize:100, 
+                                                             courseContentId:item.courseContentId
+                                                    }
+                                                  videoResourcepage(parms).then(res=>{
+                                                            console.log("视频资源")
+                                                            console.log(res)
+                                                        if(res.data.code==0){
+                                                           this.$set(this.systemdata[index],'childrenlength',res.data.data.total)       
+                                                        }
+                                                        
+                                                  })
+                                            })  
+                                           
+                                    }
+                        }) 
+            },
+ 
+            stytemclick(index){
+                  console.log(index)
+                  console.log( this.systemdata)
+                this.$router.push({name:"videoclass",params:{videoid:index}})
+            }
+    },
+    mounted(){
+           console.log("neirong")
+          console.log(this.$route.params.id)
+          this.getcontent()
+         // console.log()
+
+    }
+}
+</script>
+

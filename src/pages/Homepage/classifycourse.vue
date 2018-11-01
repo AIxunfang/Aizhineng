@@ -1,0 +1,137 @@
+<template>
+      <el-row >
+      <el-col :span="24">
+           <div class="navigationbar"> 
+              <span class="navigationname">首页<i class="el-icon-arrow-right" aria-hidden="true"></i>
+                 课程体系<i class="el-icon-arrow-right" aria-hidden="true"></i>课程分类
+                 
+              </span>
+            </div>
+            <el-col :span="24" >
+                    <div   class="headlinename">
+                       <div style="display:inline-block;width:500px">
+                        <img :src="'http://192.168.80.63:30005/api/file/'+`${itemsystem.imageUrl}`" class="headlineicon">  
+                            <span class="headname">{{itemsystem.courseStructureName}}</span>
+                       </div>
+                          <p class="Desc">{{itemsystem.courseStructureDesc}}</p>   
+                   </div>
+            </el-col>
+                 <el-col :span="24">
+                    <div   class="stytemstyle"      v-for="item in  systemdata" :key="item.id" @click="stytemclick(item.courseStructureId)">
+                          <img  :src=" 'http://192.168.80.63:30005/api/file/'+`${item.imageUrl}`" alt="" class="stytemcover">
+                            <div class="courseStructureName">{{item.courseClassificationName}}</div>
+                             <div class="coursename" >{{item.childrenlength}}个模块</div> 
+                    </div>
+        </el-col>
+      </el-col>
+      </el-row>
+</template>
+<script>
+import{courseStructurepage,courseClassificationpage,courseContentpage}from "@/api/api"
+export default {
+    data(){
+         return{
+              itemsystem:"",    
+              systemdata:[],   
+         }
+    },
+    methods:{
+           getcourseStructurepage(){
+                var _this=this
+                 var params={
+                            currentPage:1,
+                            pageSize:100,
+                     } 
+                  courseStructurepage(params).then(res=>{
+                        console.log(res)
+                      
+                        if(res.data.code==0){
+                               res.data.data.list.forEach((item,index)=>{
+                                        console.log(this.$route.params.id)
+                                        if(this.$route.params.id==item.courseStructureId){
+                                                 this.itemsystem=item
+                                        }
+                               })
+                        }
+                        
+                    })
+           },
+           getclass(){
+                var parms={
+                            currentPage:1,
+                            pageSize:1000,
+                            courseStructureId:this.$route.params.id
+                        }
+                    courseClassificationpage(parms).then(res=>{
+                            if(res.data.code==0){
+                                console.log("分类")
+                                   console.log(res)
+                                   if(res.data.code==0){
+                                        this.systemdata=res.data.data.list
+                                      this.systemdata.forEach((item,index)=>{
+                                            var parms={
+                                                    currentPage:1,
+                                                    pageSize:100,
+                                                    courseClassificationId:item.courseStructureId
+                                            }
+                                           courseContentpage(parms).then(res=>{
+                                                        console.log("内容")
+                                                        console.log(res) 
+                                                        if(res.data.code==0){
+                                                                 this.$set(this.systemdata[index],'childrenlength',res.data.data.total)
+                                                        }
+                                           })  
+                                      })      
+                                   }   
+                            }   
+                        })  
+           },
+         stytemclick(index){
+                console.log("------")
+                console.log(index)
+                 console.log(this.systemdata)
+                 this.$router.push({name:"chunkcou",params:{id:index}})
+         },
+    },
+     mounted(){
+              console.log(this.$route.params.id) 
+              this.getcourseStructurepage()
+              this.getclass()
+      }
+
+}
+</script>
+<style scoped>
+  .headlinename{
+      border:1px solid #e4e4e4;
+      height:70px;
+      margin:20px  
+  }
+ .headlineicon{
+      display: inline-block;
+            height: 40px;
+            width: 40px;
+            padding: 15px;
+ }
+ .headname{
+       display: inline-block;
+       height: 70px;
+      vertical-align: top;
+      line-height: 70px;
+      font-size: 22px;
+      color: #333;
+     font-weight: 500;
+ }
+ .Desc{
+     display: inline-block;
+      text-align: left;
+      font-size: 12px;
+      color: #666;
+      vertical-align: top;
+      white-space:pre-wrap;
+    
+ }
+</style>
+
+
+
