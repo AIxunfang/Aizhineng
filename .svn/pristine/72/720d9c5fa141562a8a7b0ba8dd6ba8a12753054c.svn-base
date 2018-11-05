@@ -20,7 +20,7 @@
                    </div>
             </el-col>
                  <el-col :span="24">
-                    <div   class="stytemstyle"      v-for="item in  systemdata" :key="item.id" @click="stytemclick(item)">
+                    <div   class="stytemstyle"      v-for="item in  systemdata" :key="item.id" @click="stytemclick(item.courseClassificationId)">
                           <img  :src=" 'http://192.168.80.63:30005/api/file/'+`${item.imageUrl}`" alt="" class="stytemcover">
                             <div class="courseStructureName">{{item.courseClassificationName}}</div>
                              <div class="coursename" >{{item.childrenlength}}个模块</div> 
@@ -93,10 +93,7 @@ export default {
                 console.log("------")
                 console.log(index)
                  console.log(this.systemdata)
-                 if(index.childrenlength>0){
-                     this.$router.push({name:"chunkcou",params:{id:index.courseClassificationId}})
-                 }
-               //  this.$router.push({name:"chunkcou",params:{id:index.courseClassificationId}})
+                 this.$router.push({name:"chunkcou",params:{id:index}})
          },
         goback(){
             this.$router.go(-1)

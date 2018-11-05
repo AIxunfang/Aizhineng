@@ -49,17 +49,13 @@ export default {
             var parms={
                          currentPage:1,
                          pageSize:100, 
-                         courseContentId:this.$route.params.videoid
+                         courseContentId:this.$route.params.index
             }
             videoResourcepage(parms).then(res=>{
                     console.log("视频资源")
                     console.log(res)
-                    if(res.data.code==0){      
-                            if(res.data.data.list.length>0){
-                                   this.videourlshowdata=res.data.data.list
-                                   console.log("进来了")
-                            }
-                            
+                    if(res.data.code==0){
+                           this.videourlshowdata=res.data.data.list
                     }
                 
             })
@@ -74,7 +70,7 @@ export default {
 
     },
     mounted(){
-        console.log(this.$route.params.videoid)
+
          this. getvideo()
     }
 

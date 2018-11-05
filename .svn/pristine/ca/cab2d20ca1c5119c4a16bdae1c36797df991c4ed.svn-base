@@ -1,0 +1,707 @@
+<template>
+    <el-row>
+          <div class="navigationbar"> 
+               <span class="navigationname">课程管理<i class="el-icon-arrow-right" aria-hidden="true"></i>
+                      课程资源
+                </span>
+           </div>
+          <el-col :span="24">
+               <el-col :span="24"   style="padding: 10px 0px 10px 20px">
+                     <el-dropdown    @command="selecty">
+                              <el-button type="primary" class="el-icon-plus" size="mini">
+                                       添加
+                              </el-button>
+                              <el-dropdown-menu slot="dropdown">
+                              <el-dropdown-item  command="1">体系</el-dropdown-item>
+                              <el-dropdown-item command="2">分类</el-dropdown-item>
+                               <el-dropdown-item command="3">模块</el-dropdown-item>
+                              </el-dropdown-menu>
+                         </el-dropdown>
+               </el-col>
+                 <el-col :span="14" style="padding:20px;border:1px solid #ededed"   id="autore">
+                        <!-- <div >
+                            <el-input placeholder="请输入内容" v-model="searchName"  size="small" class="input-with-select">
+                                <el-button slot="append" icon="el-icon-search"></el-button>
+                            </el-input>
+                        </div>   -->
+                        <div class="block" style="margin-top:15px">
+                        <el-tree
+                     
+                          
+                          :data="optionstixis"
+                          :props="defaultProps"
+                          node-key="id"
+                           default-expand-all
+
+                          >
+                          <span class="custom-tree-node" slot-scope="{ node, data }">
+                            <span>
+                               {{data.label}}
+                             </span>
+                            <span style="float:right">
+                              <el-button
+                                type="text"
+                                size="mini"
+                                v-show="node.level !== 4"
+                                @click="() => editconcent(node,data)">
+                                 编辑
+                              </el-button>
+                              <el-button
+                                type="text"
+                                size="mini"
+                                @click="() => removecon(node, data)">
+                                删除
+                              </el-button>
+                            </span>
+                          </span> 
+                        </el-tree>
+                      </div>   
+ 
+
+                 </el-col>
+                 <el-col :span="10"  style="padding:20px ;border:1px solid #ededed"  v-if="this.formStructuredata.type !=null ">
+                    <div>
+                          <div style="text-align:center"> <span v-if="this.isadd==true"> 新增</span> <span v-else>编辑</span>       {{titlename}}</div>
+                         <el-form  :model="formStructuredata"   ref="formStructuredata"    class="formStructureclass" size="small" label-position="top" :rules="rules">
+
+                          <el-form-item label="所属体系"  prop="selectType"  v-if=" this.formStructuredata.type==2 || this.formStructuredata.type==3">
+                                      <el-select v-model="formStructuredata.selectType" placeholder="请选择所属体系" @change="changeseleval"   :disabled="selectdisabledfelei" >
+                                                <el-option
+                                                      v-for="item in optionstixi"
+                                                      :key="item.createTime"
+                                                      :label="item.courseStructureName"
+                                                      :value="item.courseStructureId">
+                                                </el-option>
+                                          </el-select> 
+                                        <el-form-item   prop="selectTypemodel" v-if="this.formStructuredata.type==3"  style="display:inline-block" >
+                                          <el-select v-model="formStructuredata.selectTypemodel" placeholder="请选择分类"  :disabled="selectdisbledfenlei" >
+                                                  <el-option
+                                                         v-for="item in datamodel"
+                                                        :key="item.createTime"
+                                                        :label="item.courseClassificationName"
+                                                        :value="item.courseClassificationId">
+                                                  </el-option>
+                                            </el-select>  
+                                        </el-form-item>
+
+                          </el-form-item>
+
+                            <el-form-item :label=" titlename + '名称' " prop="name">
+                                <el-input v-model="formStructuredata.name" placeholder="输入名称"></el-input>
+                            </el-form-item>
+                            <el-form-item  :label=" titlename+'排序'" prop="order" >
+                                  <el-input v-model.number="formStructuredata.order" placeholder="请输入数字"></el-input>
+                            </el-form-item>
+                            <el-form-item :label="titlename+ '描述' " prop="desc">
+                                     <el-input
+                                            type="textarea"
+                                            :rows="2"
+                                            placeholder="请输入内容"
+                                            v-model="formStructuredata.desc">
+                                     </el-input>
+                               </el-form-item>
+                             <el-form-item label="上传封面图"   prop="uri">
+                                  <el-upload
+                                    class="avatar-uploader"
+                                    action="http://192.168.80.63:30005/api/course/upload/img"
+                                    :show-file-list="false"
+                                    :on-success="handleAvatarSuccess"
+                                    :before-upload="beforeAvatarUpload"
+                                    :data="dataform"
+                                     accept="image/*"
+                                    >
+                                    <img  v-if="imageUrlshow" :src="imageUrlshow" class="avatar">
+                                    <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                                 </el-upload>
+                            </el-form-item>
+                            <el-form-item>
+                                  <el-button type="primary" size="mini"  style="float:right"  @click="savedata" >保存</el-button>
+                            </el-form-item>   
+                     </el-form>
+                   </div>
+                 </el-col>
+          </el-col>
+    </el-row>
+</template>
+<script>
+import{courseaddcourse,courseStructurepage,courseClassificationpage,courseContentpage,delectcourseStructure,delectcourseClassification,delectcourseContent,delectvideoResource,videoResourcepage,updatecourse,listparentStructure } from "@/api/api"
+export default {
+  data() {
+    return {
+        selectdisbledfenlei:false,
+        selectdisabledfelei:false,
+       defaultProps: {
+           children: 'children',
+            label: 'label',
+          
+          
+        },
+       datachirtwo:[],
+      datamodel:[],
+      optionstixi:[],
+      optionstixis:[],
+      optioncontent:[],
+       isadd:true,
+      dataform:{
+         token:"",   
+      },
+      titlename:null,
+      imageUrlshow: "",
+      searchName: "",
+      optionvideo:[],
+      formStructuredata: {
+                  name:'',
+                  desc:'',
+                  order:'',
+                  uri:'',
+                  url:'',
+                  type:null,
+                selectType:"",
+                selectTypemodel:"",
+          },
+       rules:{
+            selectType:[
+                  { required: true, message: '请选择体系', trigger: 'change' },
+             ],
+            selectTypemodel:[
+                 { required: true, message: '请选择分类', trigger: 'change' },
+             ],
+             name:[
+                  { required: true, message: '请输入名称', trigger: 'blur'},
+             ],
+            order:[
+                       { required: true, message: '请输入序号', trigger: 'blur'},
+                       { type: 'number', message: '必须为数字值'}
+            ],
+             uri:[
+                  //  { required: true, message: '请上传图片', trigger: 'change' },
+                    {  required: true, message: '请上传图片', trigger: 'change' }
+             ],
+             desc:[
+                     { required: true, message: '请描述', trigger: 'blur'},
+             ]
+       }
+    };
+  },
+  methods: {
+      selecty(val){ 
+            console.log(val)
+            this.formStructuredata.type=val
+            this.isadd=true
+            switch(val){
+                   case '1':
+                   this.titlename="体系"
+                   break;
+                   case '2':
+                   this.titlename="分类"
+                   break;
+                   case '3':
+                  this.titlename="模块"
+                  break;
+            }
+      },
+      handleAvatarSuccess(res, file) {
+            console.log(file.raw)
+            this.imageUrlshow = URL.createObjectURL(file.raw);
+
+          //  console.log(this.imageUrlshow)
+                              console.log("上传");
+                              console.log(res);
+                              if(res.code==0){
+                                  this.formStructuredata.uri=res.data.imageUri
+                                  this.formStructuredata.url=res.data.imageUrl    
+                              }else{
+                                     this.$message.error(res.data.message)
+                              }
+      },
+      beforeAvatarUpload(file) {//上传前加一个参数.
+            const token = sessionStorage.getItem("token");
+            this.dataform.token = token;
+      },
+      handleNodeClick(data){
+        console.log(data)
+       this.datachirtwo=data
+        var _this=this
+             if(data.type==1){
+                   var parms={
+                      currentPage:1,
+                      pageSize:10000,
+                      courseStructureId:data.courseStructureId
+                   }  
+             }
+      },
+          getcourseStructurepage(){
+               var params={
+                     currentPage:1,
+                     pageSize:100
+               }
+             courseStructurepage(params).then(res=>{
+                     console.log("tixi")
+                     console.log(res)
+
+
+
+                       if(res.data.code==0){
+                            this.optionstixi=res.data.data.list   
+                            this.optionstixi.forEach((item,index)=>{
+                                     item.type=1
+                                     item.name=item.courseStructureName
+                            })
+                       }
+             })
+      },
+       //局部刷新
+  focusdata() {
+     
+       this.optionstixis =[]  ;
+     
+                      var params = {
+                        currentPage: 1,
+                        pageSize: 100
+                      };
+                      courseStructurepage(params).then(res => {
+                        if (res.data.code == 0) {
+                            console.log(res)
+                           
+                          let lists = res.data.data.list;
+                         lists.forEach((item,index)=>{
+                                this.optionstixis.push({
+                                    label:item.courseStructureName,
+                                    id:item.courseStructureId,
+                                    children: [],
+                                    itemcon:item
+                                })
+                              this.Stairarryindex=this.optionstixis
+                         })
+                       this.Stairarryindex.forEach((item,indexcas)=>{
+                              var parms = {
+                                  currentPage: 1,
+                                  pageSize: 1000,
+                                  courseStructureId: this.optionstixis[indexcas].id
+                                };
+                                courseClassificationpage(parms).then(res => {
+                                      let cascChid = [];
+                                    cascChid=res.data.data.list
+                                     var _this=this
+                                  if (res.data.code == 0) {
+                                      cascChid.forEach((item,index) => {  
+                                 this.optionstixis[indexcas].children.push(
+                                              {
+                                                label:item.courseClassificationName,
+                                                id:item.courseClassificationId,
+                                                children: [],
+                                                itemcon:item
+                                              }
+                                         ) 
+                                                var parms = {
+                                                    currentPage: 1,
+                                                    pageSize: 1000,
+                                                    courseClassificationId:this.optionstixis[indexcas].children[index].id
+                                                };
+                                                let conentchid=[]
+                                         courseContentpage(parms).then(res=>{
+                                                   console.log("内容")
+                                                   console.log(res)
+                                                   console.log(this.optionstixis)
+                                                  conentchid=res.data.data.list
+                                                 conentchid.forEach((item,contentindex)=>{
+                                                   this.optionstixis[indexcas].children[index].children.push(
+                                                          {
+                                                             label:item.courseContentName,
+                                                             id:item.courseContentId,
+                                                             children:[],
+                                                             itemcon:item
+                                                          }
+                                                       )   
+                                                    var parms={
+                                                            currentPage:1,
+                                                            pageSize:1000,
+                                                            courseContentId:this.optionstixis[indexcas].children[index].children[contentindex].id
+                                                    }    
+                                                   videoResourcepage(parms).then(res=>{
+                                                             console.log("视频")
+                                                             console.log(res)
+                                                             let videocas=[]
+                                                             if(res.data.code==0){
+                                                                    videocas=res.data.data.list
+                                                             }
+                                                      videocas.forEach((item,videoindex)=>{
+                                                           this.optionstixis[indexcas].children[index].children[contentindex].children.push({
+                                                                    label:item.videoName,
+                                                                    id: item.videoId
+                                                           })  
+                                                      })
+                                                   })
+                                               })
+                                            })
+                                        })
+
+                                    }
+ 
+                                 })
+                             })
+                         }
+                  }); 
+        
+    },
+
+
+
+      //  loadNode1(node, resolve){
+      //        console.log("lodaing")
+      //         console.log(node)
+      //         console.log(resolve)
+      //        setTimeout(()=>{
+      //         if(node.level === 0){
+      //                    return resolve(this.optionstixi)
+      //                   }
+      //           },500)
+      //       if(node.level > 3) return resolve([]);
+      //           if(node.data !==undefined){
+      //               console.log("jisudue")
+      //              if(node.data.type==1){
+      //                         var parms={
+      //                             currentPage:1,
+      //                             pageSize:10000,
+      //                             courseStructureId:node.data.courseStructureId
+      //                       }
+      //               courseClassificationpage(parms).then(res=>{
+      //                       console.log("二级的菜单")
+      //                       console.log(res)
+
+      //                     if(res.data.code==0){
+      //                       this.optionfenlei=res.data.data.list
+      //                          res.data.data.list.forEach((item,index)=>{
+      //                                  item.type=2
+      //                                  item.name=item.courseClassificationName
+      //                          })
+      //                         setTimeout(() =>{
+      //                             resolve(this.optionfenlei)
+      //                         },500)   
+      //                     }
+      //              }) 
+      //          } else  if(node.data.type==2){
+      //               console.log("sanjide neirong ")
+      //               var parms={
+      //                            currentPage:1,
+      //                             pageSize:100,
+      //                             courseClassificationId:node.data.courseClassificationId
+      //               }
+      //               courseContentpage(parms).then(res=>{
+      //                              console.log("三级")
+      //                              console.log(parms)
+      //                              console.log(res)    
+      //                              if(res.data.code==0){
+      //                                  this.optioncontent=res.data.data.list
+      //                                 res.data.data.list.forEach((item,index)=>{
+      //                                     item.type=3
+      //                                     item.name=item.courseContentName
+      //                                    })
+      //                       setTimeout(() =>{
+      //                             resolve( this.optioncontent)
+                                
+      //                         },500)  
+
+                                 
+      //                       }
+                          
+      //               })
+      //          } else if(node.data.type==3){
+      //                     var parms={
+      //                        currentPage:1,
+      //                         pageSize:100,
+      //                         courseContentId:node.data.courseContentId
+      //                     }
+                        
+      //                 videoResourcepage(parms).then(res=>{
+      //                         if(res.data.code==0){
+      //                               console.log("视频")
+      //                               console.log(res)
+      //                               this.optionvideo=res.data.data.list
+      //                             this.optionvideo.forEach((item,index)=>{
+      //                                     item.name=item.videoName
+      //                                     item.type=4
+      //                             })   
+
+
+      //                        setTimeout(() =>{
+      //                             resolve( this.optionvideo)
+                                
+      //                         },500)  
+      //                            }        
+      //                    })   
+      //          }
+      //      }
+      //  },
+editconcent(node,data){
+         console.log("bianji")
+         console.log(data)
+         console.log(node)
+         console.log(node.level)
+          this.isadd=false
+        this.formStructuredata.uri=data.itemcon.imageUri
+        this.formStructuredata.url=data.itemcon.imageUrl
+      this.imageUrlshow ="http://192.168.80.63:30005/api/file/"+`${data.itemcon.imageUrl}`
+
+         this.formStructuredata.type=node.level
+              switch(String(node.level)){
+                   case '1':
+                   this.titlename="体系"
+                   break;
+                   case '2':
+                   this.titlename="分类"
+                   break;
+                   case '3':
+                  this.titlename="模块"
+                  break;
+            }
+           if(node.level==1){
+                this.formStructuredata.name=data.itemcon.courseStructureName
+                this.formStructuredata.desc=data.itemcon.courseStructureDesc
+                this.formStructuredata.order=data.itemcon.courseStructureOrder
+             
+               // this.formStructuredata.parentId=data.courseStructureId
+                this.formStructuredata.id=data.id
+             }else if(node.level==2){
+                      this.formStructuredata.selectType=data.itemcon.courseStructureId
+                        this.selectdisabledfelei=true
+                        this.formStructuredata.name=data.itemcon.courseClassificationName
+                         this.formStructuredata.order=data.itemcon.courseClassificationOrder
+                          this.formStructuredata.desc=data.itemcon.courseClassificationDesc
+                          this.formStructuredata.id=data.id
+                }
+                else {
+                        this.selectdisbledfenlei=true
+                        this.selectdisabledfelei=true
+                       // this.imageUrlshow ="http://192.168.80.63:30005/api/file/"+`${data.imageUri}` 
+                        this.formStructuredata.name=data.itemcon.courseContentName
+                        this.formStructuredata.id=data.id
+                        this.formStructuredata.desc=data.itemcon.courseContentDesc
+                        this.formStructuredata.order=data.itemcon.courseContentOrder
+                             
+
+                        var parms={
+                                   type:node.level,
+                                   id:data.id
+                        } 
+                      listparentStructure(parms).then(res=>{
+                             console.log("zhuji")
+                            console.log(res)
+                            if(res.data.code==0){
+                                 this.formStructuredata.selectType=res.data.data[0].courseStructureId     
+                                 this.datamodel.push(
+                                       {
+                                           courseClassificationName:res.data.data[1].courseClassificationName,
+                                           courseClassificationId:res.data.data[1].courseClassificationId
+                                       }
+                                 )
+                                        this.formStructuredata.selectTypemodel= res.data.data[1].courseClassificationId
+                            }
+                      })
+                }
+
+
+      },
+     removecon(node,data){
+           console.log("删除")
+            console.log(node)
+            console.log(data)
+            // const parent = node.parent;
+            // const children = parent.data.children || parent.data;
+            // const index = children.findIndex(d => d.id === data.id);
+            // children.splice(index, 1);
+            
+            if(node.level==1){
+                    var parms={
+                           courseStructureId:data.id
+                    }
+                  delectcourseStructure(parms).then(res=>{
+                       console.log(res)
+                       if(res.data.code==0){
+                                this.$message({
+                                    type:'success',
+                                    message:'删除成功'
+                                })
+
+                               
+                       }else{
+                            this.$message.error(res.data.message)
+                       }
+                       
+                  })  
+            }else if(node.level==2){
+                      var parms={
+                            courseClassificationId:data.id
+                      }
+                      delectcourseClassification(parms).then(res=>{
+                           if(res.data.code==0){
+                                this.$message({
+                                    type:'success',
+                                    message:'删除成功'
+                                })
+                                this.focusdata()
+                            }else{
+                                  this.$message.error(res.data.message)
+                            } 
+                         
+                      })
+            }else if(node.level==3){
+
+                 var params={
+                       courseContentId:data.id
+                 }
+                 delectcourseContent(params).then(res=>{
+                           if(res.data.code==0){
+                                this.$message({
+                                    type:'success',
+                                    message:'删除成功'
+                                })
+                                this.focusdata()
+                            }else{
+                                  this.$message.error(res.data.message)
+                            }     
+                      
+                 })
+                        
+            }else if(node.level==4){
+                   console.log(data)
+                   var parms={
+                          courseResourceId:data.id
+                   }
+                   delectvideoResource(parms).then(res=>{
+                         if(res.data.code==0){
+                               this.$message({
+                                    type:'success',
+                                    message:"删除成功"
+                               })
+                              this.focusdata()
+                         }
+                   })
+            }
+
+
+
+     },
+     changeseleval(val){//选择系,在选择类,
+         console.log(val)
+         var parms={
+                currentPage:1,
+                pageSize:10000,
+                courseStructureId:val
+            }
+          courseClassificationpage(parms).then(res=>{
+                         console.log(res)
+                            if(res.data.code==0){
+                                 this.datamodel=res.data.data.list
+                            }
+                        this.datamodel.forEach(item=>{
+                                  item.type=2   
+                        })
+           })  
+     },
+      savedata(){
+             if(this.formStructuredata.type==2){
+              
+                 this.formStructuredata.parentId=this.formStructuredata.selectType
+
+             }else if(this.formStructuredata.type==3){
+                    this.formStructuredata.parentId= this.formStructuredata.selectTypemodel
+               }
+        this.formStructuredata.order=Number(this.formStructuredata.order)
+        this.formStructuredata.type=Number( this.formStructuredata.type)
+        var parms=this.formStructuredata
+              console.log(parms)
+             if(this.isadd){
+                // deletethis.formStructuredata.parentId;
+                this.$refs['formStructuredata'].validate((valid)=>{
+                        if(valid){
+                            courseaddcourse(parms).then(res=>{
+                                 console.log(parms)
+                                    console.log(res)
+                                    if(res.data.code==0){
+                                            this.$message({
+                                                    type:"success",
+                                                    message:'保存成功'
+                                            })
+                                            this.$refs['formStructuredata'].resetFields();
+                                                this.imageUrlshow="";
+                                                 this.focusdata() 
+                                                 
+
+                                        }else{
+                                            this.$message.error(res.data.message)
+                                        }
+                            })
+                        }
+                })
+           }else{
+                 console.log("编辑")
+                console.log(this.formStructuredata) 
+                updatecourse(this.formStructuredata).then(res=>{
+                             console.log(res)
+                                  if(res.data.code==0){
+                                          this.$message({
+                                               type:"success",
+                                               message:"编辑成功"
+                                          })
+                                         this.focusdata()
+                                  }
+                      
+                })   
+
+
+           }
+  
+
+
+      },
+  },
+  mounted() {
+        this.focusdata()
+        this.getcourseStructurepage()
+  }
+};
+</script>
+  <style  lang="scss"   scoped>
+
+ .custom-tree-node{
+     width:100%;
+ }
+</style>
+ <style>
+.formStructureclass .el-form-item {
+  margin-bottom:5px;
+}
+.formStructureclass  .el-form-item__label{
+       padding:0px 0px 0px ;
+}
+
+
+
+.avatar-uploader .el-upload {
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+
+}
+.avatar-uploader .el-upload:hover {
+  border-color: #409eff;
+}
+.avatar-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 178px;
+  height: 178px;
+  line-height: 178px;
+  text-align: center;
+}
+.avatar {
+  width: 178px;
+  height: 178px;
+  display: block;
+}
+</style>
+ 
+

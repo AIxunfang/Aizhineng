@@ -12,9 +12,9 @@
         <el-col :span="24">
           
 
-            <div   class="stytemstyle"      v-for="item in  systemdata" :key="item.id" @click="stytemclick(item)">
+            <div   class="stytemstyle"      v-for="item in  systemdata" :key="item.id" @click="stytemclick(item.courseContentId)">
 
-                    <img  :src=" 'http://192.168.80.63:30005/api/file/'+`${item.imageUrl}`" alt="" class="stytemcover">
+                    <img  :src=" 'http://192.168.80.63:30005/api/file/'+`${item.imageUri}`" alt="" class="stytemcover">
                     <div class="courseStructureName">{{item.courseContentName}}</div>
                 <el-popover
                      placement="bottom"
@@ -72,10 +72,7 @@ export default {
             stytemclick(index){
                   console.log(index)
                   console.log( this.systemdata)
-                 if(index.childrenlength>0){
-                       this.$router.push({name:"videoclass",params:{videoid:index.courseContentId}})
-                 }
-             
+                this.$router.push({name:"videoclass",params:{videoid:index}})
             },
             goback(){
                  this.$router.go(-1) 

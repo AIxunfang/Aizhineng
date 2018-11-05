@@ -1,0 +1,71 @@
+<template>
+        
+      <el-row>
+            <el-col :span="24">
+                        <div class="navigationbar"> 
+                              <span class="navigationname">课程资源<i class="el-icon-arrow-right" aria-hidden="true"></i>
+                                    课程资料
+                              </span>
+                        </div>
+            </el-col>
+            <el-col :span="24">
+               <el-button type="primary" size="small"  style="margin:20px;"  @click="addcouses"  >新增</el-button>
+
+            </el-col>
+            <el-col :span="24">
+                 <el-dialog
+                        title="提示"
+                        :visible.sync="CoursedialogVisible"
+                         width="30%"
+                       >
+                     <el-form   :model="cousecouseformInline" class="demo-form-inline">
+                              <el-form-item label="资料名称">
+                                    <el-input v-model="couseformInline.courseMaterialName" placeholder="资料名称"></el-input>
+                              </el-form-item>
+                              <el-form-item label="所属体系">
+                                        
+                                         
+                              </el-form-item>
+                              <el-form-item  label="资料描述">
+
+                              </el-form-item>
+
+                   </el-form>  
+
+
+
+
+                        <span slot="footer" class="dialog-footer">
+                              <el-button  size="mini" >取 消</el-button>
+                              <el-button type="primary"  size="mini" >确 定</el-button>
+                        </span>
+                  </el-dialog>
+            </el-col>
+
+      </el-row>
+</template>
+<script>
+export default {
+       data(){
+            return{
+                CoursedialogVisible:false,
+                couseformInline:{
+                       courseMaterialName:'',
+                       
+                },
+
+            }
+       },
+       methods:{
+            addcouses(){//点击新增
+                     this.CoursedialogVisible=true
+                  }
+       },
+       mounted(){
+    
+        },
+       
+
+
+}
+</script>

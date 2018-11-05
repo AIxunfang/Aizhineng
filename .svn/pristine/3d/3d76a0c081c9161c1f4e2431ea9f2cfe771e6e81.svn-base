@@ -28,7 +28,7 @@
                                 <el-input v-model="formvideo.videoName" placeholder="上传视频后会获取"></el-input>
                               </el-form-item>
                               <el-form-item label="视频描述:" prop="videoDesc">
-                                  <el-input v-model="formvideo.videoDesc"   type="textarea" :rows="2"></el-input>
+                                <el-input v-model="formvideo.videoDesc"   type="textarea" :rows="2"></el-input>
                               </el-form-item>
                               <el-form-item label="视频难度:">
                                   <el-radio-group v-model="formvideo.videoLevel">
@@ -44,6 +44,7 @@
                                               v-model="formvideo.selectedOptions" 
                                               @change="changeval"
                                              
+                            
                                         >
                                       </el-cascader>
                                     </div>
@@ -255,7 +256,10 @@ export default {
       this.formvideo.courseContentId = this.formvideo.selectedOptions[2];
     },
     focusdata() {
-                   var params = {
+       this.formvideo.selectedOptions=[] ;
+       this.optionselect =[]  ;
+      if(this.$route.params.isadd !== true){
+                      var params = {
                         currentPage: 1,
                         pageSize: 100
                       };
@@ -304,18 +308,44 @@ export default {
                                                           {
                                                              label:item.courseContentName,
                                                              value:item.courseContentId,
-                                                            
+                                                             children:[]
                                                           }
                                                        )   
+                                                    var parms={
+                                                            currentPage:1,
+                                                            pageSize:1000,
+                                                            courseContentId:this.optionselect[indexcas].children[index].children[contentindex].value
+                                                    }    
+                                                   videoResourcepage(parms).then(res=>{
+                                                             console.log("视频")
+                                                             console.log(res)
+                                                             let videocas=[]
+                                                             if(res.data.code==0){
+                                                                    videocas=res.data.data.list
+                                                             }
+                                                      videocas.forEach((item,videoindex)=>{
+                                                           this.optionselect[indexcas].children[index].children[contentindex].children.push({
+                                                                   label:item.videoName,
+                                                                   value: item.videoId
+                                                           })  
+                                                      })
+                                                   })
                                                })
                                             })
                                         })
+
                                     }
+ 
                                  })
                              })
                          }
                   }); 
+         }
     },
+
+
+
+
     beforeAvatarUpload(file) {
       //上传前加一个参数.
       this.loading = true;
@@ -452,9 +482,9 @@ export default {
     if (this.$route.params.isadd !== true) {
       console.log("编辑编辑变价");
       this.getvideoResourcepage();
-     
+      this.focusdata()
     }
-     this.focusdata()
+
        // this.getcourseStructurepage();
 
       // this.getcourseStructurepage()

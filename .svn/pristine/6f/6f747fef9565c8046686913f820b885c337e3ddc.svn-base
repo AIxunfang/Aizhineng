@@ -28,7 +28,7 @@
                                 <el-input v-model="formvideo.videoName" placeholder="上传视频后会获取"></el-input>
                               </el-form-item>
                               <el-form-item label="视频描述:" prop="videoDesc">
-                                  <el-input v-model="formvideo.videoDesc"   type="textarea" :rows="2"></el-input>
+                                <el-input v-model="formvideo.videoDesc"   type="textarea" :rows="2"></el-input>
                               </el-form-item>
                               <el-form-item label="视频难度:">
                                   <el-radio-group v-model="formvideo.videoLevel">
@@ -43,7 +43,8 @@
                                               :options="optionselect"
                                               v-model="formvideo.selectedOptions" 
                                               @change="changeval"
-                                             
+                                              @active-item-change="handleChangeslect"  
+                                              @focus="focusdata"
                                         >
                                       </el-cascader>
                                     </div>
@@ -75,9 +76,9 @@ import {
   courseClassificationpage,
   courseContentpage,
   addvideoResource,
-  updatevideoResource,
-  listparentStructure,
   videoResourcepage,
+  updatevideoResource,
+  listparentStructure
 } from "@/api/api";
 export default {
   data() {
@@ -121,7 +122,6 @@ export default {
         ]
       },
       optionselect: [],
-      Stairarryindex:[],
 
       formvideo: {
         videourlshow: "",
@@ -138,77 +138,81 @@ export default {
     };
   },
   methods: {
-    // handleChangeslect(val) {
-    //   console.log(val)
-    //   console.log("ga")
-    //   if (val.length == 1) {
-    //       var parms = {
-    //         currentPage: 1,
-    //         pageSize: 1000,
-    //         courseStructureId: val[0]
-    //       };
-    //       courseClassificationpage(parms).then(res => {
-    //              console.log("分类")
-    //              console.log(res)
-    //         let cascChid = [];
-    //         if (res.data.code == 0) {
-    //           this.courseClassificationdata = res.data.data.list;
-    //           for (let child of this.courseClassificationdata) {
-    //             cascChid.push({
-    //               label: child.courseClassificationName,
-    //               value: child.courseClassificationId, 
-    //               children: []
-    //             });
-    //           }
-    //         }
-    //         for (var i = 0; i < this.optionselect.length; i++) {
-    //           if (this.optionselect[i].value == val[0]) {
-    //             this.optionselect[i].children = cascChid;
-    //             this.arryindex = i;
-    //           }
-    //         }
-    //       });
-       
-    //   } else if (val.length == 2) {
-    //     console.log("三级菜单");
+    handleChangeslect(val) {
+      console.log(val)
+      console.log("ga")
+      if (val.length == 1) {
+          
 
-    //     this.courseContentdata = [];
+          var parms = {
+            currentPage: 1,
+            pageSize: 1000,
+            courseStructureId: val[0]
+          };
+          courseClassificationpage(parms).then(res => {
+                 console.log("分类")
+                 console.log(res)
+            let cascChid = [];
+            if (res.data.code == 0) {
+              this.courseClassificationdata = res.data.data.list;
+              for (let child of this.courseClassificationdata) {
+                cascChid.push({
+                  label: child.courseClassificationName,
+                  value: child.courseClassificationId, 
+                  children: []
+                });
+              }
+            }
+            for (var i = 0; i < this.optionselect.length; i++) {
+                
+
+              if (this.optionselect[i].value == val[0]) {
+                this.optionselect[i].children = cascChid;
+                this.arryindex = i;
+              }
+            }
+          });
+       
+      } else if (val.length == 2) {
+        console.log("三级菜单");
+
+        this.courseContentdata = [];
          
-    //       var parms = {
-    //         currentPage: 1,
-    //         pageSize: 1000,
-    //         courseClassificationId: val[1]
-    //       };
-    //       courseContentpage(parms).then(res => {
-    //         if (res.data.code == 0) {
-    //           res.data.data.list.forEach((item, index) => {
-    //             this.courseContentdata.push({
-    //               label: item.courseContentName,
-    //               value: item.courseContentId, 
-    //             });
-    //           });
-    //           for (
-    //             var k = 0;
-    //             k < this.optionselect[this.arryindex].children.length;
-    //             k++
-    //           ) {
-    //             if (
-    //               this.optionselect[this.arryindex].children[k].value ==
-    //               val[1]
-    //             ) {
-    //               this.optionselect[this.arryindex].children[
-    //                 k
-    //               ].children = this.courseContentdata;
-    //             }
-    //           }
-    //         }
-    //       });
+          var parms = {
+            currentPage: 1,
+            pageSize: 1000,
+            courseClassificationId: val[1]
+          };
+          courseContentpage(parms).then(res => {
+            if (res.data.code == 0) {
+              res.data.data.list.forEach((item, index) => {
+                this.courseContentdata.push({
+                  label: item.courseContentName,
+                  value: item.courseContentId, 
+                });
+              });
+              for (
+                var k = 0;
+                k < this.optionselect[this.arryindex].children.length;
+                k++
+              ) {
+                if (
+                  this.optionselect[this.arryindex].children[k].value ==
+                  val[1]
+                ) {
+                  this.optionselect[this.arryindex].children[
+                    k
+                  ].children = this.courseContentdata;
+                }
+              }
+            }
+          });
       
-    //   }
-    // },
+      }
+    },
     handleAvatarSuccess(res, file) {
       this.loading = false;
-
+      console.log(file);
 
       this.formvideo.videourlshow = URL.createObjectURL(file.raw);
       console.log("上传视频");
@@ -225,97 +229,57 @@ export default {
         }, 800);
       }
     },
-    // getcourseStructurepage() {
-    //   this.optionselect=[]
-    //   var params = {
-    //     currentPage: 1,
-    //     pageSize: 100
-    //   };
-    //   courseStructurepage(params).then(res => {
-    //     if (res.data.code == 0) {
-    //          console.log(res)
-    //       let lists = res.data.data.list;
-    //       lists.forEach((item,index)=>{
-    //             this.optionselect.push({
-    //                  label:item.courseStructureName,
-    //                  value:item.courseStructureId,
-    //                  children: []
-    //             })
-    //         })
-    //       }
-    //   });
+    getcourseStructurepage() {
+      this.optionselect=[]
+      var params = {
+        currentPage: 1,
+        pageSize: 100
+      };
+      courseStructurepage(params).then(res => {
+             
 
-    // },
+        if (res.data.code == 0) {
+             console.log(res)
+
+          let lists = res.data.data.list;
+          lists.forEach((item,index)=>{
+                this.optionselect.push({
+                     label:item.courseStructureName,
+                     value:item.courseStructureId,
+                     children: []
+                })
+            })
+          }
+      });
+    },
     changeval(val) {
-      console.log("change")
+
       console.log(val)
 
       console.log(this.formvideo.selectedOptions);
 
       this.formvideo.courseContentId = this.formvideo.selectedOptions[2];
     },
-    focusdata() {
-                   var params = {
-                        currentPage: 1,
-                        pageSize: 100
-                      };
-                      courseStructurepage(params).then(res => {
-                        if (res.data.code == 0) {
-                            console.log(res)
-                           
-                          let lists = res.data.data.list;
-                         lists.forEach((item,index)=>{
-                                this.optionselect.push({
-                                    label:item.courseStructureName,
-                                    value:item.courseStructureId,
-                                    children: []
-                                })
-                              this.Stairarryindex=this.optionselect
-                         })
-                       this.Stairarryindex.forEach((item,indexcas)=>{
-                              var parms = {
-                                  currentPage: 1,
-                                  pageSize: 1000,
-                                  courseStructureId: this.optionselect[indexcas].value
-                                };
-                                courseClassificationpage(parms).then(res => {
-                                      let cascChid = [];
-                                    cascChid=res.data.data.list
-                                     var _this=this
-                                  if (res.data.code == 0) {
-                                      cascChid.forEach((item,index) => {  
-                                 this.optionselect[indexcas].children.push(
-                                              {
-                                                label:item.courseClassificationName,
-                                                value:item.courseClassificationId,
-                                                children: []
-                                              }
-                                         ) 
-                                                var parms = {
-                                                    currentPage: 1,
-                                                    pageSize: 1000,
-                                                    courseClassificationId:this.optionselect[indexcas].children[index].value
-                                                };
-                                                let conentchid=[]
-                                         courseContentpage(parms).then(res=>{
-                                                  conentchid=res.data.data.list
-                                                 conentchid.forEach((item,contentindex)=>{
-                                                   this.optionselect[indexcas].children[index].children.push(
-                                                          {
-                                                             label:item.courseContentName,
-                                                             value:item.courseContentId,
-                                                            
-                                                          }
-                                                       )   
-                                               })
-                                            })
-                                        })
-                                    }
-                                 })
-                             })
-                         }
-                  }); 
+    focusdata(val) {
+      console.log("从选");
+      console.log(val)
+
+      //  return 
+      if(this.$route.params.isadd !== true){
+                    this.optionselect =[]  
+                //  this.getcourseStructurepage()
+                  // this.formvideo.selectedOptions=[]
+                  //  this.getcourseStructurepage()
+              
+      }
+      
+
+ 
     },
+
+
+
+
     beforeAvatarUpload(file) {
       //上传前加一个参数.
       this.loading = true;
@@ -436,12 +400,35 @@ export default {
             console.log("________________");
             console.log(res);
             if (res.data.code == 0) {
+              this.optionselect = [
+                            {
+                              label: res.data.data[0].courseStructureName,
+                              value: res.data.data[0].courseStructureId,
+                              children: [
+                                {
+                                  label: res.data.data[1].courseClassificationName,
+                                  value: res.data.data[1].courseClassificationId,
+                                  children: [
+                                    {
+                                      label: res.data.data[2].courseContentName,
+                                      value: res.data.data[2].courseContentId
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          
+
+
+
+                  ];
+
                     this.formvideo.selectedOptions = [
                             res.data.data[0].courseStructureId,
                             res.data.data[1].courseClassificationId,
                             res.data.data[2].courseContentId
                     ];
-             }
+            }
           });
         }
       });
@@ -452,12 +439,12 @@ export default {
     if (this.$route.params.isadd !== true) {
       console.log("编辑编辑变价");
       this.getvideoResourcepage();
-     
+      
     }
-     this.focusdata()
+
        // this.getcourseStructurepage();
 
-      // this.getcourseStructurepage()
+       this.getcourseStructurepage()
   }
 
 };
