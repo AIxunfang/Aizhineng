@@ -217,12 +217,7 @@ export default {
       }
     },
     handleAvatarSuccess(res, file) {
-      console.log(file.raw);
       this.imageUrlshow = URL.createObjectURL(file.raw);
-
-      //  console.log(this.imageUrlshow)
-      console.log("上传");
-      console.log(res);
       if (res.code == 0) {
         this.formStructuredata.uri = res.data.imageUri;
         this.formStructuredata.url = res.data.imageUrl;
@@ -253,9 +248,6 @@ export default {
         pageSize: 100
       };
       courseStructurepage(params).then(res => {
-        console.log("tixi");
-        console.log(res);
-
         if (res.data.code == 0) {
           this.optionstixi = res.data.data.list;
           this.optionstixi.forEach((item, index) => {
@@ -274,7 +266,7 @@ export default {
         pageSize: 100
       };
       courseStructurepage(params).then(res => {
-        if (res.data.code == 0) {
+        if (res.data.code == 0 && res.data.data.list.length !== 0) {
           console.log(res);
 
           let lists = res.data.data.list;
@@ -313,9 +305,6 @@ export default {
                   };
                   let conentchid = [];
                   courseContentpage(parms).then(res => {
-                    console.log("内容");
-                    console.log(res);
-                    console.log(this.optionstixis);
                     conentchid = res.data.data.list;
                     conentchid.forEach((item, contentindex) => {
                       this.optionstixis[indexcas].children[index].children.push(
@@ -358,96 +347,7 @@ export default {
         }
       });
     },
-
-    //  loadNode1(node, resolve){
-    //        console.log("lodaing")
-    //         console.log(node)
-    //         console.log(resolve)
-    //        setTimeout(()=>{
-    //         if(node.level === 0){
-    //                    return resolve(this.optionstixi)
-    //                   }
-    //           },500)
-    //       if(node.level > 3) return resolve([]);
-    //           if(node.data !==undefined){
-    //               console.log("jisudue")
-    //              if(node.data.type==1){
-    //                         var parms={
-    //                             currentPage:1,
-    //                             pageSize:10000,
-    //                             courseStructureId:node.data.courseStructureId
-    //                       }
-    //               courseClassificationpage(parms).then(res=>{
-    //                       console.log("二级的菜单")
-    //                       console.log(res)
-
-    //                     if(res.data.code==0){
-    //                       this.optionfenlei=res.data.data.list
-    //                          res.data.data.list.forEach((item,index)=>{
-    //                                  item.type=2
-    //                                  item.name=item.courseClassificationName
-    //                          })
-    //                         setTimeout(() =>{
-    //                             resolve(this.optionfenlei)
-    //                         },500)
-    //                     }
-    //              })
-    //          } else  if(node.data.type==2){
-    //               console.log("sanjide neirong ")
-    //               var parms={
-    //                            currentPage:1,
-    //                             pageSize:100,
-    //                             courseClassificationId:node.data.courseClassificationId
-    //               }
-    //               courseContentpage(parms).then(res=>{
-    //                              console.log("三级")
-    //                              console.log(parms)
-    //                              console.log(res)
-    //                              if(res.data.code==0){
-    //                                  this.optioncontent=res.data.data.list
-    //                                 res.data.data.list.forEach((item,index)=>{
-    //                                     item.type=3
-    //                                     item.name=item.courseContentName
-    //                                    })
-    //                       setTimeout(() =>{
-    //                             resolve( this.optioncontent)
-
-    //                         },500)
-
-    //                       }
-
-    //               })
-    //          } else if(node.data.type==3){
-    //                     var parms={
-    //                        currentPage:1,
-    //                         pageSize:100,
-    //                         courseContentId:node.data.courseContentId
-    //                     }
-
-    //                 videoResourcepage(parms).then(res=>{
-    //                         if(res.data.code==0){
-    //                               console.log("视频")
-    //                               console.log(res)
-    //                               this.optionvideo=res.data.data.list
-    //                             this.optionvideo.forEach((item,index)=>{
-    //                                     item.name=item.videoName
-    //                                     item.type=4
-    //                             })
-
-    //                        setTimeout(() =>{
-    //                             resolve( this.optionvideo)
-
-    //                         },500)
-    //                            }
-    //                    })
-    //          }
-    //      }
-    //  },
     editconcent(node, data) {
-      console.log("bianji");
-      console.log(data);
-      console.log(node);
-      console.log(node.level);
       this.isadd = false;
       this.formStructuredata.uri = data.itemcon.imageUri;
       this.formStructuredata.url = data.itemcon.imageUrl;
@@ -494,8 +394,6 @@ export default {
           id: data.id
         };
         listparentStructure(parms).then(res => {
-          console.log("zhuji");
-          console.log(res);
           if (res.data.code == 0) {
             this.formStructuredata.selectType =
               res.data.data[0].courseStructureId;
@@ -511,74 +409,64 @@ export default {
       }
     },
     removecon(node, data) {
-      console.log("删除");
-      console.log(node);
-      console.log(data);
-      // const parent = node.parent;
-      // const children = parent.data.children || parent.data;
-      // const index = children.findIndex(d => d.id === data.id);
-      // children.splice(index, 1);
-
-      if (node.level == 1) {
-        var parms = {
-          courseStructureId: data.id
-        };
-        delectcourseStructure(parms).then(res => {
-          console.log(res);
-          if (res.data.code == 0) {
-            this.$message({
-              type: "success",
-              message: "删除成功"
+      this.$confirm("将删除 " + data.label + ", 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          if (node.level == 1) {
+            var parms = {
+              courseStructureId: data.id
+            };
+            delectcourseStructure(parms).then(res => {
+              console.log(res);
+              if (res.data.code == 0) {
+                this.focusdata();
+              } else {
+                this.$message.error(res.data.message);
+              }
             });
-          } else {
-            this.$message.error(res.data.message);
-          }
-        });
-      } else if (node.level == 2) {
-        var parms = {
-          courseClassificationId: data.id
-        };
-        delectcourseClassification(parms).then(res => {
-          if (res.data.code == 0) {
-            this.$message({
-              type: "success",
-              message: "删除成功"
+          } else if (node.level == 2) {
+            var parms = {
+              courseClassificationId: data.id
+            };
+            delectcourseClassification(parms).then(res => {
+              if (res.data.code == 0) {
+                this.focusdata();
+              } else {
+                this.$message.error(res.data.message);
+              }
             });
-            this.focusdata();
-          } else {
-            this.$message.error(res.data.message);
-          }
-        });
-      } else if (node.level == 3) {
-        var params = {
-          courseContentId: data.id
-        };
-        delectcourseContent(params).then(res => {
-          if (res.data.code == 0) {
-            this.$message({
-              type: "success",
-              message: "删除成功"
+          } else if (node.level == 3) {
+            var params = {
+              courseContentId: data.id
+            };
+            delectcourseContent(params).then(res => {
+              if (res.data.code == 0) {
+                this.focusdata();
+              } else {
+                this.$message.error(res.data.message);
+              }
             });
-            this.focusdata();
-          } else {
-            this.$message.error(res.data.message);
-          }
-        });
-      } else if (node.level == 4) {
-        console.log(data);
-        var parms = {
-          courseResourceId: data.id
-        };
-        delectvideoResource(parms).then(res => {
-          if (res.data.code == 0) {
-            this.$message({
-              type: "success",
-              message: "删除成功"
+          } else if (node.level == 4) {
+            console.log(data);
+            var parms = {
+              courseResourceId: data.id
+            };
+            delectvideoResource(parms).then(res => {
+              if (res.data.code == 0) {
+                this.focusdata();
+              }
             });
-            this.focusdata();
           }
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除"
+          });
         });
-      }
     },
     changeseleval(val) {
       //选择系,在选择类,
@@ -643,6 +531,7 @@ export default {
           }
         });
       }
+      this.getcourseStructurepage();
     }
   },
   mounted() {

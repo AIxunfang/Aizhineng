@@ -6,7 +6,7 @@
                     菜单管理
                 </span>
             </div>
-            <div style="margin:20px"> <el-button icon="el-icon-plus" type="primary" size="small" @click="addmenu()" >新增</el-button></div>
+            <!-- <div style="margin:20px"> <el-button icon="el-icon-plus" type="primary" size="small" @click="addmenu()" >新增</el-button></div> -->
          </el-col>
          <el-col :span="24">
               <div style="margin:20px">
@@ -23,7 +23,7 @@
                     :selection-type="props.selectionType"
                     children-prop="secondPermissionList"
                   >
-                   <template slot="permissionOrder" slot-scope="scope">
+                   <!-- <template slot="permissionOrder" slot-scope="scope">
                           <el-popover
                             class="iconkongzhi"
                             placement="top"
@@ -32,7 +32,7 @@
                            <el-input v-model="scope.row.permissionOrder"></el-input><i class="fa fa-check-square editsubmit fa-3x" aria-hidden="true"></i>
                            <span slot="reference" style="text-decoration:underline;color:blue;cursor:pointer" @click="editsort(scope.row)">{{scope.row.permissionOrder}}</span>
                           </el-popover>
-                   </template>
+                   </template> -->
                     <template slot="action"  slot-scope="scope" >
                          <!-- <el-button @click="menudelect(scope.row)"   type="danger" size="small"   round>删除</el-button> -->
                          <el-button @click="menuedit(scope.row)"  type="primary"   size="small"  round  >编辑</el-button>
@@ -41,12 +41,12 @@
                 </zk-table>  
                 <el-dialog
                       :visible.sync="menudialogVisible"
-                      width="47%"
+                      width="800px"
                     >
-                <el-form :inline="true" :model="formmenu" class="formmenu" label-width="80px" >
+                <el-form :inline="true" :model="formmenu" class="formmenu" label-width="100px"  :rules="rules" ref="formmenu">
                       <div>
-                            <el-form-item label="名称">
-                              <el-input v-model="formmenu.projectName" ></el-input>
+                            <el-form-item label="名称" prop='permissionName'>
+                              <el-input v-model="formmenu.permissionName" ></el-input>
                             </el-form-item>
                             <el-form-item label="父节点">
                               <el-select v-model="formmenu.region" >
@@ -59,23 +59,25 @@
                               </el-select>
                             </el-form-item>
                        </div>
-                       <div>
+                       <div style="height:70px" class="iconpermiss">
                            <el-form-item label="类型">
-                                   <el-select v-model="formmenu.region" >
+                                   <el-select v-model="formmenu.permissionType" >
                                       <el-option label="一级" value="1"></el-option>
                                       <el-option label="二级" value="2"></el-option>
                                   </el-select>
                             </el-form-item>
-                          <el-form-item label="图标" >
-                                 <el-input  v-model="formmenu.iconurl" placeholder="图标参照font awesome,二级无需填写"></el-input>  
+                          <el-form-item label="图标" prop="permissionIcon">
+                                 <el-input  v-model="formmenu.permissionIcon" placeholder="图标参照font awesome,二级无需填写"></el-input> 
+                                  <span style="color:#e9eaec">参照FontAwesome</span>
                           </el-form-item>
+                          
                        </div>
                         <div>
-                         <el-form-item label="顺序">
-                                <el-input v-model="formmenu.projectName"  placeholder="排列序号" ></el-input> 
+                         <el-form-item label="顺序"  prop="permissionOrder">
+                                <el-input v-model="formmenu.permissionOrder"  placeholder="100以内的正整数" ></el-input> 
                          </el-form-item>
                          <el-form-item label="是否启用">
-                                      <el-select v-model="formmenu.region" >
+                                      <el-select v-model="formmenu.permissionStatus" >
                                       <el-option label="是" value="0"></el-option>
                                       <el-option label="否" value="1"></el-option>
                                   </el-select>
@@ -83,13 +85,12 @@
                         </div>
                         <div>
                            <el-form-item label="前端路由">
-                              <el-input v-model="formmenu.projectName"  ></el-input>
+                              <el-input v-model="formmenu.routeUrl"  readonly="readonly" ></el-input>
                             </el-form-item>
                         </div>
                       </el-form>
                         <span slot="footer" class="dialog-footer">
-                        <el-button size="mini">取 消</el-button>
-                        <el-button type="primary" size="mini">确 定</el-button>
+                        <el-button type="primary" size="mini"  @click="savedata" >确 定</el-button>
                       </span>
                 </el-dialog>
            </div> 
@@ -99,164 +100,232 @@
   </el-row>
 </template>
 <script>
- import {permissionlistsort,permissionlistfirst,permissiondelete} from '@/api/api'
+import {
+  permissionlistsort,
+  permissionlistfirst,
+  permissiondelete,
+  permissionupdate
+} from "@/api/api";
 
 export default {
-           data(){
-               return{
-                fatherdata:[],//父节点
-                menudialogVisible:false,
-                secondPermissionList:'',
-                  Username:'',
-                  routerurl:'',
-                 props: {
-                    border: true,
-                    showHeader: true,
-                    showRowHover: true,
-                    treeType: true,
-                    isFold: true,
-                    expandType: false, 
-                    selectionType:false,
-                   },
-          formmenu:{
-                projectName:"",
-                region:"",
-                iconurl:"",
-          },
-        treedata: [],
-        columns: [
+  data() {
+    return {
+      rules: {
+        permissionName: [
+          { required: true, message: "菜单名称不能为空", trigger: "blur" }
+        ],
+        permissionIcon: [
           {
-            label: '名称',
-             prop: 'permissionName',
-             width: '300px',
-          },
-          {
-            label: '图标',
-            prop: 'sex',
-            minWidth: '50px',
-          },
-          {
-            label: '级别',
-            prop: 'permissionType',
-           
-          },
-          {
-            label: '地址',
-            prop: 'routeUrl',
-             width:"220px"
-           },
-          {
-            label: '顺序',
-            width:'80px',
-            type: 'template',
-            template: 'permissionOrder',
-           },
-          {
-            label: '操作',
-             width:'200px',
-             type:'template',
-             template: 'action', 
-            
-                  },
-               ],     
-             }
-           },
-           methods:{
-             getmenulist(){
-              var parms={
-                    userAccount:this.Username.name,
+            required: true,
+            message: "参照FontAwesome写上图标",
+            trigger: "blur"
+          }
+        ],
+        permissionOrder: [
+          { type: "number", message: "大于0的正整数" },
+          { pattetn: /^100$|^(\d|[1-9]\d)$/, message: "大于0的正整数" }
+        ]
+      },
+
+      fatherdata: [], //父节点
+      menudialogVisible: false,
+      secondPermissionList: "",
+      Username: "",
+      routerurl: "",
+      props: {
+        border: true,
+        showHeader: true,
+        showRowHover: true,
+        treeType: true,
+        isFold: true,
+        expandType: false,
+        selectionType: false
+      },
+      formmenu: {
+        region: "",
+        permissionName: "",
+        region: "",
+        permissionIcon: "",
+        permissionStatus: "",
+        permissionOrder: "",
+        permissionType: "",
+        id: ""
+      },
+      treedata: [],
+      columns: [
+        {
+          label: "名称",
+          prop: "permissionName",
+          width: "300px"
+        },
+        {
+          label: "图标",
+          prop: "sex",
+          minWidth: "50px"
+        },
+        {
+          label: "级别",
+          prop: "permissionType"
+        },
+        {
+          label: "地址",
+          prop: "routeUrl",
+          width: "220px"
+        },
+        {
+          label: "顺序",
+          width: "80px",
+          prop: "permissionOrder"
+        },
+        {
+          label: "操作",
+          width: "200px",
+          type: "template",
+          template: "action"
+        }
+      ]
+    };
+  },
+  methods: {
+    getmenulist() {
+      var parms = {
+        userAccount: this.Username.name
+      };
+      this.treedata = [];
+      permissionlistsort(parms).then(res => {
+        if (res.data.code == 0) {
+          console.log("菜单栏权限");
+          console.log(res);
+          this.routerurl = res.data.data;
+          this.routerurl.forEach((item, index) => {
+            this.treedata.push(item[0]);
+          });
+        }
+      });
+    },
+    getfristmenu() {
+      //得到父节点的一级菜单
+      permissionlistfirst().then(res => {
+        console.log("父节点");
+        console.log(res);
+        if (res.data.code == 0) {
+          this.fatherdata = res.data.data;
+          this.fatherdata.unshift({
+            id: "",
+            permissionName: "无父节点"
+          });
+        }
+
+        console.log(this.fatherdata);
+      });
+    },
+    menudelect(index) {
+      // console.log(index)
+
+      var parms = {
+        id: index.id
+      };
+      this.$confirm("此操作将永久删除该菜单, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          permissiondelete(parms).then(res => {
+            console.log("shanchu");
+            console.log(res);
+            if (res.data.code == 0) {
+              this.getmenulist();
+            } else {
+              this.$message.error(res.data.message);
+            }
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除"
+          });
+        });
+    },
+    menuedit(event) {
+      //编辑部分
+      this.menudialogVisible = true;
+      this.formmenu.permissionName = event.permissionName;
+      this.formmenu.permissionParentId = event.permissionParentId;
+      this.formmenu.permissionType = String(event.permissionType);
+      this.formmenu.permissionIcon = event.permissionIcon;
+      this.formmenu.permissionOrder = event.permissionOrder;
+      this.formmenu.permissionStatus = String(event.permissionStatus);
+      this.formmenu.routeUrl = event.routeUrl;
+      this.formmenu.permissionUrl = event.permissionUrl;
+      this.formmenu.id = event.id;
+      if (event.permissionType == 2) {
+        this.formmenu.region = event.permissionParentId;
+      } else {
+        this.formmenu.region = "";
+      }
+    },
+    savedata() {
+      if (this.formmenu.permissionType == 2) {
+        this.formmenu.permissionParentId = this.formmenu.region;
+      }
+      this.formmenu.permissionType = Number(this.formmenu.permissionType);
+      this.formmenu.permissionStatus = Number(this.formmenu.permissionStatus);
+      console.log(this.formmenu);
+
+      this.$refs["formmenu"].validate(valid => {
+        if (valid) {
+          if (
+            this.formmenu.region !== "" &&
+            this.formmenu.permissionType == 1
+          ) {
+            this.$message.error("父节点与类型不一样重新选择");
+          } else if (
+            this.formmenu.region == "" &&
+            this.formmenu.permissionType == 2
+          ) {
+            this.$message.error("父节点与类型不一样重新选择");
+          } else {
+            permissionupdate(this.formmenu).then(res => {
+              console.log(res);
+              this.getmenulist();
+              if (res.data.code == 0) {
+                this.$message({
+                  type: "success",
+                  message: "编辑成功"
+                });
+                this.$refs["formmenu"].resetFields();
+                this.menudialogVisible = false;
               }
-               permissionlistsort(parms).then(res=>{
-                        if(res.data.code==0){
-                            console.log("菜单栏权限")
-                             console.log(res)
-                             this.routerurl= res.data.data
-                            this.routerurl.forEach((item ,index) => {
-                                      this.treedata.push(item[0])
-                            });   
-                        }
-                   })    
-              },
-             getfristmenu(){//得到父节点的一级菜单
-                   permissionlistfirst().then(res=>{
-                            console.log("父节点")
-                            console.log(res)
-                            if(res.data.code==0){
-                                 this.fatherdata=res.data.data;
-                                   this.fatherdata.unshift(
-                                      {
-                                        id:'',
-                                        permissionName:"无父节点"
-
-                                      }
-                                   )
-                            }
-
-                            console.log( this.fatherdata)
-                   })    
-             },
-             menudelect(index){
-                  // console.log(index)
-
-                   var parms={
-                        id:index.id
-                   }
-                    this.$confirm('此操作将永久删除该菜单, 是否继续?', '提示', {
-                        confirmButtonText: '确定',
-                        cancelButtonText: '取消',
-                        type: 'warning'
-                      }).then(() => {
-                     permissiondelete(parms).then(res=>{
-                          console.log("shanchu")
-                          console.log(res)
-                          if(res.data.code==0){
-                                 this.getmenulist()   
-                          }else{
-                               this.$message.error(res.data.message)
-                          }
-                    })       
-                      }).catch(() => {
-                        this.$message({
-                          type: 'info',
-                          message: '已取消删除'
-                        });          
-                   });     
-             },
-           menuedit(event){//编辑部分
-                   this.menudialogVisible=true
-
-           },
-           editsort(event){//点击编辑顺序
-                //  this.visible2=true
-                  console.log(event)
-           },
-           addmenu(){
-               this.menudialogVisible=true  
-           },
-           
-
-           },
-           mounted(){
-                  this.Username = JSON.parse(sessionStorage.getItem("user"));
-                  this.getmenulist()
-                  this.getfristmenu()
-           }           
-}
+            });
+          }
+        }
+      });
+    }
+  },
+  mounted() {
+    this.Username = JSON.parse(sessionStorage.getItem("user"));
+    this.getmenulist();
+    this.getfristmenu();
+  }
+};
 </script>
 <style lang="scss" scoped>
-
 </style>
 <style>
-     .el-popper .el-input{
-          width: 97px;
-     }
-            .editsubmit{
-                vertical-align: middle;
-               color: #409eff;
-        }
-        .formmenu  .el-input--suffix{
-               width:202px;
-        }
-
+.el-popper .el-input {
+  width: 97px;
+}
+.editsubmit {
+  vertical-align: middle;
+  color: #409eff;
+}
+.formmenu .el-input--suffix {
+  width: 202px;
+}
+.iconpermiss .el-input {
+  width: 202px;
+}
 </style>
 

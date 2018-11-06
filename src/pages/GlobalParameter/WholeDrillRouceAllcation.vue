@@ -89,9 +89,9 @@ import { configget, configupdate, findresource } from "@/api/api";
 export default {
   data() {
     return {
-      titleName:null,
-      amendVisible:false,
-      usetableData:[],
+      titleName: null,
+      amendVisible: false,
+      usetableData: [],
       chartSettings: {
         radius: 50,
         offsetY: 120,
@@ -115,8 +115,8 @@ export default {
         cpuamend: "",
         gpuamend: "",
         memoryamend: "",
-        type:'',
-        resource:''
+        type: "",
+        resource: ""
       },
 
       rules: {
@@ -145,38 +145,35 @@ export default {
       chartData_vebarmeory: {
         columns: ["类型", "使用情况"],
         rows: []
-      },
-
+      }
     };
   },
   methods: {
     getconfigget() {
       configget().then(res => {
-        console.log("------资源数据----");
-        console.log(res);
         if (res.data.code == 0) {
-             this.usetableData=res.data.data
+          this.usetableData = res.data.data;
         }
       });
     },
-  amend_data(index){
-         console.log(index)
-         if(index.type==1){
-            this.titleName="训练资源配置"
-         }else{
-             this.titleName="发布资源配置"
-         }
-         this.amendVisible=true 
-         this.formmemory.memoryamend=index.memory
-         this.formmemory.gpuamend=index.gpu
-         this.formmemory.cpuamend=index.cpu
-         this.formmemory.type=index.type 
-         this.formmemory.resource=index.resource
-  },
+    amend_data(index) {
+      console.log(index);
+      if (index.type == 1) {
+        this.titleName = "训练资源配置";
+      } else {
+        this.titleName = "发布资源配置";
+      }
+      this.amendVisible = true;
+      this.formmemory.memoryamend = index.memory;
+      this.formmemory.gpuamend = index.gpu;
+      this.formmemory.cpuamend = index.cpu;
+      this.formmemory.type = index.type;
+      this.formmemory.resource = index.resource;
+    },
 
     savememoryamend() {
       var params = {
-        resource:this.formmemory.resource,
+        resource: this.formmemory.resource,
         type: this.formmemory.type,
         memory: this.formmemory.memoryamend,
         gpu: this.formmemory.gpuamend,
@@ -190,7 +187,7 @@ export default {
                 message: "修改成功",
                 type: "success"
               });
-              this.amendVisible=false
+              this.amendVisible = false;
               this.$refs["formmemory"].resetFields();
               setTimeout(() => {
                 this.getconfigget();
@@ -222,73 +219,53 @@ export default {
               使用情况:
                 res.data.data.all_publish_limit_cpu -
                 res.data.data.all_publish_used_cpu
-            },
-          ]
-            this.chartData_vebargpu.rows = [
-              {
-                类型: "训练剩余",
-                使用情况:
-                  res.data.data.all_training_limit_gpu -
-                  res.data.data.all_training_used_gpu
-              },
-              {
-                类型: "训练使用",
-                使用情况: res.data.data.all_training_used_gpu
-              },
-              {
-                类型: "发布使用",
-                使用情况: res.data.data.all_publish_used_gpu
-              },
-              {
-                类型: "发布剩余",
-                使用情况:
-                  res.data.data.all_publish_limit_gpu -
-                  res.data.data.all_publish_used_gpu
-              }
-            ]
-           this.chartData_vebarmeory.rows=[
-                 {
-                   类型: "训练剩余",
-                   使用情况: res.data.data.all_training_used_memory,
-                 },
-                 {
-                    类型: "训练使用",
-                    使用情况: res.data.data.all_training_limit_memory - res.data.data.all_training_used_memory,
-                 },
-                 {
-                   类型:"发布使用",
-                   使用情况:  res.data.data.all_publish_used_memory
-                 },
-                 {
-                   类型:'发布剩余',
-                   使用情况:res.data.data.all_publish_limit_memory - res.data.data.all_publish_used_memory,
-                 }
-
-           ]
-            // {
-            //   '类型': "GPU",
-            //   '训练使用': res.data.data.all_training_used_gpu,
-            //   '训练剩余':
-            //     res.data.data.all_training_limit_gpu -
-            //     res.data.data.all_training_used_gpu,
-            //   '发布使用': res.data.data.all_publish_used_gpu,
-            //   '发布剩余':
-            //     res.data.data.all_publish_limit_gpu -
-            //     res.data.data.all_publish_used_gpu,
-            // },
-            // {
-            //   '类型': "内存",
-            //   '训练使用': res.data.data.all_training_used_memory,
-            //   '训练剩余':
-            //     res.data.data.all_publish_limit_memory -
-            //     res.data.data.all_training_used_memory,
-            //   '发布使用': res.data.data.all_publish_used_memory,
-            //   '发布剩余':
-            //     res.data.data.all_publish_limit_memory -
-            //     res.data.data.all_publish_used_memory,
-            // }
-        
             }
+          ];
+          this.chartData_vebargpu.rows = [
+            {
+              类型: "训练剩余",
+              使用情况:
+                res.data.data.all_training_limit_gpu -
+                res.data.data.all_training_used_gpu
+            },
+            {
+              类型: "训练使用",
+              使用情况: res.data.data.all_training_used_gpu
+            },
+            {
+              类型: "发布使用",
+              使用情况: res.data.data.all_publish_used_gpu
+            },
+            {
+              类型: "发布剩余",
+              使用情况:
+                res.data.data.all_publish_limit_gpu -
+                res.data.data.all_publish_used_gpu
+            }
+          ];
+          this.chartData_vebarmeory.rows = [
+            {
+              类型: "训练剩余",
+              使用情况: res.data.data.all_training_used_memory
+            },
+            {
+              类型: "训练使用",
+              使用情况:
+                res.data.data.all_training_limit_memory -
+                res.data.data.all_training_used_memory
+            },
+            {
+              类型: "发布使用",
+              使用情况: res.data.data.all_publish_used_memory
+            },
+            {
+              类型: "发布剩余",
+              使用情况:
+                res.data.data.all_publish_limit_memory -
+                res.data.data.all_publish_used_memory
+            }
+          ];
+        }
       });
     }
   },

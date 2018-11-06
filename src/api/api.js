@@ -470,3 +470,23 @@ export const addcourseMaterial =(parms) =>{
     return axios
     .post('/course/add/courseMaterial', parms,)
 }
+//资料分页查询
+export const courseMaterialpage=(parms) =>{
+    return axios
+    .get('/course/courseMaterial/page',{params : parms})
+}
+//资料删除接口
+export const delectcourseMaterial=(parms) =>{
+    return axios
+    .get('/course/delete/courseMaterial',{params : parms})
+}
+//资料编辑接口
+export const updatecourseMaterial =(parms) =>{
+    return axios
+    .post('/course/update/courseMaterial', parms,)
+}
+//权限菜单的修改
+export const permissionupdate =(parms) =>{
+    return axios
+    .post('/permission/update', parms,)
+}
