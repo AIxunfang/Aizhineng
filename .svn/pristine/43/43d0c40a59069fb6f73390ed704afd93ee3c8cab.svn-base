@@ -303,12 +303,6 @@ export const projectSharefinduserName=(parms) =>{
     return axios
     .get('/projectShare/find/userName',{params : parms})
 }
-//项目分享下载
-export const projectSharedownload=(parms) =>{
-    return axios
-    .get('/projectShare/download',{params : parms})
-}
-
 //发布模型-->删除接口
 export const publishdelete=(parms) =>{
     return axios
@@ -495,9 +489,4 @@ export const updatecourseMaterial =(parms) =>{
 export const permissionupdate =(parms) =>{
     return axios
     .post('/permission/update', parms,)
-}
-//下载课资料
-export const findcourseMaterial=(parms) =>{
-    return axios
-    .get('/course/find/courseMaterial',{params : parms})
 }
