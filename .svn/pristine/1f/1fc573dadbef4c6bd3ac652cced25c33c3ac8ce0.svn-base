@@ -26,6 +26,21 @@ axios.interceptors.request.use(function (config) {
                 return config;
             };
 
+      
+                // if(config.url==="/hdfs/delete"){
+                //     let data = config.data
+                //     // console.log(data)
+                //     config.headers={'Content-type':'application/json;charset=UTF-8' };
+                //     config.data ={
+                //         ...config.data,
+                //        token: token
+                //     }
+                //     return config;
+                // };       
+
+
+
+
             if(config.url==="/publish/create/model"){
                 let data = config.data
                 config.headers={'Content-type':'application/json;charset=UTF-8' };
@@ -516,9 +531,4 @@ export const hdfslist=(parms) =>{
 export const hdfsdelete =(parms) =>{
     return axios
     .post('/hdfs/delete', parms,)
-}
-//从hdfs下载
-export const hdfsdown=(parms) =>{
-    return axios
-    .get('/hdfs/download',{params : parms})
 }

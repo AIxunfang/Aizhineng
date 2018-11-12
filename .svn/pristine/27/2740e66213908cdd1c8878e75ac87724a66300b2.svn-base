@@ -172,7 +172,7 @@ export default {
       console.log("--666666--")
       console.log(index)
       var imagread=index
-      this.imgUrl = this.picturedata[index].resourceUrl;
+
       this.pictureurl = this.picturedata[index].resourceUri;
       var imgread=this.picturedata[index].resourceUri
       const readdataimg= imgread.indexOf('images')

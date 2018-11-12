@@ -1,0 +1,76 @@
+<template>
+  <el-row>
+         <div class="navigationbar"> 
+               <span class="navigationname">公共数据集管理<i class="el-icon-arrow-right" aria-hidden="true"></i>
+                    HDFS
+                </span>
+           </div>
+           <el-col :span="24">
+                <el-dropdown trigger="click" style="margin:20px 0px 20px 100px ;"  placement="bottom">
+                      <span class="el-dropdown-link">
+                          <el-button  type="info" size="small">  <i class="el-icon-plus"></i> </el-button>
+                      </span>
+                      <el-dropdown-menu slot="dropdown">
+                              <el-dropdown-item>黄金糕</el-dropdown-item>
+                              <el-dropdown-item>狮子头</el-dropdown-item>
+                              <el-dropdown-item>螺蛳粉</el-dropdown-item>
+                      </el-dropdown-menu>
+                </el-dropdown>
+           </el-col>
+           <el-button type="primary" @click="upload">上传</el-button>
+            <form>
+                <input type="file" id="file-input" name="fileContent" @change="clickinput">
+            </form>
+
+  </el-row>
+
+
+
+</template>
+<script>
+$("#file-input").on("change", function() {
+
+});
+
+
+
+
+import{hdfsupload} from '@/api/api'
+export default {
+           data(){
+               return{
+
+               }
+           },
+        methods:{
+                upload(){
+                        var parms={
+                              localFile:"/F:/2018.zip",
+                              hdfsPath:'/'
+                           
+                        }
+                    hdfsupload(parms).then(res=>{
+                      console.log(res)
+
+                    })    
+
+                },
+             clickinput(){
+                    console.log( $('#file-input').value   )
+                     // console.log(`file name is ${this.value}`);
+                    let formData = new FormData(this.form);
+                    formData.append("fileName", this.value);
+                    console.log(formData);
+                    console.log("===================")
+             }
+
+                
+        },
+        mounted(){
+
+        }
+}
+</script>
+<style lang="scss" scoped>
+
+</style>

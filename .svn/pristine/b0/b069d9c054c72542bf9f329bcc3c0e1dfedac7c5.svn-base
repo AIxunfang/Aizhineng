@@ -6,7 +6,7 @@ import router from './router'
 import ElementUI from 'element-ui'
 import VCharts from 'v-charts'
 import timeago from 'timeago.js'
-import Vuex from 'vuex'
+
 import ZkTable from 'vue-table-with-tree-grid'
 
 // import './components/changeTheme/theme/index.css'
@@ -14,13 +14,17 @@ import 'element-ui/lib/theme-chalk/index.css'
 import 'element-ui/lib/theme-chalk/reset.css'
 import 'font-awesome/css/font-awesome.css';
  import './assets/css/common.scss'
- import store from '@/store'
 
 Vue.config.productionTip = false
 Vue.use(ElementUI)
 Vue.use(VCharts)
 Vue.use(timeago)//时间转化的格式
-Vue.use(Vuex)
+ 
+
+
+
+
+
 Vue.use(ZkTable)//树状表格
 
 
@@ -40,7 +44,6 @@ router.beforeEach((to, from, next ) => {
 window.app =  new Vue({
   el: '#app',
   router,
-  store,
   template: '<App/>',
   components: { App }
 })

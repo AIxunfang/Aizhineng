@@ -1,0 +1,193 @@
+<template>
+  <el-row>
+         <div class="navigationbar"> 
+               <span class="navigationname">公共数据集管理<i class="el-icon-arrow-right" aria-hidden="true"></i>
+                    HDFS
+                </span>
+           </div>
+           <el-col :span="24">
+                <el-dropdown trigger="click" style="margin:20px 0px 20px 100px ;" :hide-on-click="false"  placement="bottom" @command="clickmenu">
+                      <span class="el-dropdown-link">
+                          <el-button  type="info" size="small">  <i class="el-icon-plus"></i> 
+                          </el-button>
+                         
+
+                      </span>
+                      <el-dropdown-menu slot="dropdown">
+                              <el-dropdown-item   command="1">
+                                <i class="el-icon-document"></i> 创建文件夹
+                             </el-dropdown-item>
+                              <el-dropdown-item  command="2" >
+
+                                   <el-upload
+                                     action="http://192.168.80.63:30005/api/hdfs/upload"
+                                     :show-file-list="false"
+                                     :on-success="handleAvatarSuccess"
+                                     :headers="headers"
+                                     :data="dataform"
+                                     :on-progress="progressfunc"
+                                     :before-upload="beforeAvatarUpload">
+                                <i class="el-icon-upload"></i> 上传文件
+                                    </el-upload>
+                            </el-dropdown-item>
+                      </el-dropdown-menu>
+                </el-dropdown>
+                <div style="display:inline-block;width:500px" v-show="uploadshow">
+                  <el-progress :text-inside="true" :stroke-width="18" :percentage="percentage" status="success"></el-progress>
+                </div>
+           </el-col>
+           <el-col :span="24">
+                  <div style="margin:  0px 20px 0px 20px">
+                       <el-button @click="delect"  size="mini" style="margin-bottom:10px">删除</el-button>
+                        <el-table
+                             tooltip-effect="dark"
+                            :data="filetableData"
+                             ref="multipleTable"
+                              @selection-change="handleSelectionChange"
+                             :default-sort = "{prop: 'fileSize', prop:'modificationTime', order: 'descending'}"
+                            style="width: 100%">
+                      
+                            <el-table-column
+                                 type="selection"
+                                
+                                width="55">
+                            </el-table-column>      
+
+
+
+                            <el-table-column
+                                prop="fileName"
+                                label='文件名次'
+                              
+                                width="480">
+                            </el-table-column>
+                            <el-table-column
+                                prop="fileSize"
+                                 :formatter="formatter"
+                                label="大小"
+                                sortable
+                                width="180">
+                              <template slot-scope="scope">
+                                  {{bytesToSize(scope.row.fileSize)}}
+
+                              </template>
+
+                            </el-table-column>
+                            <el-table-column
+                                label='修改时间'
+                                >
+
+                                <template slot-scope="scope">
+                                    {{timeFormattershowsecod(scope.row.modificationTime)}}
+                                </template>
+                            </el-table-column>
+                    </el-table>
+               </div>   
+           </el-col>
+         
+
+
+  </el-row>
+
+
+
+</template>
+<script>
+import timeago from 'timeago.js';
+import { timeFormattershowsecod,bytesToSize } from "@/assets/js/common";
+import{hdfsupload,hdfslist,hdfsdelete} from '@/api/api'
+export default {
+           data(){
+               return{
+                timeago,
+                bytesToSize,
+                timeFormattershowsecod,
+                delectdata:[],
+                 multipleTable:[],
+                 filetableData:[],
+                 uploadshow:false,
+                 percentage:0,
+                 headers:{
+                      token:"",
+                 },
+                  dataform:{
+                      hdfsPath:'/',
+                  }
+               }
+           },
+        methods:{
+            delect(){
+                  var parms= this.delectdata.join(',')
+                  console.log(parms)
+                  hdfsdelete(parms).then(res=>{
+                      console.log('删除')
+                      console.log(res)
+
+                  })
+
+
+            },
+             formatter(row, column) {
+                     console.log('=====')
+                     console.log(row)
+                     console.log(column)
+
+                     return row.fileSize;
+                },
+             handleSelectionChange(val) {
+                        this.multipleSelection = val;
+                        console.log(this.multipleSelection)
+                        this.multipleSelection.forEach((item,index)=>{
+                              
+                              this.delectdata.push(item.fileName)
+                        })
+
+                    },
+            
+            
+            
+            //进度条
+          progressfunc(event, file, fileList){
+              this.uploadshow=true
+              this.percentage=parseInt(event.percent)
+              if( this.percentage==100){
+                    this.uploadshow=false
+              }
+          },
+
+             beforeAvatarUpload(){//上传前加参数
+                            const token = sessionStorage.getItem("token");
+                            this.headers.token = token;            
+             },
+             handleAvatarSuccess(res,file){
+                     console.log(res)
+                     console.log(file)
+
+             }, 
+             clickmenu(val){
+                   console.log(val)
+
+             },
+             gethdfslist(){
+                              var parms={
+                                       path:'/'
+                              }
+                          hdfslist(parms).then(res=>{
+                               if(res.data.code==0){
+                                   console.log("888888888")
+                                     console.log(res)
+                                     this.filetableData=res.data.data   
+                               }
+
+                          })    
+             }
+                
+        },
+        mounted(){
+                this.gethdfslist()
+        }
+}
+</script>
+<style lang="scss" scoped>
+
+</style>

@@ -118,7 +118,7 @@ export default {
                                        })
                                        this.$refs['formInline'].resetFields();
                                  }else{
-                                      this.$message.error("该训练名称已提交申请")
+                                      this.$message.error(res.data.message)
                                    }
                                 }) 
                         }

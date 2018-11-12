@@ -8,7 +8,7 @@
                       text-color='#758c97'
                       :unique-opened="true" 
                       router>
-                  <div class="collapseicon"><span  class="logoname"  v-show="this.isCollapse==false" >讯方AI学习计算平台</span></div>
+                  <div class="collapseicon"><span  class="logoname"  v-show="this.isCollapse==false" > 讯方AI云平台</span></div>
                     <template v-for=" (item,index) in routerurl">
                       <el-menu-item :key="item[0].routeUrl" :index='item[0].routeUrl' v-if="item[0].secondPermissionList.length==0" >
                             <template slot='title'>
@@ -242,7 +242,7 @@ export default {
                     display:inline-block;
                     height:60px; 
                     line-height:62px;
-                    font-size: 16px;
+                    font-size: 18px;
                  }
             }
         }

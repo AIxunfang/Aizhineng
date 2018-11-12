@@ -1,5 +1,5 @@
 <template>
-  <el-row class="hdfsmodel">
+  <el-row>
          <div class="navigationbar"> 
                <span class="navigationname">公共数据集管理<i class="el-icon-arrow-right" aria-hidden="true"></i>
                     HDFS
@@ -39,12 +39,10 @@
            <el-col :span="24">
                   <div style="margin:  0px 20px 0px 20px">
                        <el-button @click="delect"  size="mini" style="margin-bottom:10px"  v-show="ischecked"  >删除</el-button>
-                 
                         <el-table
                              tooltip-effect="dark"
                             :data="filetableData"
                              ref="multipleTable"
-                             @current-change="handleCurrentChange"
                               @selection-change="handleSelectionChange"
                              :default-sort = "{prop: 'fileSize', prop:'modificationTime', order: 'descending'}"
                             style="width: 100%">
@@ -62,17 +60,6 @@
                                 label='文件名次'
                                 width="480">
                               <template slot-scope="scope" >
-                                 <span  v-if='scope.row.dir==false '>
-                                       <span v-if=" scope.row.fileName.slice(-4)=='.jpg'|| scope.row.fileName.slice(-4)=='.png'  "> 
-                                             <img  :src="'http://192.168.80.63:30005/api/file' +scope.row.fileName "  style="width:32px;height:32px" class="picturemiddle">
-                                        </span>  
-                                         <span v-if=" scope.row.fileName.slice(-4)=='.rar'||  scope.row.fileName.slice(-4)=='.zip'">
-                                             <img src="../../assets/img/compress.png" class="picturemiddle">
-                                        </span>
-                                 </span>
-                                 <span v-else>
-                                     <img src="../../assets/img/dir.png"  class="picturemiddle">
-                                 </span>
                                   {{scope.row.fileName.slice(1) }}
                               </template>
                             </el-table-column>
@@ -104,132 +91,127 @@
                     </el-table>
                </div>   
            </el-col>
+         
+
+
   </el-row>
+
+
+
 </template>
 <script>
-import timeago from "timeago.js";
-import { timeFormattershowsecod, bytesToSize } from "@/assets/js/common";
-import { hdfsupload, hdfslist, hdfsdelete, hdfsdown } from "@/api/api";
+import timeago from 'timeago.js';
+import { timeFormattershowsecod,bytesToSize } from "@/assets/js/common";
+import{hdfsupload,hdfslist,hdfsdelete,hdfsdown} from '@/api/api'
 export default {
-  data() {
-    return {
-      datapeth: "/",
-      ischecked: false,
-      timeago,
-      bytesToSize,
-      timeFormattershowsecod,
-      delectdata: [],
-      multipleTable: [],
-      filetableData: [],
-      uploadshow: false,
-      percentage: 0,
-      headers: {
-        token: ""
-      },
-      dataform: {
-        hdfsPath: "/"
-      }
-    };
-  },
-  methods: {
-    delect() {
-      var parms = {
-        path: this.delectdata.join(",")
-      };
-      console.log(parms);
-      hdfsdelete(parms).then(res => {
-        console.log("删除");
-        console.log(res);
-        if (res.data.code == 0) {
-          this.gethdfslist();
-        }
-      });
-    },
-    formatter(row, column) {//按照时间排序
-      return row.modificationTime;
-    },
-    handleSelectionChange(val) {//选中的时候,显示删除功能按钮
-      this.delectdata = [];
-      this.multipleSelection = val;
-      console.log(this.multipleSelection);
-      if (this.multipleSelection.length > 0) {
-        this.ischecked = true;
-      } else {
-        this.ischecked = false;
-      }
+           data(){
+            
+               return{
+                 datapeth:'/',
+                 ischecked:false,
+                timeago,
+                bytesToSize,
+                timeFormattershowsecod,
+                delectdata:[],
+                 multipleTable:[],
+                 filetableData:[],
+                 uploadshow:false,
+                 percentage:0,
+                 headers:{
+                      token:"",
+                 },
+                  dataform:{
+                      hdfsPath:'/',
+                  }
+               }
+           },
+        methods:{
+            delect(){
+                  var parms= 
+                            { 
+                               path: this.delectdata.join(',')
+                            }
+                  console.log(parms)
+                  hdfsdelete(parms).then(res=>{
+                      console.log('删除')
+                      console.log(res)
+                      if(res.data.code==0){
+                              this.gethdfslist() 
+                      }
 
-      this.multipleSelection.forEach((item, index) => {
-        this.delectdata.push(item.fileName);
-      });
-    },
 
-    //进度条
-    progressfunc(event, file, fileList) {
-      this.uploadshow = true;
-      this.percentage = parseInt(event.percent);
-      if (this.percentage == 100) {
-        this.uploadshow = false;
-      }
-    },
+                  })
 
-    beforeAvatarUpload() {
-      //上传前加参数
-      const token = sessionStorage.getItem("token");
-      this.headers.token = token;
-    },
-    handleAvatarSuccess(res, file) {
-      console.log(res);
-      console.log(file);
-    },
-    handleCurrentChange(val) {
-      console.log(val);
-    },
-    clickmenu(val) {
-      console.log(val);
-    },
-    gethdfslist() {
-      var parms = {
-        path: this.datapeth
-      };
-      hdfslist(parms).then(res => {
-        if (res.data.code == 0) {
-          console.log("888888888");
-          console.log(res);
-          this.filetableData = res.data.data;
-          this.filetableData.forEach((item, index) => {
-            const picture = item.fileName.slice(-4);
-            console.log(picture);
-            if (picture === ".png" || picture === ".jpg")
-              if (item.dir == false) {
-                var parms = {
-                  hdfsFile: item.fileName
-                };
-                hdfsdown(parms).then(res => {
-                  console.log("下载");
-                  console.log(res);
-                });
+
+            },
+             formatter(row, column) {
+                     console.log('=====')
+                     console.log(row)
+                     console.log(column)
+
+                     return row.modificationTime;
+                },
+             handleSelectionChange(val) {
+                       this.delectdata=[]
+                        this.multipleSelection = val;
+                        console.log(this.multipleSelection)
+                        if(this.multipleSelection.length>0){
+                            this.ischecked=true
+                        }else{
+                              this.ischecked=false
+                        }
+
+                        this.multipleSelection.forEach((item,index)=>{
+                              
+                              this.delectdata.push(item.fileName)
+                        })
+
+                    },
+            
+            
+            
+            //进度条
+          progressfunc(event, file, fileList){
+              this.uploadshow=true
+              this.percentage=parseInt(event.percent)
+              if( this.percentage==100){
+                    this.uploadshow=false
               }
-          });
+          },
+
+             beforeAvatarUpload(){//上传前加参数
+                            const token = sessionStorage.getItem("token");
+                            this.headers.token = token;            
+             },
+             handleAvatarSuccess(res,file){
+                     console.log(res)
+                     console.log(file)
+
+             }, 
+             clickmenu(val){
+                   console.log(val)
+
+             },
+             gethdfslist(){
+                            var parms={
+                                       path:this.datapeth
+                              }
+                          hdfslist(parms).then(res=>{
+                               if(res.data.code==0){
+                                   console.log("888888888")
+                                     console.log(res)
+                                     this.filetableData=res.data.data   
+                               }
+
+                          })    
+             }
+                
+        },
+        mounted(){
+                this.gethdfslist()
         }
-      });
-    }
-  },
-  mounted() {
-    this.gethdfslist();
-  }
-};
+}
 </script>
 <style lang="scss" scoped>
-.hdfsmodel {
-  .picturemiddle {
-    vertical-align: middle;
-    margin-right: 8px;
-  }
-}
-</style>
-<style>
-.hdfsmodel .el-table_1_column_2 {
-  cursor: pointer;
-}
-</style>
 
+</style>
