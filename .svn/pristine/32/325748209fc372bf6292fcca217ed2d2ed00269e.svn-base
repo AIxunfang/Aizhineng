@@ -1,0 +1,239 @@
+<template>
+  <el-row class="hdfsmodel">
+         <div class="navigationbar"> 
+               <span class="navigationname">公共数据集管理<i class="el-icon-arrow-right" aria-hidden="true"></i>
+                    HDFS
+                </span>
+           </div>
+           <el-col :span="24">
+                <el-dropdown trigger="click" style="margin:20px 0px 20px 100px ;" :hide-on-click="false"  placement="bottom" @command="clickmenu">
+                      <span class="el-dropdown-link">
+                          <el-button  type="info" size="small">  <i class="el-icon-plus"></i> 
+                          </el-button>
+                         
+
+                      </span>
+                      <el-dropdown-menu slot="dropdown">
+                              <el-dropdown-item   command="1">
+                                <i class="el-icon-document"></i> 创建文件夹
+                             </el-dropdown-item>
+                              <el-dropdown-item  command="2" >
+
+                                   <el-upload
+                                     action="http://192.168.80.63:30005/api/hdfs/upload"
+                                     :show-file-list="false"
+                                     :on-success="handleAvatarSuccess"
+                                     :headers="headers"
+                                     :data="dataform"
+                                     :on-progress="progressfunc"
+                                     :before-upload="beforeAvatarUpload">
+                                <i class="el-icon-upload"></i> 上传文件
+                                    </el-upload>
+                            </el-dropdown-item>
+                      </el-dropdown-menu>
+                </el-dropdown>
+                <div style="display:inline-block;width:500px" v-show="uploadshow">
+                  <el-progress :text-inside="true" :stroke-width="18" :percentage="percentage" status="success"></el-progress>
+                </div>
+           </el-col>
+           <el-col :span="24">
+                  <div style="margin:  0px 20px 0px 20px">
+                       <el-button @click="delect"  size="mini" style="margin-bottom:10px"  v-show="ischecked"  >删除</el-button>
+                 
+                        <el-table
+                             tooltip-effect="dark"
+                            :data="filetableData"
+                             ref="multipleTable"
+                             @current-change="handleCurrentChange"
+                              @selection-change="handleSelectionChange"
+                             :default-sort = "{prop: 'fileSize', prop:'modificationTime', order: 'descending'}"
+                            style="width: 100%">
+                      
+                            <el-table-column
+                                 type="selection"
+                                
+                                width="55">
+                            </el-table-column>      
+
+
+
+                            <el-table-column
+                                prop="fileName"
+                                label='文件名次'
+                                width="480">
+                              <template slot-scope="scope" >
+                                 <span  v-if='scope.row.dir==false '>
+                                       <span v-if=" scope.row.fileName.slice(-4)=='.jpg'|| scope.row.fileName.slice(-4)=='.png'  "> 
+                                             <img  :src="'http://192.168.80.63:30005/api/file' +scope.row.fileName "  style="width:32px;height:32px" class="picturemiddle">
+                                        </span>  
+                                         <span v-if=" scope.row.fileName.slice(-4)=='.rar'||  scope.row.fileName.slice(-4)=='.zip'">
+                                             <img src="../../assets/img/compress.png" class="picturemiddle">
+                                        </span>
+                                 </span>
+                                 <span v-else>
+                                     <img src="../../assets/img/dir.png"  class="picturemiddle">
+                                 </span>
+                                  {{scope.row.fileName.replace(scope.row.currentpath,'') }}
+                              </template>
+                            </el-table-column>
+                            <el-table-column
+                                prop="fileSize"
+                                label="大小"
+                               >
+                              <template slot-scope="scope">
+                                  <span v-if='scope.row.dir==false'> {{bytesToSize(scope.row.fileSize)}}</span>
+                                  <span v-else   >--</span>
+                              </template>
+                            </el-table-column>
+                            <el-table-column
+                                label='修改时间'
+                                 width="180"
+                                   sortable
+                                 :formatter="formatter"
+                                 prop="modificationTime"
+                                >
+                                <template slot-scope="scope">
+                                 <el-popover trigger="hover" placement="top">    
+                                     <span>{{timeFormattershowsecod(scope.row.modificationTime)}}</span>
+                                     <div slot="reference" class="name-wrapper"  style="cursor:pointer">
+                                        {{timeago().format(scope.row.modificationTime,'zh_CN')}}
+                                     </div>
+                                 </el-popover>
+                                </template>
+                            </el-table-column>
+                    </el-table>
+               </div>   
+           </el-col>
+  </el-row>
+</template>
+<script>
+import timeago from "timeago.js";
+import { timeFormattershowsecod, bytesToSize } from "@/assets/js/common";
+import { hdfsupload, hdfslist, hdfsdelete, hdfsdown } from "@/api/api";
+export default {
+  data() {
+    return {
+      datapeth: "/",
+      ischecked: false,
+      timeago,
+      bytesToSize,
+      timeFormattershowsecod,
+      delectdata: [],
+      multipleTable: [],
+      filetableData: [],
+      uploadshow: false,
+      percentage: 0,
+      headers: {
+        token: ""
+      },
+      dataform: {
+        hdfsPath: "/"
+      }
+    };
+  },
+  methods: {
+    delect() {
+      var parms = {
+        path: this.delectdata.join(",")
+      };
+      console.log(parms);
+      hdfsdelete(parms).then(res => {
+        console.log("删除");
+        console.log(res);
+        if (res.data.code == 0) {
+          this.gethdfslist();
+        }
+      });
+    },
+    formatter(row, column) {//按照时间排序
+      return row.modificationTime;
+    },
+    handleSelectionChange(val) {//选中的时候,显示删除功能按钮
+      this.delectdata = [];
+      this.multipleSelection = val;
+      console.log(this.multipleSelection);
+      if (this.multipleSelection.length > 0) {
+        this.ischecked = true;
+      } else {
+        this.ischecked = false;
+      }
+
+      this.multipleSelection.forEach((item, index) => {
+        this.delectdata.push(item.fileName);
+      });
+    },
+
+    //进度条
+    progressfunc(event, file, fileList) {
+      this.uploadshow = true;
+      this.percentage = parseInt(event.percent);
+      if (this.percentage == 100) {
+        this.uploadshow = false;
+      }
+    },
+
+    beforeAvatarUpload() {
+      //上传前加参数
+      const token = sessionStorage.getItem("token");
+      this.headers.token = token;
+    },
+    handleAvatarSuccess(res, file) {
+      console.log(res);
+      console.log(file);
+    },
+    handleCurrentChange(val) {
+      console.log(val);
+    },
+    clickmenu(val) {
+      console.log(val);
+    },
+    gethdfslist() {
+      var parms = {
+        path: this.datapeth
+      };
+      hdfslist(parms).then(res => {
+        if (res.data.code == 0) {
+          console.log("888888888");
+          console.log(res);
+          this.filetableData = res.data.data;
+          this.filetableData.forEach((item, index) => {
+              
+              item.currentpath=res.config.params.path
+        //   item.tableName=item.fileName.Replace(item.currentpath,'')
+
+            const picture = item.fileName.slice(-4);
+            console.log(picture);
+            if (picture === ".png" || picture === ".jpg")
+              if (item.dir == false) {
+                var parms = {
+                  hdfsFile: item.fileName
+                };
+                hdfsdown(parms).then(res => {
+                  console.log("下载");
+                  console.log(res);
+                });
+              }
+          });
+        }
+      });
+    }
+  },
+  mounted() {
+    this.gethdfslist();
+  }
+};
+</script>
+<style lang="scss" scoped>
+.hdfsmodel {
+  .picturemiddle {
+    vertical-align: middle;
+    margin-right: 8px;
+  }
+}
+</style>
+<style>
+.hdfsmodel .el-table_1_column_2 {
+  cursor: pointer;
+}
+</style>
+

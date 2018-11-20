@@ -47,8 +47,8 @@
                         <el-button @click="downfile"   size="mini" style="margin-bottom:10px"  v-show="ischecked"  >下载</el-button>
                         <el-button    size="mini" style="margin-bottom:10px"  v-show="ischecked"  @click="movefile" > 移动</el-button>
                         <el-table
-                             size='mini'
-                             class="hefstable"
+                                size='mini'
+                              class="hefstable"
                              tooltip-effect="dark"
                             :data="filetableData"
                              ref="multipleTable"
@@ -179,7 +179,7 @@
 
                         </el-table-column>
                         <el-table-column
-                          width="180"
+                        width="180"
                           label='创建时间'>
                           <template slot-scope="scope">
                                    <el-popover trigger="hover" placement="top">    
@@ -196,7 +196,11 @@
                       <el-button type="primary" size='mini'   @click='suremove'>确 定</el-button>
                     </span>
 
+
                 </el-dialog>
+
+
+
           </el-col>
   </el-row>
 </template>
@@ -287,8 +291,17 @@ export default {
              if(column.label=="文件夹"){
                    this.movepath=row.fileName  
                    this.movehdfs()
+                   
+
+
              }
+
+
     },
+
+
+
+
     optioncommand(val, item) { //操作里面的下拉
       console.log(val);
        if(val==1){
@@ -365,6 +378,7 @@ export default {
                   oldPath: this.seleoldpath,
                   newPath:  this.$route.params.id == "/" ? this.currentpath+this.numberValidateForm.filename+this.selecttype :this.currentpath+'/'+this.numberValidateForm.filename+this.selecttype,
             }
+
  this.$refs["numberValidateForm"].validate(valid => {
         if(valid){
          hefsrename(parms).then(res=>{
@@ -378,10 +392,11 @@ export default {
               }
                
          })
-       }
-     })
-     console.log(parms)
-     }
+      }
+    })
+
+          console.log(parms)
+    }
     },
     delect() {
       var parms = {
@@ -535,13 +550,16 @@ export default {
 
     gethdfslist() {
       var parms = {
-        path: this.$route.params.id 
+        path: this.$route.params.id
       };
 
       if (this.$route.params.id.split("/").length > 1) {
         this.routermenu = this.$route.params.id.split("/").slice(1); //上面点击的菜单,
       }
       //  this.routermenu.splice(1)
+
+   
+
       hdfslist(parms).then(res => {//首页列表
         if (res.data.code == 0) {
           console.log("888888888");

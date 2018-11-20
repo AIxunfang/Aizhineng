@@ -20,7 +20,7 @@
                       width="210"
                       trigger="hover"
                      :content="item.courseContentDesc">
-                    <div class="coursename" slot="reference" >{{item.childrenlength}}个课时</div> 
+                    <div class="coursename" slot="reference" >{{item.childrenlength}}个章节</div> 
                  </el-popover>
             </div> 
         </el-col>

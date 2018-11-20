@@ -572,13 +572,3 @@ export const  commonlist=(parms) =>{
     return axios
     .get('/common/list',{params : parms})
 }
-//文件管理创建目录
-export const  commoncreat=(parms) =>{
-    return axios
-    .get('/common/create',{params : parms})
-}
-//文件管理重命名文件夹
-export const  commonrename=(parms) =>{
-    return axios
-    .get('/common/rename',{params : parms})
-}

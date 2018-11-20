@@ -140,7 +140,7 @@
                             </div> 
                         </div>
                 </el-form>  
-                <div> <el-button @click="creatmodel" size="small" type="primary" style="float:right;margin-right: 50px ;50px;50px; " > 创建训练 </el-button>  </div>
+                <div> <el-button @click="creatmodel" size="small" type="primary" style="float:right;margin-right: 50px ;50px;50px; " > 创建模块 </el-button>  </div>
        </el-col>
   </el-row>
 </template>

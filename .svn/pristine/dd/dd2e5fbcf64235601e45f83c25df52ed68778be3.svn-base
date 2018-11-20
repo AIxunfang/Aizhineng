@@ -10,7 +10,6 @@ import  Codeupload from '@/pages/ProiectManagement/Codeupload' //项目-上传
 import Firstpage from '@/pages/Homepage/Firstpage'  //首页
 import  Managefristpage from '@/pages/Homepage/Managefristpage'//管理员首页
 import  HdfsManagement from '@/pages/CommonData/HdfsManagement'//公共数据管理-->HDfs管理
-import  FileManagement from '@/pages/CommonData/FileManagement'//文件管理
 import DrillList from '@/pages/Trainmanagement/DrillList' //训练管理 -->训练列表
 import Trainstart from '@/pages/Trainmanagement/Trainstart'//训练管理训练页面
 import NewDrill from '@/pages/Trainmanagement/NewDrill'//训练管理-->新建训练
@@ -22,7 +21,7 @@ import PublishResourceManagement from '@/pages/ResourceManagement/PublishResourc
 import NewShare from '@/pages/ProjectShare/NewShare'//项目分享--->新建项目
 import ShareList from '@/pages/ProjectShare/ShareList'//项目分享--->项目列表
 import Userinfo from '@/pages/PersonalCenter/Userinfo'//个人中心--用户资料\
-import Announcement from '@/pages/PersonalCenter/Announcement' //个人中心--通知管理
+import NoticeManagement from '@/pages/PersonalCenter/NoticeManagement' //个人中心--通知管理
 import LogManagement from '@/pages/PersonalCenter/LogManagement' //个人中心--日志管理
 import FormationDrill from '@/pages/Modeldispatch/FormationDrill'//模块调度管理-调度列表
 import Releasequeue from '@/pages/Modeldispatch/Releasequeue'//模块调度管理-发布队列
@@ -65,7 +64,6 @@ export default new Router({
         { path: 'Firstpage', name: ' Firstpage', component: Firstpage },
         {path:'Managefristpage',name:'Managefristpage',component:Managefristpage},
         { path: '/HdfsManagement/:id', name: 'HdfsManagement', component: HdfsManagement},
-        { path:'/FileManagement/:id',name:'FileManagement',component:FileManagement},
         { path: 'DrillList', name: 'DrillList', component: DrillList},
         { path: 'NewDrill', name: 'NewDrill', component: NewDrill},  
         { path: 'Addmodel', name: 'Addmodel', component: Addmodel}, 
@@ -75,7 +73,7 @@ export default new Router({
         { path: 'NewShare', name: 'NewShare', component: NewShare},  
         { path: 'ShareList', name: 'ShareList', component: ShareList},  
         { path: 'Userinfo', name: 'Userinfo', component: Userinfo},  
-        { path: 'Announcement', name: 'Announcement', component: Announcement},  
+        { path: 'NoticeManagement', name: 'NoticeManagement', component: NoticeManagement},  
         { path: 'LogManagement', name: 'LogManagement', component: LogManagement},  
         { path: 'FormationDrill', name: 'FormationDrill', component: FormationDrill},  
         { path: 'Releasequeue', name: 'Releasequeue', component: Releasequeue},  

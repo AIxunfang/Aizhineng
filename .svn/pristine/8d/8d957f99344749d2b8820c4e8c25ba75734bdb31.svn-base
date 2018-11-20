@@ -29,11 +29,6 @@
             </el-aside>
     <el-container>
         <el-header  >
-             <span v-show="noiceshaow">
-              <i class="fa fa-volume-down fa-2x" aria-hidden="true" style="position:absolute;line-height: 60px;margin-left: 73px; "></i>
-               <P class="nocielan"><span class="nocicontent">{{ conctentnoice}}</span>  </P>
-               </span>
-
                 <i  class="fa fa-outdent"  aria-hidden="true"  @click="foldmenu" ></i>
                   <div class='Exitoutfather'>
                         <el-popover
@@ -117,12 +112,10 @@
 </template>
 <script>
 import { timeFormattershowsecod} from "@/assets/js/common";
-import { menulist, notifynumber ,indexnotifys,notifyupdate,notifydelect,announcementweb} from "@/api/api";
+import { menulist, notifynumber ,indexnotifys,notifyupdate,notifydelect} from "@/api/api";
 export default {
   data() {
     return {
-      noiceshaow:false,
-      conctentnoice:'',
     status:'',
     timeFormattershowsecod,
      gridData:[],
@@ -164,26 +157,6 @@ export default {
   },
 
   methods: {
-         getnoice(){
-               announcementweb().then(res=>{
-                 console.log('gonggao')
-                         console.log(res)
-                         if(res.data.code==0){
-                           this.conctentnoice=res.data.data.announcementContent
-                              // this.formLabelAlignnotice.announcementContent=res.data.data.announcementContent
-                              // this.formLabelAlignnotice.announcementId=res.data.data.announcementId
-                           //   this.formLabelAlignnotice.announcementStatus=Boolean(res.data.data.announcementStatus)
-                              if(res.data.data.announcementStatus==1){
-                                  this.noiceshaow=true;
-                              }else{
-                                 //  this.statrStatus=false
-                                 this.noiceshaow=false;
-                              }
-                         }
-                   })
-             },
-
-
     getindexnotifys(){
           var params={
                  currentPage:1,
@@ -309,14 +282,10 @@ export default {
       console.log(index);
       if (index == "/HdfsManagement/id") {
         this.$router.push({ name: "HdfsManagement", params: { id: "/" } });
-      //  this.valuetouter = this.$route.params.id;
+        this.valuetouter = this.$route.params.id;
+        console.log(this.valuetouter);
         return;
-      } else if(index =='/FileManagement/id'){
-            this.$router.push({ name: "FileManagement", params: { id: "/" } });     
-         return;
       }
-
-
       this.$router.push(index);
     }
   },
@@ -329,7 +298,6 @@ export default {
     console.log(this.tocken);
     this.getmenulist();
     this.getnotifynumber();
-    this.getnoice()
   }
 };
 </script>
@@ -419,45 +387,6 @@ export default {
       margin-right: 20px;
     }
   }
-
-  .nocielan{
-            width: 500px;
-            margin: 0 auto;
-            overflow: hidden;
-            position: absolute;
-            line-height: 60px;
-            margin-left: 100px;
-  }
-  .nocicontent{
-           padding-left: 100px;
-            font-size: 16px;
-            color: #fff;
-            display: inline-block;
-            white-space: nowrap;
-            font-family: '微软雅黑';
-            animation: 50s wordsLoop linear infinite normal; 
-  }
-   @keyframes wordsLoop {
-            0% {
-                transform: translateX(200px);
-                -webkit-transform: translateX(200px);
-            }
-            100% {
-                transform: translateX(-100%);
-                -webkit-transform: translateX(-100%);
-            }
-        }
- 
-        @-webkit-keyframes wordsLoop {
-            0% {
-                transform: translateX(200px);
-                -webkit-transform: translateX(200px);
-            }
-            100% {
-                transform: translateX(-100%);
-                -webkit-transform: translateX(-100%);
-            }
-        }
 }
 </style>
 <style scoped>
@@ -474,10 +403,6 @@ export default {
 .item .el-badge__content .is-dot {
   margin-top: 11px;
 }
- .nocielan ::before{
-      content:'公告:';
- }
-
 </style>
 
 

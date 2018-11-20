@@ -1,0 +1,410 @@
+<template>
+  <el-row class="hdfsmodel">
+         <div class="navigationbar"> 
+               <span class="navigationname">公共数据集管理<i class="el-icon-arrow-right" aria-hidden="true"></i>
+                    HDFS
+                </span>
+           </div>
+           <el-col :span="24">
+            
+                   <i class="fa fa-home fa-2x homehdfs" aria-hidden="true"  @click="homeHdfs"   ></i> 
+                   <span  v-for="(item,index) in routermenu" :key=index>
+                     <i class="fa fa-chevron-right  fa-2x  greaterthan" aria-hidden="true"></i> 
+                     <span class="crumenupath" @click="selectcurret(item,index)">
+                          {{item}}
+                      </span>
+                     </span>
+                <el-dropdown trigger="click" style="margin:20px 0px 20px 10px ;"   placement="bottom" @command="clickmenu">
+                      <span class="el-dropdown-link">
+                          <el-button  type="info" size="small">  <i class="el-icon-plus"></i> 
+                          </el-button>
+                      </span>
+                      <el-dropdown-menu slot="dropdown">
+                              <el-dropdown-item   command="1">
+                                <i class="el-icon-document"></i> 创建文件夹
+                             </el-dropdown-item>
+                              <el-dropdown-item  command="2" >
+                                   <el-upload
+                                     action="http://192.168.80.63:30005/api/hdfs/upload"
+                                     :show-file-list="false"
+                                     :on-success="handleAvatarSuccess"
+                                     :headers="headers"
+                                     :data="dataform"
+                                     :on-progress="progressfunc"
+                                     :before-upload="beforeAvatarUpload">
+                                     <i class="el-icon-upload"></i> 上传文件
+                                    </el-upload>
+                            </el-dropdown-item>
+                      </el-dropdown-menu>
+                </el-dropdown>
+                <div style="display:inline-block;width:500px" v-show="uploadshow">
+                  <el-progress :text-inside="true" :stroke-width="18" :percentage="percentage" status="success"></el-progress>
+                </div>
+           </el-col>
+           <el-col :span="24">
+                  <div style="margin:  0px 20px 0px 20px">
+                       <el-button @click="delect"  size="mini" style="margin-bottom:10px"  v-show="ischecked"  >删除</el-button>
+                        <el-button @click="downfile"   size="mini" style="margin-bottom:10px"  v-show="ischecked"  >下载</el-button>
+                        <el-table
+                              class="hefstable"
+                             tooltip-effect="dark"
+                            :data="filetableData"
+                             ref="multipleTable"
+                              @cell-click="handleCurrentChange"
+                              @selection-change="handleSelectionChange"
+                             :default-sort = "{prop: 'fileSize', prop:'modificationTime', order: 'descending'}"
+                              style="width: 100%">
+                            <el-table-column
+                                 type="selection"
+                                 width="55">
+                            </el-table-column>      
+                            <el-table-column
+                                label='文件名称'
+                               >
+                              <template slot-scope="scope" >
+                                 <span  v-if='scope.row.dir==false '>
+                                       <span v-if="scope.row.type==1  "> 
+                                            <span v-if='scope.row.currentpath== "/" '>
+                                               <img  :src="'http://192.168.80.63:30005/api/file' +scope.row.fileName "  style="width:32px;height:32px" class="picturemiddle">
+                                             </span>
+                                             <span v-else>
+                                                  <img  :src="'http://192.168.80.63:30005/api/file/' +scope.row.tableName "  style="width:32px;height:32px" class="picturemiddle">
+                                             </span>
+                                        </span>  
+                                         <span v-if=" scope.row.type==4">
+                                             <img src="../../assets/img/compress.png" class="picturemiddle">
+                                        </span>
+                                         <span v-if=" scope.row.type==2">
+                                             <img src="../../assets/img/video.png" class="picturemiddle">
+                                        </span>
+                                         <span v-if=" scope.row.type==3">
+                                             <img src="../../assets/img/viceo.png" class="picturemiddle">
+                                        </span>
+
+                                 </span>
+                                 <span v-else>
+                                     <img src="../../assets/img/dir.png"  class="picturemiddle">
+                                 </span>
+                                  {{ scope.row.tableName }}
+                              </template>
+                            </el-table-column>
+                           <el-table-column
+                              width="100" 
+                              label=''>
+                                  <template slot-scope="scope">
+                                       <el-dropdown>    
+                                            <i class="fa fa-ellipsis-h" aria-hidden="true"></i>
+                                              <el-dropdown-menu slot="dropdown">
+                                                   <el-dropdown-item><i class="fa fa-trash" aria-hidden="true"></i>删除</el-dropdown-item>  
+                                                     <el-dropdown-item><i class="fa fa-pencil-square-o" aria-hidden="true"></i>重命名</el-dropdown-item>  
+                                               </el-dropdown-menu>
+                                        </el-dropdown>
+                                  </template>
+
+                           </el-table-column>
+                            <el-table-column
+                                prop="fileSize"
+                                label="大小"
+                                width="100"
+                               >
+                              <template slot-scope="scope">
+                                  <span v-if='scope.row.dir==false'> {{bytesToSize(scope.row.fileSize)}}</span>
+                                  <span v-else   >--</span>
+                              </template>
+                            </el-table-column>
+                            <el-table-column
+                                label='修改时间'
+                                 width="180"
+                                   sortable
+                                 :formatter="formatter"
+                                 prop="modificationTime"
+                                >
+                                <template slot-scope="scope">
+                                 <el-popover trigger="hover" placement="top">    
+                                     <span>{{timeFormattershowsecod(scope.row.modificationTime)}}</span>
+                                     <div slot="reference" class="name-wrapper"  style="cursor:pointer">
+                                        {{timeago().format(scope.row.modificationTime,'zh_CN')}}
+                                     </div>
+                                 </el-popover>
+                                </template>
+                            </el-table-column>
+                    </el-table>
+               </div>   
+           </el-col>
+          <el-col :span="24">
+              <el-dialog
+                  title="提示"
+                  :visible.sync="filedialogVisible"
+                  width="30%"
+                 >
+                  <el-form :model="numberValidateForm" ref="numberValidateForm" label-width="100px" class="demo-ruleForm">
+                          <el-form-item
+                            label="文件名称"
+                            prop="filename"
+                            :rules="[
+                              { required: true, message: '文件名不能为空'},
+                            ]"
+                          >
+                            <el-input    v-model="numberValidateForm.filename" autocomplete="off"></el-input>
+                          </el-form-item>
+                      </el-form>
+                  <span slot="footer" class="dialog-footer">
+                    <el-button type="primary" @click="filesubmit" size="mini">确 定</el-button>
+                  </span>
+                </el-dialog>
+          </el-col>
+  </el-row>
+</template>
+<script>
+import timeago from "timeago.js";
+import { timeFormattershowsecod, bytesToSize } from "@/assets/js/common";
+import { hdfsupload, hdfslist, hdfsdelete, hdfsdown ,hdfscreate} from "@/api/api";
+export default {
+  data() {
+    return {
+      numberValidateForm:{
+          filename:'',
+      },
+      filedialogVisible:false,
+      routermenu:[],
+      valuetouter:'',
+      ischecked: false,
+      timeago,
+      bytesToSize,
+      timeFormattershowsecod,
+      delectdata: [],
+      multipleTable: [],
+      filetableData: [],
+      uploadshow: false,
+      percentage: 0,
+      headers: {
+        token: ""
+      },
+      dataform: {
+        hdfsPath:""
+      }
+    };
+  },
+  methods: {
+    filesubmit(){//提交文件夹名称
+             var parms={
+                  path: this.$route.params.id=='/' ? '/': this.$route.params.id+'/'+this.numberValidateForm.filename//三木区分是不是第一个目录
+             }
+
+           this.$refs['numberValidateForm'].validate((valid)=>{
+                   if(valid){
+                           console.log(parms)
+                           hdfscreate(parms).then(res=>{
+                                      console.log('创建文件夹')
+                                       console.log(res)
+                                       if(res.data.code==0){
+                                             this.$message({
+                                                type:'success',
+                                                message:'创建成功'
+                                             })
+                                            this.$refs['numberValidateForm'].resetFields();
+                                            this.filedialogVisible==false
+                                            this.gethdfslist()
+
+                                       }
+
+                           })
+                   }
+
+           })
+    },
+
+    delect() {
+      var parms = {
+        path: this.delectdata.join(",")
+      };
+      console.log(parms);
+      hdfsdelete(parms).then(res => {
+        console.log("删除");
+        console.log(res);
+        if (res.data.code == 0) {
+          this.gethdfslist();
+        }
+      });
+    },
+    downfile(){
+          var params={
+              hdfsFile: this.delectdata.join(",")
+          }
+          console.log(params)
+       hdfsdown(params).then(res => {
+                      console.log("下载wenjian");
+                      console.log(res);
+                    });
+    },
+
+
+
+    formatter(row, column) {//按照时间排序
+      return row.modificationTime;
+    },
+    handleSelectionChange(val) {//选中的时候,显示删除功能按钮
+      this.delectdata = [];
+      this.multipleSelection = val;
+      console.log(this.multipleSelection);
+      if (this.multipleSelection.length > 0) {
+        this.ischecked = true;
+      } else {
+        this.ischecked = false;
+      }
+
+      this.multipleSelection.forEach((item, index) => {
+        this.delectdata.push(item.fileName);
+      });
+    },
+
+    //进度条
+    progressfunc(event, file, fileList) {
+      this.uploadshow = true;
+      this.percentage = parseInt(event.percent);
+      if (this.percentage == 100) {
+        this.uploadshow = false;
+      }
+    },
+
+    beforeAvatarUpload() {
+      console.log("上传参数")
+      this.dataform.hdfsPath=this.$route.params.id
+      console.log(this.dataform)
+      //上传前加参数
+      const token = sessionStorage.getItem("token");
+      this.headers.token = token;
+    },
+    handleAvatarSuccess(res, file) {
+      console.log(res);
+      console.log(file);
+      if(res.code==0){
+            
+            this.gethdfslist()
+      }
+    },
+    handleCurrentChange(row, column, cell, event) {//点击的时候是文件夹,就发送下一次请求
+      console.log(row);
+      console.log(column)
+      console.log(cell)
+      console.log(event)
+         if(column.label=="文件名称"){
+            if(row.dir==true){
+                this.datapeth=row.fileName
+                 this.$router.push({name:'HdfsManagement',params:{id:this.datapeth}})
+                  this.gethdfslist()
+              }
+         }
+
+  
+    },
+    clickmenu(val) {
+      console.log(val);
+      if(val==1){
+            this.filedialogVisible=true
+      }
+    },
+   homeHdfs(){
+   this.$router.push({name:'HdfsManagement',params:{id:'/'}})
+   this.gethdfslist()
+   },
+ selectcurret(item,index){
+      console.log(item)
+      console.log(index)
+      console.log( this.routermenu)
+      const pathclick=this.routermenu.slice(0,index+1)
+      console.log(pathclick)
+      // this.$route.params.id= '/'+ pathclick.join('/')
+          this.$router.push({name:'HdfsManagement',params:{id:'/'+ pathclick.join('/')}})
+           this.gethdfslist()
+ },
+    gethdfslist() {
+      var parms = {
+        path: this.$route.params.id
+      };
+       
+       if(this.$route.params.id.split('/').length>1){
+          this.routermenu=this.$route.params.id.split('/').slice(1)//上面点击的菜单,
+       }
+       //  this.routermenu.splice(1)
+      
+      hdfslist(parms).then(res => {
+        if (res.data.code == 0) {
+          console.log("888888888");
+          console.log(this.routermenu)
+          console.log(res);
+          this.filetableData = res.data.data;
+          this.filetableData.forEach((item, index) => {
+             console.log(item.fileName.slice(-4).toLowerCase())
+              item.currentpath=res.config.params.path
+              
+              var index = item.fileName.lastIndexOf("/"); //截取最后一个/ 后面的作为名字  
+             item.tableName  =item.fileName.slice(index + 1);
+
+              var fileNamelower= item.fileName.slice(-4).toLowerCase()//截取后面四位判断格式
+              
+            if (fileNamelower === ".png" || fileNamelower === ".jpg"||fileNamelower==="jpeg"||fileNamelower==='.gif'||fileNamelower===".psd" ){
+               console.log('tupian')
+             item.type=1
+                  if (item.dir == false) {
+                    var parms = {
+                          hdfsFile: item.fileName
+                    };
+                    hdfsdown(parms).then(res => {
+                      console.log("下载");
+                      console.log(res);
+                    });
+                  }
+            } else if(fileNamelower===".mp4"||fileNamelower===".3gp"||fileNamelower==='rmvb'||fileNamelower==='.avi'||fileNamelower==='rmvb'||fileNamelower==='.wma'){
+                   item.type=2
+            } else if(fileNamelower==='.mp3'||fileNamelower==='.wma'||fileNamelower=='.aac'||fileNamelower=='.ogg'){
+                  item.type=3
+            }else if(fileNamelower=='.zip'||fileNamelower=='.rar'){
+                   item.type=4
+            }
+               });
+           }
+      });
+    }
+  },
+  mounted() {
+    this.gethdfslist();
+      console.log('luy0ou')
+      console.log(this.$route.params.id)
+      
+
+
+  }
+};
+</script>
+<style lang="scss" scoped>
+.hdfsmodel {
+  .picturemiddle {
+    vertical-align: middle;
+    margin-right: 8px;
+  }
+
+    .homehdfs{
+    color:#7f7f7f ;
+    vertical-align: middle;
+    margin-left: 20px;
+    cursor: pointer;
+  }
+  .greaterthan{
+    vertical-align: middle;
+    color: #cbcbcb;
+  }
+  .crumenupath{
+    font-family: '微软雅黑';
+    color:#9b9b9b;
+    cursor: pointer;
+  }
+}
+</style>
+<style>
+.hefstable .el-table_1_column_2 {
+  cursor: pointer;
+}
+
+</style>
+

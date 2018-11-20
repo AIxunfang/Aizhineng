@@ -1,0 +1,106 @@
+<template>
+    <el-row>
+        文件管理
+         <el-col :span='24'>
+
+                 <el-dropdown trigger="click" style="margin:20px 0px 20px 10px ;"  size="small"  placement="bottom" @command="clickmenu">
+                      <span class="el-dropdown-link">
+                          <el-button  type="info" size="small">  <i class="el-icon-plus"></i> 
+                          </el-button>
+                      </span>
+                      <el-dropdown-menu slot="dropdown">
+                              <el-dropdown-item   command="1">
+                                <i class="el-icon-document"></i> 创建文件夹
+                             </el-dropdown-item>
+                              <el-dropdown-item  command="2" >
+                                   <el-upload
+                                     action="http://192.168.80.63:30005/api/common/upload"
+                                     :show-file-list="false"
+                                     :on-success="handleAvatarSuccess"
+                                     :headers="headers"
+                                     :data="dataform"
+                                     :on-progress="progressfunc"
+                                     :before-upload="beforeAvatarUpload">
+                                     <i class="el-icon-upload"></i> 上传文件
+                                    </el-upload>
+                            </el-dropdown-item>
+                      </el-dropdown-menu>
+                </el-dropdown>
+               <div style="display:inline-block;width:500px" v-show="uploadshow">
+                  <el-progress :text-inside="true" :stroke-width="18" :percentage="percentage" status="success"></el-progress>
+                </div>
+         </el-col>
+    </el-row>
+</template>
+<script>
+import{commonlist} from '@/api/api'
+export default {
+     data(){
+          return{
+               dataform: {
+                filePath: "",
+               },
+               percentage:0,
+               uploadshow:false,
+              headers: {
+                    token: ""
+                },
+          }
+     },
+     methods:{
+            getcommonlist(){
+                 var params={
+                      filepath:this.$route.params.id
+                 }
+              commonlist(params).then(res=>{
+                  console.log('列表')     
+                  console.log(res)
+                   if(res.data.code==0){
+                            
+                   }
+              })      
+
+            },
+
+
+
+             //进度条
+         progressfunc(event, file, fileList) {
+            this.uploadshow = true;
+            this.percentage = parseInt(event.percent);
+            if (this.percentage == 100) {
+                this.uploadshow = false;
+            }
+            },
+
+             beforeAvatarUpload() {
+                console.log("上传参数");
+                this.dataform.filePath = this.$route.params.id;
+                console.log(this.dataform);
+                //上传前加参数
+                const token = sessionStorage.getItem("token");
+                this.headers.token = token;
+                },
+
+             handleAvatarSuccess(res, file) {
+                    console.log(res);
+                    console.log(file);
+                    if (res.code == 0) {
+                        
+                    }
+                 },
+           clickmenu(val) {
+                if (val == 1) {
+                    this.filedialogVisible = true;
+                    this.selectedit=false
+                }
+    },
+
+
+
+     },
+     mounted(){
+           this.getcommonlist()   
+       }
+     }
+</script>
