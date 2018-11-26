@@ -29,14 +29,12 @@
                    <div  :key="item.id"    class="projectmodel">
                   <div  class="projectdiscrb">
                           <div class="projectdimg">
-                               <img  v-show='item.dataDirectory==0'   src="../../assets/img/personal.png" alt="文件logo" class="massterpic">
-                               <img  v-show='item.dataDirectory==1'   src="../../assets/img/public.png" alt="文件logo" class="massterpic">
+                            <img src="../../assets/img/matter.png" alt="文件logo" class="massterpic">
                          </div>
                          <div  class="projectdisright">
-                            <div  class="projectName">{{item.projectNameZh}} </div>
+                            <div  class="projectName">{{item.projectNameZh}}</div>
                             <div class="projectdiecribetion"><span>项目描述:</span>{{item.projectDesc}}</div>
-                               <!-- <div class="projectdiecribetion"><span> {{item.dataDirectory==0 ? '私有' : '公有'}}路径:</span>{{item.projectPublicPath}}</div> -->
-                               <div class="projectdiecribetion"><span> 创建时间:</span>{{timeFormattershowsecod(item.createTime)}}</div>
+                               <div class="projectdiecribetion"><span> {{item.dataDirectory==0 ? '私有' : '公有'}}路径:</span>{{item.projectPublicPath}}</div>
                          </div>
                   </div>
                    <div class="projectbottom">
@@ -69,11 +67,10 @@
 </template>
 <script>
 import {projectlist,deleteprojectId} from "@/api/api"
-import { timeFormattershowsecod} from "@/assets/js/common";
+
 export default {
         data(){
           return{
-                timeFormattershowsecod,
                 projectName:'',
                 currPage:1,
                 pageSize:8,
@@ -128,9 +125,13 @@ export default {
                                               deleteprojectId(parms).then(res=>{
                                                             console.log(res)
                                                     if(res.data.code==0){
+                                                                      this.$message({
+                                                                        message: '删除成功',
+                                                                        type: 'success'
+                                                                      });  
                                                                this.getprojectlist()
                                                            }else{
-                                                               this.$message.error(res.data.message);
+                                                               this.$message.error('出现错误，删除失败');
                                                            }
                                                       })
                                               }).catch(() => {
@@ -141,8 +142,10 @@ export default {
                                               }); 
                     },
                  edititem(index){//编辑项目
-                      this.$router.push({name:'editproject', params:{id:JSON.stringify(this.projectdata[index])}})
-
+                         //  this.$router.push("/AddProject")  
+                         //  sessionStorage.setItem('judge',  JSON.stringify({id:this.projectdata[index],editjudge:false}))   
+                    this.$router.push({name:'editproject', params:{id:JSON.stringify(this.projectdata[index])}})
+                  //  this.$router.push({name:'Trainstart',params:{id:  this.modelarry[index].trainingId}}) 
                    }
            },
         mounted(){
@@ -191,7 +194,7 @@ export default {
                        display: inline-block;
                        font-family: "Microsoft YaHei";
                        color:#666666;
-                       font-size:14px;
+                       font-size:16px;
                        width:250px;
                    }
                    .projectdiecribetion{

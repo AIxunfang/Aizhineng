@@ -90,11 +90,13 @@
                                         <el-dropdown-menu slot="dropdown">
                                                 <el-dropdown-item  command="1" ><i class="fa fa-trash" aria-hidden="true"></i> 删除</el-dropdown-item>  
                                                 <el-dropdown-item  command="2"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> 重命名</el-dropdown-item>  
-                                                <el-dropdown-item  command="3"><i class="fa fa-arrows" aria-hidden="true"></i> 移动</el-dropdown-item>   
-                                                 <el-dropdown-item  command="4" v-show='scope.row.type==4'  ><i class="fa fa-exchange" aria-hidden="true"></i> 解压</el-dropdown-item>                    
+                                                <el-dropdown-item  command="3"><i class="fa fa-arrows" aria-hidden="true"></i> 移动</el-dropdown-item>                     
                                           </el-dropdown-menu>
                                   </el-dropdown>
                             </template>
+
+
+
                             </el-table-column>
                             <el-table-column
                                 width="120"
@@ -148,7 +150,7 @@
                        
                        <span  class="crumenupath" v-for='(item,index) in movecurent' :key=index >
                            <i class="fa fa-chevron-right  fa-2x  greaterthan" aria-hidden="true"></i> 
-                              <span  @click="movecurrentpage(item,index)" style="cursor:pointer" >
+                              <span  @click="movecurrentpage(item,index)">
                                 {{item}}
                               </span>
                          </span>
@@ -201,13 +203,11 @@ import {
   commonrename,
   commondelete,
   commondownload,
-  commondownmove,
-  commonunzip
+  commondownmove
 } from "@/api/api";
 export default {
   data() {
     return {
-       moveone:false,
        foldertableData: [],
        movecurent: [],
        movepath: "/",
@@ -220,6 +220,7 @@ export default {
       numberValidateForm: {
         filename: ""
       },
+      seleoldpath: "",
       selectedit: false,
       routermenu: [],
       filedata: [],
@@ -231,46 +232,42 @@ export default {
       headers: {
         token: ""
       },
-      delectdata: [],
-      selectdelect:'',
-      selecttype:'',
-      selefilename:"",
-      seleoldpath:'',
-      currentpath:'',
-      currentfileyasuo:'',
+      delectdata: []
     };
   },
   methods: {
     suremove() {
       var parms = {
-          path: this.moveone == false ? this.delectdata : [this.seleoldpath],
-          newName: this.movepath 
+        path: this.moveone == false ? this.delectdata : [this.seleoldpath],
+        newName: this.movepath + "/"
       };
-      console.log(parms)
 
       commondownmove(parms).then(res => {
         if (res.data.code == 0) {
-          this.getcommonlist();
+          this.gethdfslist();
           this.movementdialogvis = false;
         } else {
           this.$message.error(res.data.message);
         }
       });
     },
+
     movecurrentpage(item, index) {
       //移动时候的当前页
-       const moveclickcur = "/" + this.movecurent.slice(0, index + 1).join("/");
-       this.movepath = moveclickcur +'/';
-       this.movehdfs();
+      const moveclickcur = "/" + this.movecurent.slice(0, index + 1).join("/");
+      this.movepath = moveclickcur;
+      this.movehdfs();
     },
+
+
     moveCurrentChange(row, column) {
-      console.log(row)
-      console.log(column)
       if (column.label == "文件夹") {
-        this.movepath = row.filePath+'/';
+        this.movepath = row.filePath;
         this.movehdfs();
       }
     },
+
+
      movehomeHdfs() {
       //移动的首页
       this.movepath = "/";
@@ -283,12 +280,12 @@ export default {
       this.foldertableData = [];
       hdfslist(parms).then(res => {
         if (res.data.code == 0) {
-          this.movecurent = res.config.params.filepath.split("/").slice(1); //上面点击的菜单,
+          this.movecurent = res.config.params.path.split("/").slice(1); //上面点击的菜单,
           console.log(this.movecurent);
           console.log(res);
           res.data.data.forEach((item, index) => {
-            if (item.isDir == true) {
-              item.currentpath = res.config.params.filepath;
+            if (item.dir == true) {
+              item.currentpath = res.config.params.path;
               var index = item.fileName.lastIndexOf("/"); //截取最后一个/ 后面的作为名字
               item.tableName = item.fileName.slice(index + 1);
 
@@ -300,6 +297,8 @@ export default {
       console.log("移动----------");
       console.log(this.foldertableData);
     },
+
+
     getcommonlist() {
       var params = {
         filepath:
@@ -369,55 +368,42 @@ export default {
     optioncommand(val, item) {
       //操作里面的下拉
       console.log(val);
-       if(val==1){
-                  var parms = {
-                        path: [this.selectdelect]
-                   }
-                   commondelete(parms).then(res => {
-                  if (res.data.code == 0) {
-                    this.getcommonlist();
-                  }
-                });
-       }else if(val==2){
-               this.filedialogVisible=true
-               this.numberValidateForm.filename=this.selefilename
-       }else if(val==3)  {
-               this.movementdialogvis=true
-               this.movepath='/'
-               this.movehdfs()
-         }
-         else if(val==4){
-                var parms={
-                     filePath:this.currentfileyasuo
-                } 
-                console.log(parms)
-                commonunzip(parms).then(res=>{
-                      console.log(res)
-                      if(res.data.code==0){
-                          this.getcommonlist() 
-                      }
-                })
-         }
+      //  if(val==1){
+      //             var parms = {
+      //                   path: this.selectdelect
+      //              }
+      //              hdfsdelete(parms).then(res => {
+      //             if (res.data.code == 0) {
+      //               this.gethdfslist();
+      //             }
+      //           });
+      //  }else if(val==2){
+      //          this.filedialogVisible=true
+      //          this.numberValidateForm.filename=this.selefilename
+      //  }else{
+      //          this.movementdialogvis=true
+      //          this.movepath='/'
+      //          this.movehdfs()
+      //  }
     },
     actionfun(index) {
       console.log("选择的值");
       console.log(index);
-       this.selectedit=true
-        this.moveone=true//判断移动单个文件还是数组文件
-       if(index.isDir==false){
-            this.selectdelect=index.filePath
-            this.selecttype=index.filePath.slice(index.filePath.lastIndexOf("."))
-            this.selefilename=index.fileName.slice(0,index.fileName.lastIndexOf("."))
-            
-            this.seleoldpath=index.filePath
-            this.currentfileyasuo=index.filePath
-            console.log( this.selefilename)
-       }else{
-            this.currentfileyasuo=index.filePath
-            this.selefilename=index.fileName
-            this.seleoldpath=index.filePath
-            this.selecttype=''
-       }
+      //  this.selectedit=true
+      //   this.moveone=true//判断移动单个文件还是数组文件
+      //  if(index.dir==false){
+      //       this.selectdelect=index.fileName
+      //       this.selecttype=index.tableName.slice(index.tableName.lastIndexOf("."))
+      //       this.selefilename=index.tableName.slice(0,index.tableName.lastIndexOf("."))
+      //       this.seleoldpath=index.fileName
+      //       this.currentpath=index.currentpath
+      //       console.log( this.selefilename)
+      //  }else{
+      //       this.currentpath=index.currentpath
+      //       this.selefilename=index.tableName
+      //       this.seleoldpath=index.fileName
+      //       this.selecttype=''
+      //  }
     },
 
     downfile() {
@@ -425,64 +411,13 @@ export default {
       var parms = {
             path: this.delectdata
       };
-       const token = sessionStorage.getItem("token");
-      var  formdatas={
-           path: this.delectdata,
-           token:token,
-      }
-      //  commondownload(parms).then(res=>{
-         //    var blob=new Blob(); 
-           //  blob=res.data;
-                // console.log(res)
-            //  window.open(URL.createObjectURL(blob))
-           $.ajax({
-          type: 'post', // 获取头信息，type=HEAD即可
-          url :'http://192.168.80.63:30005/api/common/download',
-          data:JSON.stringify(formdatas),
-          headers : {'Content-type': 'application/json;charset=UTF-8'},
-           success:function(data, textStatus, request){
-              alert(request.getResponseHeader('filename'));
-           },
-          complete: function(request){
-          console.log('zhe shi toubu')
-            console.log(request)
-
-              // 获取相关Http Response header
-              // var wpoInfo = {
-              //     // 服务器端时间
-              //     "date" : xhr.getResponseHeader('Date'),
-              //     // 如果开启了gzip，会返回这个东西
-              //     "contentEncoding" : xhr.getResponseHeader('Content-Encoding'),
-              //     // keep-alive ？ close？
-              //     "connection" : xhr.getResponseHeader('Connection'),
-              //     // 响应长度
-              //     "contentLength" : xhr.getResponseHeader('Content-Length'),
-              //     // 服务器类型，apache？lighttpd？
-              //     "server" : xhr.getResponseHeader('Server'),
-              //     "vary" : xhr.getResponseHeader('Vary'),
-              //     "transferEncoding" : xhr.getResponseHeader('Transfer-Encoding'),
-              //     // text/html ? text/xml?
-              //     "contentType" : xhr.getResponseHeader('Content-Type'),
-              //     "cacheControl" : xhr.getResponseHeader('Cache-Control'),
-              //     // 生命周期？
-              //     "exprires" : xhr.getResponseHeader('Exprires'),
-              //     "lastModified" : xhr.getResponseHeader('Last-Modified')
-              // };
-              // 在这里，做想做的事。。。
-              // console.log(wpoInfo)
-              // console.log(xhr)
-              // console.log(data)
-          }
-      // });
-
+       commondownload(parms).then(res=>{
+             var blob=new Blob(); 
+             blob=res.data;
+                 console.log(res)
+              window.open(URL.createObjectURL(blob))
 
           })
-
-
-
-
-
-
     },
     movefile() {
            this.movementdialogvis=true
@@ -568,14 +503,14 @@ export default {
         });
       } else {
         var parms = {
-          oldname: this.seleoldpath ,
-          newname:
+          oldPath: this.seleoldpath,
+          newPath:
             this.$route.params.id == "/"
-              ? "/"+
+              ? this.currentpath +
                 this.numberValidateForm.filename +
                 this.selecttype
-              : 
-                this.$route.params.id  +'/'+
+              : this.currentpath +
+                "/" +
                 this.numberValidateForm.filename +
                 this.selecttype
         };
@@ -635,8 +570,6 @@ export default {
       console.log(file);
       if (res.code == 0) {
         this.getcommonlist();
-      }else{
-         this.$message.error('上传失败')
       }
     },
     clickmenu(val) {
@@ -668,11 +601,5 @@ export default {
     color: #cbcbcb;
   }
 }
-  .homehdfs {
-    color: #7f7f7f;
-    vertical-align: middle;
-   
-    cursor: pointer;
-  }
 </style>
 

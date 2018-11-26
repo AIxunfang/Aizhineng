@@ -277,7 +277,7 @@ export default {
                                               })
                                             this.getpublishfinddetail()
                                          }else{
-                                                this.$message('重启失败!') 
+                                                this.$message('重启失败!')
                                          }
                                 })
                           }).catch(() => {
@@ -286,6 +286,9 @@ export default {
                               message: '已取消'
                             });          
                           });        
+                    
+                          
+
                     }else{
                         this.$message.error('接口异常!请联系发布人')
                 }
@@ -297,6 +300,12 @@ export default {
       this.sharedialogVisible = true;
     },
     Share_Project() {
+      //    this.sendpicturedata=[]
+      //    this.picturedata.forEach((item,index)=>{
+      //           this.sendpicturedata.push(item.resourceUrl)
+      //    })
+      //   var stringdata= this.sendpicturedata.join(",")
+
       var parms = {
         publishId: this.$route.params.id,
         projectId: this.$route.params.projectId,

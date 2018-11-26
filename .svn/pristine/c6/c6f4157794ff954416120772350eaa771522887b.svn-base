@@ -2,6 +2,7 @@
 <el-container>
             <el-aside :width="adisewidth">
                 <el-menu
+                      
                       :collapse="isCollapse"
                       :default-active='$route.path' 
                       active-text-color="#f18f17"
@@ -11,17 +12,17 @@
                      >
                   <div class="collapseicon"><span  class="logoname"  v-show="this.isCollapse==false" >讯方AI学习计算平台</span></div>
                     <template v-for=" (item,index) in routerurl">
-                      <el-menu-item :key="item[0].routeUrl" :index='item[0].routeUrl' v-if="item[0].secondPermissionList.length==0">
+                      <el-menu-item :key="item[0].routeUrl" :index='item[0].routeUrl' v-if="item[0].secondPermissionList.length==0" >
                             <template slot='title'>
-                            <i  :class="item[0].permissionIcon" class="fa  menuicon"></i><span>{{item[0].permissionName}}</span>
+                                <span>{{item[0].permissionName}}</span>
                             </template>
                         </el-menu-item>
-                            <el-submenu  :key="item.id"  :index='String(index)'   v-if="item[0].secondPermissionList.length !==0"    >
+                            <el-submenu  :key="item.id"  :index='String(index)'   v-if="item[0].secondPermissionList.length !==0" >
                              <template slot='title'>
-                               <i  :class="item[0].permissionIcon" class="fa  menuicon"></i>   <span >{{item[0].permissionName}}</span>
+                                <span >{{item[0].permissionName}}</span>
                             </template>
                             <el-menu-item :key="item.id"  :index='item.routeUrl' v-for="item in item[0].secondPermissionList">
-                               <i  :class="item.permissionIcon" class="fa  menuicon"></i>{{item.permissionName}}
+                                   {{item.permissionName}}
                             </el-menu-item>
                         </el-submenu> 
                     </template>
@@ -64,6 +65,7 @@
                                        <template slot-scope="scope" >
                                              <i class="el-icon-error" style="cursor:pointer" @click="delectnoice(scope.row)"></i>   
                                        </template>
+
                                 </el-table-column>
                             </el-table>
                           <span  class="noice"  slot="reference">
@@ -72,6 +74,7 @@
                             </el-badge>
                     </span>
                        </el-popover>
+                       <!-- <el-button  size="mini"  class="Exitoutchidren"     > 退出</el-button>   -->
                         <span class="UserName">{{Username.name}}</span>
                         <el-dropdown  @command="handleCommand"  trigger="click">   
                           <span class="el-dropdown-link">
@@ -114,24 +117,17 @@
 </el-container>
 </template>
 <script>
-import { timeFormattershowsecod } from "@/assets/js/common";
-import {
-  menulist,
-  notifynumber,
-  indexnotifys,
-  notifyupdate,
-  notifydelect,
-  announcementweb
-} from "@/api/api";
+import { timeFormattershowsecod} from "@/assets/js/common";
+import { menulist, notifynumber ,indexnotifys,notifyupdate,notifydelect,announcementweb} from "@/api/api";
 export default {
   data() {
     return {
-      noiceshaow: false,
-      conctentnoice: "",
-      status: "",
-      timeFormattershowsecod,
-      gridData: [],
-      noicedialogVisible: false,
+      noiceshaow:false,
+      conctentnoice:'',
+    status:'',
+    timeFormattershowsecod,
+     gridData:[],
+     noicedialogVisible:false,
       noicemessage: true,
       valuetouter: "",
       isCollapse: false,
@@ -157,8 +153,11 @@ export default {
       routerurl: {} //跳转路由的数组
     };
   },
+  // components: { ChangeTheme }
   watch: {
     valuetouter: function(value, newvalue) {
+      console.log("=======================5656====");
+      console.log(value);
       if (value == "/") {
         console.log("jinlai");
       }
@@ -166,88 +165,100 @@ export default {
   },
 
   methods: {
-    getnoice() {
-      announcementweb().then(res => {
-        if (res.data.code == 0) {
-          this.conctentnoice = res.data.data.announcementContent;
-          if (res.data.data.announcementStatus == 1) {
-            this.noiceshaow = true;
-          } else {
-            this.noiceshaow = false;
+         getnoice(){
+               announcementweb().then(res=>{
+                 console.log('gonggao')
+                         console.log(res)
+                         if(res.data.code==0){
+                           this.conctentnoice=res.data.data.announcementContent
+                              // this.formLabelAlignnotice.announcementContent=res.data.data.announcementContent
+                              // this.formLabelAlignnotice.announcementId=res.data.data.announcementId
+                           //   this.formLabelAlignnotice.announcementStatus=Boolean(res.data.data.announcementStatus)
+                              if(res.data.data.announcementStatus==1){
+                                  this.noiceshaow=true;
+                              }else{
+                                 //  this.statrStatus=false
+                                 this.noiceshaow=false;
+                              }
+                         }
+                   })
+             },
+
+
+    getindexnotifys(){
+          var params={
+                 currentPage:1,
+                 pageSize:1000,
+                 status:this.status,
           }
-        }
-      });
+        indexnotifys(params).then(res=>{
+            console.log('xiao')
+             console.log(res)
+             if(res.data.code==0){
+                   this.gridData=res.data.data.list
+                   this.gridData.forEach((item,index)=>{
+                        if(item.notifyStatus==2){
+                             item.visable= true
+                        }else{
+                             item.visable= false
+                        }
+                   })
+             }
+             
+        })  
     },
+    delectnoice(index){
+       console.log(index)
+       var parms={
+           notificationId:index.notifyId
+       }
+      notifydelect(parms).then(res=>{
+          console.log(res)
+             if(res.data.code==0){
+               this.getindexnotifys()
+             }
 
-    getindexnotifys() {
-      var params = {
-        currentPage: 1,
-        pageSize: 1000,
-        status: this.status
-      };
-      indexnotifys(params).then(res => {
-        console.log("xiao");
-        console.log(res);
-        if (res.data.code == 0) {
-          this.gridData = res.data.data.list;
-          this.gridData.forEach((item, index) => {
-            if (item.notifyStatus == 2) {
-              item.visable = true;
-            } else {
-              item.visable = false;
-            }
-          });
-        }
-      });
-    },
-    delectnoice(index) {
-      console.log(index);
-      var parms = {
-        notificationId: index.notifyId
-      };
-      notifydelect(parms).then(res => {
-        console.log(res);
-        if (res.data.code == 0) {
-          this.getindexnotifys();
-        }
-      });
-    },
-    markread() {
-      this.status = 1;
-      this.getindexnotifys();
-    },
-    unread() {
-      this.status = 2;
-      this.getindexnotifys();
-    },
-    findnoice() {
-      //查看
-      this.noicedialogVisible = true;
-      this.getindexnotifys();
-    },
-    looknoice(index) {
-      console.log(index);
-      var parms = {
-        status: 1,
-        notificationId: index.notifyId
-      };
-      notifyupdate(parms).then(res => {
-        console.log(res);
-      });
-      this.getindexnotifys();
-    },
+      })
 
-    getnotifynumber() {
-      //消息显示红点
+    },
+     markread(){
+           this.status=1
+           this.getindexnotifys()
+
+     },
+     unread(){
+         this.status=2
+          this.getindexnotifys()
+
+     },
+     findnoice(){//查看
+        this.noicedialogVisible=true
+        this.getindexnotifys()
+         
+
+     },
+  looknoice(index){
+       console.log(index)
+       var parms={
+              status:1,
+              notificationId:index.notifyId
+       }
+      notifyupdate(parms).then(res=>{
+             console.log(res)
+      }) 
+       this.getindexnotifys()
+  },
+
+    getnotifynumber() {//消息显示红点
       notifynumber().then(res => {
-        console.log("==========xiaoxi====");
+        console.log("==========xiaoxi===="); 
         console.log(res);
-        if (res.data.code == 0) {
-          if (res.data.data.unread == 0) {
-            this.noicemessage = false;
-          } else {
-            this.noicemessage = true;
-          }
+        if(res.data.code==0){
+               if(res.data.data.unread==0){
+                     this.noicemessage=false
+               }else{
+                     this.noicemessage=true
+               }
         }
       });
     },
@@ -299,12 +310,13 @@ export default {
       console.log(index);
       if (index == "/HdfsManagement/id") {
         this.$router.push({ name: "HdfsManagement", params: { id: "/" } });
-        //  this.valuetouter = this.$route.params.id;
+      //  this.valuetouter = this.$route.params.id;
         return;
-      } else if (index == "/FileManagement/id") {
-        this.$router.push({ name: "FileManagement", params: { id: "/" } });
-        return;
+      } else if(index =='/FileManagement/id'){
+            this.$router.push({ name: "FileManagement", params: { id: "/" } });     
+         return;
       }
+
 
       this.$router.push(index);
     }
@@ -318,7 +330,7 @@ export default {
     console.log(this.tocken);
     this.getmenulist();
     this.getnotifynumber();
-    this.getnoice();
+    this.getnoice()
   }
 };
 </script>
@@ -409,44 +421,45 @@ export default {
     }
   }
 
-  .nocielan {
-    width: 500px;
-    margin: 0 auto;
-    overflow: hidden;
-    position: absolute;
-    line-height: 60px;
-    margin-left: 100px;
+  .nocielan{
+            width: 500px;
+            margin: 0 auto;
+            overflow: hidden;
+            position: absolute;
+            line-height: 60px;
+            margin-left: 100px;
   }
-  .nocicontent {
-    padding-left: 100px;
-    font-size: 16px;
-    color: #fff;
-    display: inline-block;
-    white-space: nowrap;
-    font-family: "微软雅黑";
-    animation: 50s wordsLoop linear infinite normal;
+  .nocicontent{
+           padding-left: 100px;
+            font-size: 16px;
+            color: #fff;
+            display: inline-block;
+            white-space: nowrap;
+            font-family: '微软雅黑';
+            animation: 50s wordsLoop linear infinite normal; 
   }
-  @keyframes wordsLoop {
-    0% {
-      transform: translateX(200px);
-      -webkit-transform: translateX(200px);
-    }
-    100% {
-      transform: translateX(-100%);
-      -webkit-transform: translateX(-100%);
-    }
-  }
+   @keyframes wordsLoop {
+            0% {
+                transform: translateX(200px);
+                -webkit-transform: translateX(200px);
+            }
+            100% {
+                transform: translateX(-100%);
+                -webkit-transform: translateX(-100%);
+            }
+        }
+ 
+        @-webkit-keyframes wordsLoop {
+            0% {
+                transform: translateX(200px);
+                -webkit-transform: translateX(200px);
+            }
+            100% {
+                transform: translateX(-100%);
+                -webkit-transform: translateX(-100%);
+            }
+        }
 
-  @-webkit-keyframes wordsLoop {
-    0% {
-      transform: translateX(200px);
-      -webkit-transform: translateX(200px);
-    }
-    100% {
-      transform: translateX(-100%);
-      -webkit-transform: translateX(-100%);
-    }
-  }
 }
 </style>
 <style scoped>
@@ -463,9 +476,21 @@ export default {
 .item .el-badge__content .is-dot {
   margin-top: 11px;
 }
-.nocielan ::before {
-  content: "公告:";
+ .nocielan ::before{
+      content:'公告:';
+ }
+        .el-menu-item,.el-submenu__title
+           {
+                height: 46px;
+                line-height:46px;
+                
+           }
+        
+.el-submenu .el-menu-item{
+  height: 46px;
+  line-height:46px;
 }
+
 
 </style>
 

@@ -54,19 +54,19 @@
                         </el-table-column>
                         <el-table-column
                               prop="videoDuration"
-                              width="70"
+                              width="80"
                               label="时长/分">
                         </el-table-column>
                         <el-table-column 
                          label="创建时间"
-                         width="140">
+                         width="180">
                               <template slot-scope="scope">
                                     {{timeFormattershowsecod(scope.row.createTime)}}
                               </template>
                         </el-table-column>
                          <el-table-column 
                               label="操作"
-                              width="160">
+                              width="180">
                               <template slot-scope="scope">
                                    <el-button type="primary" size="mini"  round @click="editvideo(scope.$index)" >编辑</el-button>
                                    <el-button type="danger" size="mini"  round  @click="delectvideo(scope.row.videoId)" >删除</el-button>

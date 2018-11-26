@@ -217,6 +217,3 @@
   height: 36px;
   line-height: 36px;
 }
-.menuicon{
-    margin:5px;
-}

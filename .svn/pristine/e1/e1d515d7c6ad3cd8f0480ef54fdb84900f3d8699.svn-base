@@ -112,13 +112,10 @@ export default {
                   dataformcode:{
                         type:1,
                         projectId:'',
-                        token:''
-                        
                   },
                   dataformdata:{
                         type:2,
                         projectId:'',
-                        token:''
                   },
                   codedata:[
 
@@ -163,22 +160,17 @@ export default {
             },
             beforeRemovecode(){
                    this.dataformcode.projectId=this.prodetail.projectId  
-                   const token = sessionStorage.getItem("token");
-                   this.dataformcode.token=token
-                   this.headers.token = token;
+                  const token = sessionStorage.getItem("token");
+                  this.headers.token = token;
             },
                beforeRemovedata(){
                    this.dataformdata.projectId=this.prodetail.projectId  
                   const token = sessionStorage.getItem("token");
-                   this.dataformdata.token=token
                   this.headers.token = token;
             },
 
 
             handleAvatarSuccess(res, file){
-                    console.log(res)
-                    console.log(file)
-
                     if(res.code==0){
                         console.log("刷新")
                          setTimeout(()=>{
@@ -257,6 +249,10 @@ export default {
                                         this.getgetfileSize()
                                     }
                             })
+
+
+                          
+                         
                         }).catch(() => {
                         this.$message({
                             type: 'info',
@@ -270,13 +266,11 @@ export default {
                 this.projectNameZh= this.prodetail.projectNameZh
                  this.routefile=this.prodetail.projectDataPath
                  this.routefilesubstr=this.routefile.substring(0,this.routefile.length-5)  
+                 this.getgetfileSize()
                  console.log('===shuju===')
                 console.log( this.prodetail)
                 this.public=this.prodetail.dataDirectory
-                  this.getgetfileSize()     
-
-   
-                
+               
   
        }
 }

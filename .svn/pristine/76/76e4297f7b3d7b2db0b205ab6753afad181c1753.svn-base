@@ -425,64 +425,13 @@ export default {
       var parms = {
             path: this.delectdata
       };
-       const token = sessionStorage.getItem("token");
-      var  formdatas={
-           path: this.delectdata,
-           token:token,
-      }
-      //  commondownload(parms).then(res=>{
+       commondownload(parms).then(res=>{
          //    var blob=new Blob(); 
            //  blob=res.data;
-                // console.log(res)
+                 console.log(res)
             //  window.open(URL.createObjectURL(blob))
-           $.ajax({
-          type: 'post', // 获取头信息，type=HEAD即可
-          url :'http://192.168.80.63:30005/api/common/download',
-          data:JSON.stringify(formdatas),
-          headers : {'Content-type': 'application/json;charset=UTF-8'},
-           success:function(data, textStatus, request){
-              alert(request.getResponseHeader('filename'));
-           },
-          complete: function(request){
-          console.log('zhe shi toubu')
-            console.log(request)
-
-              // 获取相关Http Response header
-              // var wpoInfo = {
-              //     // 服务器端时间
-              //     "date" : xhr.getResponseHeader('Date'),
-              //     // 如果开启了gzip，会返回这个东西
-              //     "contentEncoding" : xhr.getResponseHeader('Content-Encoding'),
-              //     // keep-alive ？ close？
-              //     "connection" : xhr.getResponseHeader('Connection'),
-              //     // 响应长度
-              //     "contentLength" : xhr.getResponseHeader('Content-Length'),
-              //     // 服务器类型，apache？lighttpd？
-              //     "server" : xhr.getResponseHeader('Server'),
-              //     "vary" : xhr.getResponseHeader('Vary'),
-              //     "transferEncoding" : xhr.getResponseHeader('Transfer-Encoding'),
-              //     // text/html ? text/xml?
-              //     "contentType" : xhr.getResponseHeader('Content-Type'),
-              //     "cacheControl" : xhr.getResponseHeader('Cache-Control'),
-              //     // 生命周期？
-              //     "exprires" : xhr.getResponseHeader('Exprires'),
-              //     "lastModified" : xhr.getResponseHeader('Last-Modified')
-              // };
-              // 在这里，做想做的事。。。
-              // console.log(wpoInfo)
-              // console.log(xhr)
-              // console.log(data)
-          }
-      // });
-
 
           })
-
-
-
-
-
-
     },
     movefile() {
            this.movementdialogvis=true

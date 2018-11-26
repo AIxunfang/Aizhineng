@@ -1,0 +1,456 @@
+<template>
+    <el-row class="filement">
+     <div class="navigationbar"> 
+                  <span class="navigationname">公共数据集管理<i class="el-icon-arrow-right" aria-hidden="true"></i>
+                        文件管理
+                  </span>
+           </div>
+         <el-col :span='24'>
+                 <i class="fa fa-home fa-2x homefile" aria-hidden="true"  @click="homefile"   ></i> 
+                   <span  v-for="(item,index) in routermenu" :key=index>
+                     <i class="fa fa-chevron-right  fa-2x  greaterthan" aria-hidden="true"></i> 
+                     <span class="crumenupath" @click="selectcurret(item,index)">
+                          {{item}}
+                      </span>
+                     </span>
+                 <el-dropdown trigger="click" style="margin:20px 0px 20px 10px ;"  size="small"  placement="bottom" @command="clickmenu">
+                      <span class="el-dropdown-link">
+                          <el-button  type="info" size="small">  <i class="el-icon-plus"></i> 
+                          </el-button>
+                      </span>
+                      <el-dropdown-menu slot="dropdown">
+                              <el-dropdown-item   command="1">
+                                <i class="el-icon-document"></i> 创建文件夹
+                             </el-dropdown-item>
+                              <el-dropdown-item  command="2" >
+                                   <el-upload
+                                     action="http://192.168.80.63:30005/api/common/upload"
+                                     :show-file-list="false"
+                                     :on-success="handleAvatarSuccess"
+                                     :headers="headers"
+                                     :data="dataform"
+                                     :on-progress="progressfunc"
+                                     :before-upload="beforeAvatarUpload">
+                                     <i class="el-icon-upload"></i> 上传文件
+                                    </el-upload>
+                            </el-dropdown-item>
+                      </el-dropdown-menu>
+                </el-dropdown>
+               <div style="display:inline-block;width:500px" v-show="uploadshow">
+                  <el-progress :text-inside="true" :stroke-width="18" :percentage="percentage" status="success"></el-progress>
+                </div>
+         </el-col>
+         <el-col :span='24'>
+                 <div style="margin:  0px 20px 0px 20px">
+                       <el-button @click="delect"  size="mini" style="margin-bottom:10px"  v-show="ischecked"  >删除</el-button>
+                        <el-button @click="downfile"   size="mini" style="margin-bottom:10px"  v-show="ischecked"  >下载</el-button>
+                          <el-button    size="mini" style="margin-bottom:10px"  v-show="ischecked"  @click="movefile" > 移动</el-button>
+                    <el-table
+                        size="mini"
+                         :data="filedata"
+                           @cell-click="handleCurrentChange"
+                             @selection-change="handleSelectionChange"
+                        style="width: 100%">
+                          <el-table-column
+                                 type="selection"
+                                 width="55">
+                            </el-table-column>     
+                            <el-table-column
+                                prop="fileName"
+                                label="文件名称"
+                               >
+                              <template slot-scope="scope">
+                                  <span  v-if='scope.row.isDir==false '>
+                                       <span v-if="scope.row.type==1  "> 
+                                             <img  src="../../assets/img/pictureimg.png"    class="picturemiddle">
+                                        </span>  
+                                         <span v-if=" scope.row.type==4">
+                                             <img src="../../assets/img/compress.png" class="picturemiddle">
+                                        </span>
+                                         <span v-if=" scope.row.type==2">
+                                             <img src="../../assets/img/video.png" class="picturemiddle">
+                                        </span>
+                                         <span v-if=" scope.row.type==3">
+                                             <img src="../../assets/img/viceo.png" class="picturemiddle">
+                                        </span>
+                                 </span>
+                                 <span v-else>
+                                     <img src="../../assets/img/dir.png"  class="picturemiddle">
+                                 </span>
+                                  {{ scope.row.fileName }}  
+                              </template> 
+                            </el-table-column>
+                            <el-table-column
+                                width="120"
+                                label="操作"
+                              >
+                          <template slot-scope="scope">
+                                  <el-dropdown size="small"    @command='optioncommand'  trigger="click">    
+                                      <i class="fa fa-ellipsis-h" aria-hidden="true" style="cursor:pointer" @click='actionfun(scope.row)' ></i>
+                                        <el-dropdown-menu slot="dropdown">
+                                                <el-dropdown-item  command="1" ><i class="fa fa-trash" aria-hidden="true"></i> 删除</el-dropdown-item>  
+                                                <el-dropdown-item  command="2"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> 重命名</el-dropdown-item>  
+                                                <el-dropdown-item  command="3"><i class="fa fa-arrows" aria-hidden="true"></i> 移动</el-dropdown-item>                     
+                                          </el-dropdown-menu>
+                                  </el-dropdown>
+                            </template>
+
+
+
+                            </el-table-column>
+                            <el-table-column
+                                width="120"
+                                label="大小">
+                                 <template slot-scope="scope">
+                                  <span v-if='scope.row.isDir==false'> {{scope.row.size}}</span>
+                                  <span v-else   >--</span>
+                              </template>
+                            </el-table-column>
+                            <el-table-column
+                                  width="180"
+                                 label="更新时间">
+                                <template slot-scope="scope">
+                                        <el-popover trigger="hover" placement="top">    
+                                            <span>{{timeFormattershowsecod(scope.row.updateTime)}}</span>
+                                            <div slot="reference" class="name-wrapper"  style="cursor:pointer">
+                                                {{timeago().format(scope.row.updateTime,'zh_CN')}}
+                                            </div>
+                                        </el-popover>
+                                </template>
+                         </el-table-column>
+                    </el-table>
+                 </div>
+         </el-col>
+         <el-col :span='12'>
+              <el-dialog
+                  :visible.sync="filedialogVisible"
+                  width="30%"
+                 >
+                  <el-form :model="numberValidateForm" ref="numberValidateForm" label-width="100px" class="demo-ruleForm">
+                          <el-form-item
+                            label="文件名称"
+                            prop="filename"
+                            :rules="[
+                              { required: true, message: '文件名不能为空'},
+                            ]"
+                          >
+                            <el-input    v-model="numberValidateForm.filename" autocomplete="off"></el-input>
+                          </el-form-item>
+                      </el-form>
+                  <span slot="footer" class="dialog-footer">
+                    <el-button type="primary" @click="filesubmit" size="mini">确 定</el-button>
+                  </span>
+                </el-dialog>
+         </el-col>
+    </el-row>
+</template>
+<script>
+import timeago from "timeago.js";
+import { timeFormattershowsecod, bytesToSize } from "@/assets/js/common";
+import{commonlist,commoncreat,commonrename,commondelete,commondownload} from '@/api/api'
+export default {
+     data(){
+          return{
+              ischecked:false,
+              timeago,
+              timeFormattershowsecod,
+              bytesToSize,
+              filedialogVisible:false,
+             numberValidateForm:{
+                 filename:"",
+             },
+              seleoldpath:'',
+              selectedit:false,
+              routermenu:[],
+               filedata:[],
+               dataform: {
+                filePath: "",
+               },
+               percentage:0,
+               uploadshow:false,
+              headers: {
+                    token: ""
+                },
+               delectdata:[],
+          }
+     },
+     methods:{
+            getcommonlist(){
+                 var params={
+                      filepath:this.$route.params.id =="/" ? '/': this.$route.params.id+'/'
+                 }
+       if (this.$route.params.id.split("/").length > 1) {
+        this.routermenu = this.$route.params.id.split("/").slice(1); //上面点击的菜单,
+      }
+
+              commonlist(params).then(res=>{
+                  console.log('列表')     
+                  console.log(res)
+                   if(res.data.code==0){
+                       this.filedata = res.data.data  
+                      this.filedata.forEach((item,index)=>{
+                            item.curentpath=res.config.params.filepath
+                         if(item.isDir==false){
+                              var fileNamelower = item.filePath.slice(-4).toLowerCase(); //截取后面四位判断格式
+                            if (
+                            fileNamelower === ".png" ||
+                            fileNamelower === ".jpg" ||
+                            fileNamelower === "jpeg" ||
+                            fileNamelower === ".gif" ||
+                            fileNamelower === ".psd"
+                            ) {
+                            console.log("tupian");
+                                    item.type = 1;
+                            } else if (
+                            fileNamelower === ".mp4" ||
+                            fileNamelower === ".3gp" ||
+                            fileNamelower === "rmvb" ||
+                            fileNamelower === ".avi" ||
+                            fileNamelower === "rmvb" ||
+                            fileNamelower === ".wma"
+                            ) {
+                            item.type = 2;
+                            } else if (
+                            fileNamelower === ".mp3" ||
+                            fileNamelower === ".wma" ||
+                            fileNamelower == ".aac" ||
+                            fileNamelower == ".ogg"
+                            ) {
+                            item.type = 3;
+                            } else if (fileNamelower == ".zip" || fileNamelower == ".rar") {
+                            item.type = 4;
+                            }
+                            }
+                      })
+                 }
+              })      
+            },
+    handleSelectionChange(val) {
+      //选中的时候,显示删除功能按钮
+      this.delectdata = [];
+      this.multipleSelection = val;
+      console.log(this.multipleSelection);
+      if (this.multipleSelection.length > 0) {
+        this.ischecked = true;
+      } else {
+        this.ischecked = false;
+      }
+
+      this.multipleSelection.forEach((item, index) => {
+        this.delectdata.push(item.filePath);
+      });
+    },
+     optioncommand(val, item) { //操作里面的下拉
+      console.log(val);
+      //  if(val==1){
+      //             var parms = {
+      //                   path: this.selectdelect
+      //              }
+      //              hdfsdelete(parms).then(res => {
+      //             if (res.data.code == 0) {
+      //               this.gethdfslist();
+      //             }
+      //           });      
+      //  }else if(val==2){
+      //          this.filedialogVisible=true
+      //          this.numberValidateForm.filename=this.selefilename      
+      //  }else{
+      //          this.movementdialogvis=true  
+      //          this.movepath='/'
+      //          this.movehdfs()
+      //  }
+    },
+     actionfun(index) {
+       console.log("选择的值");
+       console.log(index);
+      //  this.selectedit=true
+      //   this.moveone=true//判断移动单个文件还是数组文件
+      //  if(index.dir==false){
+      //       this.selectdelect=index.fileName
+      //       this.selecttype=index.tableName.slice(index.tableName.lastIndexOf(".")) 
+      //       this.selefilename=index.tableName.slice(0,index.tableName.lastIndexOf(".")) 
+      //       this.seleoldpath=index.fileName
+      //       this.currentpath=index.currentpath
+      //       console.log( this.selefilename)
+      //  }else{
+      //       this.currentpath=index.currentpath
+      //       this.selefilename=index.tableName
+      //       this.seleoldpath=index.fileName
+      //       this.selecttype=''
+      //  }
+    },
+
+
+
+    downfile(){
+         console.log('下来')
+         var parms={
+             filePath: this.delectdata.join(",")
+         }
+
+       //  console.log(res)
+        //  commondownload(parms).then(res=>{
+        //            console.log(res)
+
+        //  })
+    },
+  movefile(){
+
+  },
+
+
+    delect() {//批量删除
+      var parms = {path:this.delectdata}
+ 
+      console.log(parms);
+        commondelete(parms).then(res => {
+          console.log("删除");
+          console.log(res);
+          if (res.data.code == 0) {
+               this.getcommonlist();
+          }
+        });
+    },
+
+
+      handleCurrentChange(row, column, cell, event) {//点击当前的额目录
+      //点击的时候是文件夹,就发送下一次请求
+      if (column.label == "文件名称") {
+        if (row.isDir == true) {
+         const datapeth = row.filePath;
+          this.$router.push({
+            name: "FileManagement",
+            params: { id:  datapeth }
+          });
+          this.getcommonlist();
+        }
+      }
+    },       
+    filesubmit() {
+      //提交文件夹名称
+     if(this.selectedit==false){
+       var parms = {
+        dirName:
+          this.$route.params.id == "/"
+            ? "/"+this.numberValidateForm.filename
+            : this.$route.params.id + "/" + this.numberValidateForm.filename //三木区分是不是第一个目录
+      };
+
+      this.$refs["numberValidateForm"].validate(valid => {
+        if (valid) {
+          commoncreat(parms).then(res => {
+            console.log("创建文件夹");
+            console.log(res);
+            if (res.data.code == 0) {
+              this.$message({
+                type: "success",
+                message: "创建成功"
+              });
+              this.$refs["numberValidateForm"].resetFields();
+              this.filedialogVisible = false;
+              this.getcommonlist();
+            }
+          });
+        }
+      });
+      }else{
+            var parms={
+                  oldPath: this.seleoldpath,
+                  newPath:  this.$route.params.id == "/" ? this.currentpath+this.numberValidateForm.filename+this.selecttype :this.currentpath+'/'+this.numberValidateForm.filename+this.selecttype,
+            }
+ this.$refs["numberValidateForm"].validate(valid => {
+        if(valid){
+         commonrename(parms).then(res=>{
+              if(res.data.code==0){
+              this.$refs["numberValidateForm"].resetFields();
+               this.filedialogVisible = false;
+                this.getcommonlist();
+
+              }else{
+                   this.$message.error(res.data.message)
+              }
+               
+         })
+       }
+     })
+     console.log(parms)
+     }
+    },
+     selectcurret(item, index) {//点击选择当前的目录进入
+      console.log(item);
+      console.log(index);
+      console.log(this.routermenu);
+      const pathclick = this.routermenu.slice(0, index + 1);
+      console.log(pathclick);
+      this.$router.push({
+        name: "FileManagement",
+        params: { id: "/" + pathclick.join("/") }
+      });
+      this.getcommonlist()
+    },
+
+
+
+
+   homefile() {
+      this.$router.push({ name: "FileManagement", params: { id: "/" } });
+      this.getcommonlist()
+    },
+
+             //进度条
+         progressfunc(event, file, fileList) {
+            this.uploadshow = true;
+            console.log(event)
+            this.percentage = parseInt(event.percent);
+            if (this.percentage == 100) {
+                this.uploadshow = false;
+              }
+            },
+             beforeAvatarUpload() {
+                console.log("上传参数");
+                this.dataform.filePath = this.$route.params.id =="/" ? '/': this.$route.params.id+'/'
+                console.log(this.dataform);
+                //上传前加参数
+                const token = sessionStorage.getItem("token");
+                this.headers.token = token;
+                },
+             handleAvatarSuccess(res, file) {
+                    console.log(res);
+                    console.log(file);
+                    if (res.code == 0) {
+                          this.getcommonlist()   
+                    }
+                 },
+           clickmenu(val) {
+                if (val == 1) {
+                    this.filedialogVisible = true;
+                    this.selectedit=false
+                }
+        },
+     },
+     mounted(){
+           this.getcommonlist()   
+       }
+     }
+</script>
+<style  lang='scss' scoped>
+   .filement{
+         .picturemiddle {
+            vertical-align: middle;
+            margin-right: 8px;
+        }  
+     .homefile {
+        color: #7f7f7f;
+        vertical-align: middle;
+        margin-left: 20px;
+        cursor: pointer;
+    }
+    .greaterthan {
+     vertical-align: middle;
+    color: #cbcbcb;
+   }
+
+   }
+  
+</style>
+

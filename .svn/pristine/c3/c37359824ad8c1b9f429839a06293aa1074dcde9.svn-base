@@ -165,13 +165,6 @@ export const trainingdelete = (parms) => {
     return axios
         .get('/training/delete', { params: parms })
 }
-//训练模型-->启动
-export const publishrestart = (parms) => {
-    return axios
-        .get('/publish/restart', { params: parms })
-}
-
-
 
 //启用项目的时候的打印日志
 export const findlog = (parms) => {

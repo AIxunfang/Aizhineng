@@ -257,6 +257,10 @@ export default {
                                         this.getgetfileSize()
                                     }
                             })
+
+
+                          
+                         
                         }).catch(() => {
                         this.$message({
                             type: 'info',

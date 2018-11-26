@@ -148,7 +148,6 @@
                     <el-button type="primary" @click="filesubmit" size="mini">确 定</el-button>
                   </span>
                 </el-dialog>
-                
                 <el-dialog  
                    width='500'
                    :visible.sync="movementdialogvis" >
@@ -196,9 +195,8 @@
                      <span slot="footer" class="dialog-footer">
                       <el-button type="primary" size='mini'   @click='suremove'>确 定</el-button>
                     </span>
+
                 </el-dialog>
-
-
           </el-col>
   </el-row>
 </template>
@@ -217,20 +215,20 @@ import {
 export default {
   data() {
     return {
-      movecurent: [],
-      moveone: true,
-      movepath: "/",
-      foldertableData: [],
-      selenewpath: "",
-      seleoldpath: "",
-      selectedit: false,
-      selefilename: "",
-      selectdelect: "",
-      selecttype: "",
+      movecurent:[],
+      moveone:true,
+      movepath:'/',
+      foldertableData:[],
+      selenewpath:'',
+      seleoldpath:'',
+      selectedit:false,
+      selefilename:'',
+      selectdelect:"",
+      selecttype:'',
       numberValidateForm: {
         filename: ""
       },
-      movementdialogvis: false,
+      movementdialogvis:false,
       filedialogVisible: false,
       routermenu: [],
       valuetouter: "",
@@ -253,135 +251,146 @@ export default {
     };
   },
   methods: {
-    movehomeHdfs() {
-      //移动的首页
-      this.movepath = "/";
-      this.movehdfs();
-    },
-    suremove() {
-      var parms = {
-        path: this.moveone == false ? this.delectdata : [this.seleoldpath],
-        newName: this.movepath + "/"
-      };
+   movehomeHdfs(){//移动的首页
+           this.movepath='/'
+           this.movehdfs()
 
-      hefsmove(parms).then(res => {
-        if (res.data.code == 0) {
-          this.gethdfslist();
-          this.movementdialogvis = false;
-        } else {
-          this.$message.error(res.data.message);
+   },
+   suremove(){
+        var parms={
+                oldPath:  this.moveone==false ? this.delectdata.join(",") : this.seleoldpath ,
+                newPath:this.movepath+'/'
         }
-      });
+        console.log(parms)
+        hefsmove(parms).then(res=>{
+               console.log(res)
+               if(res.data.code==0){
+                    this.gethdfslist() 
+                     this.movementdialogvis=false
+               }else{
+                   thie.$message.error(res.data.message)
+               }
+            
+        })
+   },
+ movecurrentpage(item,index){//移动时候的当前页
+      console.log(item)
+      console.log(index)
+      const moveclickcur='/'+ this.movecurent.slice(0, index + 1).join('/');
+       this.movepath=moveclickcur
+       this.movehdfs()
+ },
+    moveCurrentChange(row, column){
+             if(column.label=="文件夹"){
+                   this.movepath=row.fileName  
+                   this.movehdfs()
+             }
     },
-    movecurrentpage(item, index) {
-      //移动时候的当前页
-      const moveclickcur = "/" + this.movecurent.slice(0, index + 1).join("/");
-      this.movepath = moveclickcur;
-      this.movehdfs();
-    },
-    moveCurrentChange(row, column) {
-      if (column.label == "文件夹") {
-        this.movepath = row.fileName;
-        this.movehdfs();
-      }
-    },
-    optioncommand(val, item) {
-      //操作里面的下拉
-      if (val == 1) {
-        var parms = {
-          path: [this.selectdelect]
-        };
-        hdfsdelete(parms).then(res => {
-          if (res.data.code == 0) {
-            this.gethdfslist();
-          }
-        });
-      } else if (val == 2) {
-        this.filedialogVisible = true;
-        this.numberValidateForm.filename = this.selefilename;
-      } else {
-        this.movementdialogvis = true;
-        this.movepath = "/";
-        this.movehdfs();
-      }
+    optioncommand(val, item) { //操作里面的下拉
+      console.log(val);
+       if(val==1){
+                  var parms = {
+                        path: this.selectdelect
+                   }
+                   hdfsdelete(parms).then(res => {
+                  if (res.data.code == 0) {
+                    this.gethdfslist();
+                  }
+                });      
+       }else if(val==2){
+               this.filedialogVisible=true
+               this.numberValidateForm.filename=this.selefilename      
+       }else{
+               this.movementdialogvis=true  
+               this.movepath='/'
+               this.movehdfs()
+       }
     },
     actionfun(index) {
-      this.selectedit = true;
-      this.moveone = true; //判断移动单个文件还是数组文件
-      if (index.dir == false) {
-        this.selectdelect = index.fileName;
-        this.selecttype = index.tableName.slice(
-          index.tableName.lastIndexOf(".")
-        );
-        this.selefilename = index.tableName.slice(
-          0,
-          index.tableName.lastIndexOf(".")
-        );
-        this.seleoldpath = index.fileName;
-        this.currentpath = index.currentpath;
-      } else {
-        this.currentpath = index.currentpath;
-        this.selefilename = index.tableName;
-        this.seleoldpath = index.fileName;
-        this.selecttype = "";
-      }
+       console.log("选择的值");
+       console.log(index);
+       this.selectedit=true
+        this.moveone=true//判断移动单个文件还是数组文件
+       if(index.dir==false){
+            this.selectdelect=index.fileName
+            this.selecttype=index.tableName.slice(index.tableName.lastIndexOf(".")) 
+            this.selefilename=index.tableName.slice(0,index.tableName.lastIndexOf(".")) 
+            this.seleoldpath=index.fileName
+            this.currentpath=index.currentpath
+            console.log( this.selefilename)
+       }else{
+            this.currentpath=index.currentpath
+            this.selefilename=index.tableName
+            this.seleoldpath=index.fileName
+            this.selecttype=''
+       }
     },
     filesubmit() {
       //提交文件夹名称
-      if (this.selectedit == false) {
-        var parms = {
-          path:
-            this.$route.params.id == "/"
-              ? "/" + this.numberValidateForm.filename
-              : this.$route.params.id + "/" + this.numberValidateForm.filename //三木区分是不是第一个目录
-        };
+     if(this.selectedit==false){
+       var parms = {
+        path:
+          this.$route.params.id == "/"
+            ? "/"+this.numberValidateForm.filename
+            : this.$route.params.id + "/" + this.numberValidateForm.filename //三木区分是不是第一个目录
+      };
 
-        this.$refs["numberValidateForm"].validate(valid => {
-          if (valid) {
-            hdfscreate(parms).then(res => {
-              if (res.data.code == 0) {
-                this.$message({
-                  type: "success",
-                  message: "创建成功"
-                });
-                this.$refs["numberValidateForm"].resetFields();
-                this.filedialogVisible = false;
+      this.$refs["numberValidateForm"].validate(valid => {
+        if (valid) {
+          hdfscreate(parms).then(res => {
+            console.log("创建文件夹");
+            console.log(res);
+            if (res.data.code == 0) {
+              this.$message({
+                type: "success",
+                message: "创建成功"
+              });
+              this.$refs["numberValidateForm"].resetFields();
+              this.filedialogVisible = false;
+              this.gethdfslist();
+            }
+          });
+        }
+      });
+      }else{
+            var parms={
+                  oldPath: this.seleoldpath,
+                  newPath:  this.$route.params.id == "/" ? this.currentpath+this.numberValidateForm.filename+this.selecttype :this.currentpath+'/'+this.numberValidateForm.filename+this.selecttype,
+            }
+ this.$refs["numberValidateForm"].validate(valid => {
+        if(valid){
+         hefsrename(parms).then(res=>{
+              if(res.data.code==0){
+              this.$refs["numberValidateForm"].resetFields();
+               this.filedialogVisible = false;
                 this.gethdfslist();
-              }
-            });
-          }
-        });
-      } else {
-        var parms = {
-          oldPath: this.seleoldpath,
-          newPath:
-            this.$route.params.id == "/"
-              ? this.currentpath +
-                this.numberValidateForm.filename +
-                this.selecttype
-              : this.currentpath +
-                "/" +
-                this.numberValidateForm.filename +
-                this.selecttype
-        };
-        this.$refs["numberValidateForm"].validate(valid => {
-          if (valid) {
-            hefsrename(parms).then(res => {
-              if (res.data.code == 0) {
-                this.$refs["numberValidateForm"].resetFields();
-                this.filedialogVisible = false;
-                this.gethdfslist();
-              } else {
-                this.$message.error(res.data.message);
-              }
-            });
-          }
-        });
-        console.log(parms);
-      }
+              }else{
+                   this.$message.error(res.data.message)
+              }    
+         })
+       }
+     })
+     console.log(parms)
+     }
     },
     delect() {
-      var parms = { path: this.delectdata };
+      var parms ={
+              path:this.delectdata.join(",")
+        }
+      console.log(parms);
+      // $.post({
+      //       url:"http://192.168.80.63:30005/api/hdfs/delete?token=NmIxZFk0OTI2MGE2V2YzdG9rZW5fc2FsdA==",
+      //       contentType:'application/json',
+      //       data:JSON.stringify(parms),
+      //      success:function(res){
+      //             console.log(res)
+      //      },
+      //      error:function(res){
+      //         console.log('shibai')
+      //          console.log(res)
+      //        }
+
+      // }) 
       hdfsdelete(parms).then(res => {
         console.log("删除");
         console.log(res);
@@ -389,17 +398,18 @@ export default {
           this.gethdfslist();
         }
       });
+
+
     },
     downfile() {
       var params = {
-        path: this.delectdata
+        hdfsFile: this.delectdata.join(",")
       };
       hdfsdown(params).then(res => {
-        if (res.data.code == 0) {
-          window.location.href =
-            "http://192.168.80.63:30005/api/file/" + res.data.data;
-          this.gethdfslist();
-        }
+          if(res.data.code==0){
+                window.location.href='http://192.168.80.63:30005/api/file/'+res.data.data
+                 this.gethdfslist();
+            }
       });
     },
 
@@ -437,8 +447,8 @@ export default {
       console.log(this.dataform);
       //上传前加参数
       const token = sessionStorage.getItem("token");
-      this.headers.token = token;
-      this.dataform.token = token;
+       this.headers.token = token;
+       this.dataform.token=token
     },
     handleAvatarSuccess(res, file) {
       console.log(res);
@@ -463,7 +473,7 @@ export default {
     clickmenu(val) {
       if (val == 1) {
         this.filedialogVisible = true;
-        this.selectedit = false;
+         this.selectedit=false
       }
     },
     homeHdfs() {
@@ -483,55 +493,61 @@ export default {
       this.gethdfslist();
     },
     //点击移动的时候的列表
-    movehdfs() {
-      var parms = {
-        path: this.movepath
-      };
-      this.foldertableData = [];
-      hdfslist(parms).then(res => {
-        if (res.data.code == 0) {
-          this.movecurent = res.config.params.path.split("/").slice(1); //上面点击的菜单,
-          console.log(this.movecurent);
-          console.log(res);
-          res.data.data.forEach((item, index) => {
-            if (item.dir == true) {
-              item.currentpath = res.config.params.path;
-              var index = item.fileName.lastIndexOf("/"); //截取最后一个/ 后面的作为名字
-              item.tableName = item.fileName.slice(index + 1);
+   movehdfs(){
+         var parms={
+              path:this.movepath
+         }
+         this.foldertableData=[]
+        hdfslist(parms).then(res=>{
+               if(res.data.code==0){
+               this.movecurent =res.config.params.path.split("/").slice(1); //上面点击的菜单,
+                   console.log(this.movecurent )
+                   console.log(res)
+                    res.data.data.forEach((item,index)=>{
 
-              this.foldertableData.push(item);
-            }
-          });
-        }
-      });
-      console.log("移动----------");
-      console.log(this.foldertableData);
+                         if(item.dir==true){
+                              item.currentpath = res.config.params.path;
+                              var index = item.fileName.lastIndexOf("/"); //截取最后一个/ 后面的作为名字
+                              item.tableName = item.fileName.slice(index + 1);
+                              
+                              this.foldertableData.push(item)
+                             
+                         }
+                    })
+               }
+        })
+         console.log('移动----------')
+        console.log(this.foldertableData)
+    
+
+   },
+    movefile(){//点击移动.,刷新
+       this.movementdialogvis=true 
+        this.movepath='/'
+         this.movehdfs()
+         this.moveone=false
     },
-    movefile() {
-      //点击移动.,刷新
-      this.movementdialogvis = true;
-      this.movepath = "/";
-      this.movehdfs();
-      this.moveone = false;
-    },
+
+
+
 
     gethdfslist() {
       var parms = {
-        path: this.$route.params.id
+        path: this.$route.params.id 
       };
 
       if (this.$route.params.id.split("/").length > 1) {
         this.routermenu = this.$route.params.id.split("/").slice(1); //上面点击的菜单,
       }
       //  this.routermenu.splice(1)
-      hdfslist(parms).then(res => {
-        //首页列表
+      hdfslist(parms).then(res => {//首页列表
         if (res.data.code == 0) {
           console.log("888888888");
           console.log(this.routermenu);
           console.log(res);
           this.filetableData = res.data.data;
           this.filetableData.forEach((item, index) => {
+           
             item.currentpath = res.config.params.path;
             var index = item.fileName.lastIndexOf("/"); //截取最后一个/ 后面的作为名字
             item.tableName = item.fileName.slice(index + 1);
@@ -544,9 +560,10 @@ export default {
               fileNamelower === ".psd"
             ) {
               console.log("tupian");
-
+            
               if (item.dir == false) {
-                item.type = 1;
+                    item.type = 1;
+
               }
             } else if (
               fileNamelower === ".mp4" ||

@@ -148,7 +148,6 @@
                     <el-button type="primary" @click="filesubmit" size="mini">确 定</el-button>
                   </span>
                 </el-dialog>
-                
                 <el-dialog  
                    width='500'
                    :visible.sync="movementdialogvis" >
@@ -196,9 +195,8 @@
                      <span slot="footer" class="dialog-footer">
                       <el-button type="primary" size='mini'   @click='suremove'>确 定</el-button>
                     </span>
+
                 </el-dialog>
-
-
           </el-col>
   </el-row>
 </template>
