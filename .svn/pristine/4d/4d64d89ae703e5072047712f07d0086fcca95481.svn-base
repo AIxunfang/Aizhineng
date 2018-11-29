@@ -26,17 +26,8 @@
                         </el-form>
                    </div>
                   <div style="float:right;display:inline-block;margin-right:80px" >
-                         <el-button size='mini'  @click='batckdown'>导入模版</el-button>
-                          <el-upload
-                            style="display:inline-block"
-                            accept='.xlsx,.xls'
-                            action="http://192.168.80.63:30005/api/user/import/users"
-                            :show-file-list="false"
-                            :on-success="handleAvatarSuccess"
-                            :data="dataform"
-                            :before-upload="beforeAvatarUpload">
+                         <el-button size='mini'  @click='batckdown'>批量模版下载</el-button>
                           <el-button size='mini'>批量上传</el-button>
-                          </el-upload>
 
                         <el-button icon="el-icon-plus" type="primary"  size="mini"  @click="addueser" >新增</el-button>    
                   </div>  
@@ -198,9 +189,6 @@ import {
 export default {
   data() {
     return {
-      dataform:{
-            token:''
-      },
       userinfo: null,
       Diseditsfalse: false,
       tableData: [],
@@ -258,20 +246,8 @@ export default {
     batckdown(){//批量下载模版
        window.location.href='http://192.168.80.63:30005/api/file/template/user/userImportTemplate.xlsx'
     },
-    beforeAvatarUpload(){
-            const token = sessionStorage.getItem("token");
-            this.dataform.token=token
-    },
-    handleAvatarSuccess(res,file ){
-             if(res.code==0){
-                this.$message({
-                   type:'sucess',
-                   message:res.data
-                })
-             }else{
-                this.message.error(res.message)
-             }
-    },
+
+
     closeuserdislog() {
       //关闭弹框
       this.formuserAdd.userAccount = "";
@@ -284,6 +260,7 @@ export default {
       this.Diseditsfalse = false;
       this.formuserAdd.userMobile = "";
       this.formuserAdd.userEmail = "";
+
       this.formuserAdd.roleIds = [];
     },
     edit_user(index) {
@@ -387,6 +364,8 @@ export default {
         currentPage: this.currentPage
       };
       userlistpage(parms).then(res => {
+        console.log("-用户列表--");
+        console.log(res);
         if (res.data.code == 0) {
           this.usertableData = res.data.data.list;
           this.paggtatol = res.data.data.total;

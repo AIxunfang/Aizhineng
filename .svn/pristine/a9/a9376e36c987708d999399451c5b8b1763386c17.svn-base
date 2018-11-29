@@ -9,12 +9,12 @@
          </el-col>
          <el-col :span="24">
              <div class="selectmodelform">
-                <el-form :inline="true" :model="mdoelform" size='small'  label-width='100px'    class="addmodelforminline"  ref="mdoelform"  :rules="rules">
+                <el-form :inline="true" :model="mdoelform" class="addmodelforminline"  ref="mdoelform"  :rules="rules">
                      <div>
                         <el-form-item label="发布名称" prop="publishName" >
                              <el-input v-model="mdoelform.publishName"></el-input>
                         </el-form-item>
-                        <el-form-item label="  镜像名称" prop='publishImage'>
+                        <el-form-item label="镜像名称">
                              <el-input v-model="mdoelform.publishImage" readonly="readonly"></el-input>
                         </el-form-item>
                      </div>
@@ -44,7 +44,7 @@
                    <div>
                        <el-form-item label="发布描述">
                          <el-input
-                            style="width:519px"
+                            style="width:500px"
                             type="textarea"
                             :rows="2"
                             placeholder="请输入内容"
@@ -64,7 +64,7 @@
                                           ></el-cascader>
                          </el-form-item>
                          <el-form-item>
-                             <el-button size="mini" type="primary" @click="analysis()">解析参数</el-button>
+                             <el-button size="small" type="primary" @click="analysis()">解析参数</el-button>
                          </el-form-item>
                           <div  v-show="comprehensionshow"  style="margin-left:20px">
                                     <el-form-item>

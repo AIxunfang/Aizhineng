@@ -45,7 +45,7 @@
                   </div>
                    <div class="projectbottom">
                          <div class="menukey">
-                               <el-button  size="small"  icon="el-icon-download" v-if='item.trainingStatus==3'  @click='doenmodel(index)'  >下载</el-button>
+                               <el-button  size="small"  icon="el-icon-upload" v-if='item.trainingStatus==3'  @click='doenmodel(index)'  >下载</el-button>
                               <span v-else   :class='{"startdisabled":modelarry[index].trainingStatus !== 1}'><el-button   size="small"  icon="el-icon-caret-right" @click.once="startmodel(index)" >启用</el-button></span>   
                         </div>
                           <div class="menukey">
@@ -99,7 +99,7 @@ export default {
                       window.location.href =
                         "http://192.168.80.63:30005/api/file/" + res.data.data.msg;   
                            }else{
-                                  this.$message.error(res.data.data.msg)
+                                  this.$message.error(res.data.message)
                            }
                  })  
              },

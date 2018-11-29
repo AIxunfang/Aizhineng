@@ -219,6 +219,3 @@
 .menuicon{
     margin:5px;
 }
-.el-badge__content.is-dot{
-    margin-top:10px;
-}

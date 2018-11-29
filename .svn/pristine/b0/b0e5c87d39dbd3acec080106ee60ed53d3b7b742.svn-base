@@ -13,13 +13,10 @@
                       <div class="getback"><el-button  type="primary"  size="small" @click="goback">返回</el-button></div>
                   </div>
                  <div class="uploadfile">
-                    <div style="margin-bottom:20px; width:500px; "  v-show="progresshow">
-                        <el-progress :text-inside="true" :stroke-width="18" :percentage="percentage" status="success"></el-progress>
-                    </div>
-                        <div style="display:inline-block">
+                        <div>
                           <div style="display:inline-block">
                             <el-upload  
-                             action="http://192.168.80.63:30005/api/project/upload"
+                            action="http://192.168.80.63:30005/api/project/upload"
                             :limit="1"
                              :on-progress="progressfunc"
                             :data='dataformcode'
@@ -29,23 +26,25 @@
                             :headers='headers'
                             :before-upload="beforeRemovecode"
                             >
-                          <el-button size="mini" type="primary"   ref="codeUpload">
+                                <el-button size="mini" type="primary"   ref="codeUpload">
                                     <i class="el-icon-upload el-icon--right"></i>上传代码 code 
                                 </el-button>
                             </el-upload>
 
                         </div>
-
-                      </div> 
-                      <div style="margin-top:20px;display:inline-block"   v-show="this.public ==0"  >
+                            <div style="margin-bottom:20px; width:500px; display:inline-block"  v-show="progresshow">
+                                    <el-progress :text-inside="true" :stroke-width="18" :percentage="percentage" status="success"></el-progress>
+                          </div>
+                      </div>
+                      <div style="margin-top:20px"   v-show="this.public ==0"  >
                           <div style="display:inline-block">
                             <el-upload  
                             action="http://192.168.80.63:30005/api/project/upload"
                             :limit="1"
-                             :on-progress="progressfunc"
+                             :on-progress="progressfuncdata"
                             :data='dataformdata'
                             :show-file-list="false"
-                            :on-success="handleAvatarSuccess"
+                            :on-success="handleAvatarSuccessdata"
                              accept=".zip"
                             :headers='headers'
                             :before-upload="beforeRemovedata"
@@ -56,9 +55,10 @@
                             </el-upload>
 
                         </div>
-
+                            <div style="margin-bottom:20px; width:500px; display:inline-block"  v-show="progresshowdata">
+                                    <el-progress :text-inside="true" :stroke-width="18" :percentage="percentagedata" status="success"></el-progress>
+                          </div>
                       </div>
-                      <div style="color:#909399;font-size:12px;margin-top:10px">只能同时上传一个</div>
                  </div>
           </el-col>
           <el-col :span="24">
@@ -74,6 +74,7 @@
 
                          </el-table-column>
                          <el-table-column label="大小" prop="fileSize">
+
                          </el-table-column>
                          <el-table-column label="操作">
                                  <template slot-scope="scope">
@@ -95,6 +96,7 @@ export default {
                   headers:{
                     token:"",
                   },
+                  progresshowdata:false,
                   data_upload:"",
                   progresshow:false,
                   percentagedata:0,
@@ -126,17 +128,38 @@ export default {
        methods:{
               goback(){//返回上一页
                     this.$router.go(-1)
+
               },
+              
+
+
             getgetfileSize(){//获取文件大小和更新时间
-              this.codedata=[]
                     var parms={
                           projectId:this.prodetail.projectId
                     }
                  getfileSize(parms).then(res=>{
+                        console.log("daxiao")
+                        console.log(res)
+
+
                           if(res.data.code==0){//可能值传了一个值,遍历一遍
+
                               this.codedata=res.data.data
+
+                                //  for(var i=0;i<res.data.data.length;i++ ){
+                                //          if(res.data.data[i].type==1){
+                                //                this.codedata[0].time= res.data.data[i].time;
+                                //                this.codedata[0].storage= res.data.data[i].fileSize;
+                                               
+                                //          }else if(res.data.data[i].type==2){
+                                //                this.codedata[1].time= res.data.data[i].time;
+                                //                this.codedata[1].storage= res.data.data[i].fileSize;
+                                                
+                                //          }
+                                //  }
                           }
-                 })      
+                 })    
+                 
             },
             beforeRemovecode(){
                    this.dataformcode.projectId=this.prodetail.projectId  
@@ -150,12 +173,7 @@ export default {
                    this.dataformdata.token=token
                   this.headers.token = token;
             },
-            getprogress(){
-                   projectprocess().then(res=>{
-                       console.log('进度条')
-                       console.log(res)
-                   })
-            },
+
 
             handleAvatarSuccess(res, file){
                     console.log(res)
@@ -173,18 +191,35 @@ export default {
                          this.$message.error(res.message)
                     }
             },
+
+            handleAvatarSuccessdata(){
+                  if(res.code==0){
+                        console.log("刷新data")
+                        setTimeout(()=>{
+                          this.getgetfileSize()  
+                        },1000)
+                        
+
+                    }else{
+                         this.$message.error(res.message)
+                    }
+            },
+
    //进度条code
             progressfunc(event, file, fileList) {
-             console.log(event)
-            console.log(file)
-            console.log(fileList)
             this.progresshow = true;
             this.percentage = parseInt(event.percent);
             if (this.percentage == 100) {
                 this.progresshow = false;
-               }
+            }
             },
-
+     progressfuncdata(event, file, fileList){
+          this.progresshowdata = true;
+            this.percentagedata = parseInt(event.percent);
+            if (this.percentagedata == 100) {
+                this.progresshowdata = false;
+            }
+     },
            closevisble(){//关闭浏览器清空input\
                 console.log("1111")
                 document.getElementById('fileform').reset()
@@ -209,6 +244,7 @@ export default {
                         cancelButtonText: '取消',
                         type: 'warning'
                         }).then(() => {
+                         
                             deletefile(parms).then(res=>{
                                     console.log(res)
                                     if(res.data.code==0){
@@ -217,8 +253,6 @@ export default {
                                                 message:"删除成功" 
                                         })
                                         this.getgetfileSize()
-                                    }else{
-                                        this.$message.error(res.data.message)
                                     }
                             })
                         }).catch(() => {
@@ -238,9 +272,10 @@ export default {
                 console.log( this.prodetail)
                 this.public=this.prodetail.dataDirectory
                   this.getgetfileSize()     
-                //   setInterval(()=>{
-                //       this.getprogress()
-                //   },2000)
+
+   
+                
+  
        }
 }
 </script>

@@ -170,11 +170,7 @@ export const publishrestart = (parms) => {
     return axios
         .get('/publish/restart', { params: parms })
 }
-//训练成功后的下载
-export const modeldownload = (parms) => {
-    return axios
-        .get('/training/model/download', { params: parms })
-}
+
 
 
 //启用项目的时候的打印日志
@@ -593,11 +589,6 @@ export const announcementupdate = (parms) => {
     return axios
         .get('/index/announcement/update', { params: parms })
 }
-//个人修改密码
-export const updatepassword = (parms) => {
-    return axios
-        .post('/user/update/password', parms)
-}
 //文件管理-->列表
 export const commonlist = (parms) => {
     return axios
@@ -634,4 +625,4 @@ export const commonunzip = (parms) => {
         .get('/common/unzip', { params: parms })
 }
 
- 
+``

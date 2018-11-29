@@ -11,28 +11,27 @@
               <el-button type="primary" size="mini"  style="float:right;margin:20px 20px 0px 0px" @click="goback"  >返回上一级</el-button>
             <el-col :span="24" >
                     <div   class="headlinename">
-                         
-                            <el-col :span='3'>
-                            <div style="display:inline-block;">
+                       <div style="display:inline-block;">
+                            <div style="display:inline-block;text-align:center;line-height:60px;">
                                 <img :src="'http://192.168.80.63:30005/api/file/'+`${itemsystem.imageUrl}`" class="headlineicon">  
                             </div>
-                           </el-col>
-                           <el-col :span='21'>
                              <span class="headname">{{itemsystem.courseStructureName}}</span>
                               <p class="Desc">{{itemsystem.courseStructureDesc}}</p>   
-                           </el-col>
+                       </div>
+                         
                    </div>
             </el-col>
-            <el-col :span='24' style="padding:  0px 20px 0px 20px;">
-              <hr/>
-            </el-col>
-            <el-col :span="24">
-              <div   class="stytemstyle"      v-for="item in  systemdata" :key="item.id" @click="stytemclick(item)">
-                    <img  :src=" 'http://192.168.80.63:30005/api/file/'+`${item.imageUrl}`" alt="" class="stytemcover">
-                      <div class="courseStructureName">{{item.courseClassificationName}}</div>
-                        <div class="coursename" >{{item.childrenlength}}个模块</div> 
-              </div>
-          </el-col>
+                 <el-col :span="24">
+                    <div   class="stytemstyle"      v-for="item in  systemdata" :key="item.id" @click="stytemclick(item)">
+                          <img  :src=" 'http://192.168.80.63:30005/api/file/'+`${item.imageUrl}`" alt="" class="stytemcover">
+                            <div class="courseStructureName">{{item.courseClassificationName}}</div>
+                             <div class="coursename" >{{item.childrenlength}}个模块</div> 
+                    </div>
+        </el-col>
+        <!-- <el-col>
+            <el-button @click="changeText"  >click</el-button>
+            <el-button  v-for="item of defaultText" @click="routerPush(item.router)" :key='item.title'>{{ item.title }}</el-button>
+        </el-col> -->
       </el-col>
       </el-row>
 </template>
@@ -181,16 +180,16 @@ export default {
   font-size: 22px;
   color: #333;
   font-weight: 500;
-  font-family: '微软雅黑'
 }
 .Desc {
+  display: inline-block;
   text-align: left;
   font-size: 12px;
   color: #666;
   vertical-align: top;
   white-space: pre-wrap;
-  font-family: '微软雅黑'
-
+  padding-left: 8px;
+  padding-right: 8px;
 }
 </style>
 

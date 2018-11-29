@@ -284,6 +284,8 @@ export default {
       hdfslist(parms).then(res => {
         if (res.data.code == 0) {
           this.movecurent = res.config.params.filepath.split("/").slice(1); //上面点击的菜单,
+          console.log(this.movecurent);
+          console.log(res);
           res.data.data.forEach((item, index) => {
             if (item.isDir == true) {
               item.currentpath = res.config.params.filepath;
@@ -295,6 +297,8 @@ export default {
           });
         }
       });
+      console.log("移动----------");
+      console.log(this.foldertableData);
     },
     getcommonlist() {
       var params = {
@@ -417,6 +421,7 @@ export default {
     },
 
     downfile() {
+      console.log("下来");
       var parms = {
             path: this.delectdata
       };
@@ -426,17 +431,25 @@ export default {
            token:token,
       }
        commondownload(parms).then(res=>{
+
+                console.log(res)
+           //  window.open(URL.createObjectURL(blob))
               if(res.data.code==0){
                window.location.href =
                         "http://192.168.80.63:30005/api/file/" + res.data.data.fileName;
               }
+
+
           })
+
+
     },
     movefile() {
            this.movementdialogvis=true
           this.movepath = "/";
           this.movehdfs();
           this.moveone = false;
+
     },
      movehdfs() {
       var parms = {
@@ -446,6 +459,8 @@ export default {
       commonlist(parms).then(res => {
         if (res.data.code == 0) {
         this.movecurent = res.config.params.filepath.split("/").slice(1); //上面点击的菜单,
+          console.log(this.movecurent);
+          console.log(res);
           res.data.data.forEach((item, index) => {
             if (item.isDir == true) {
               item.currentpath = res.config.params.path;
@@ -457,11 +472,15 @@ export default {
           });
         }
       });
+      console.log("移动----------");
+      console.log(this.foldertableData);
     },
     delect() {
       //批量删除
       var parms = { path: this.delectdata };
       commondelete(parms).then(res => {
+        console.log("删除");
+        console.log(res);
         if (res.data.code == 0) {
           this.getcommonlist();
         }
@@ -533,6 +552,7 @@ export default {
             });
           }
         });
+        console.log(parms);
       }
     },
     selectcurret(item, index) {
@@ -563,7 +583,9 @@ export default {
     },
     beforeAvatarUpload() {
       console.log("上传参数");
-      this.dataform.filePath =this.$route.params.id == "/" ? "/" : this.$route.params.id + "/";
+      this.dataform.filePath =
+        this.$route.params.id == "/" ? "/" : this.$route.params.id + "/";
+      console.log(this.dataform);
       //上传前加参数
       const token = sessionStorage.getItem("token");
       this.headers.token = token;

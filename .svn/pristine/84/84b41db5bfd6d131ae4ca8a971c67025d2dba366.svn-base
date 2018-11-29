@@ -387,6 +387,8 @@ export default {
         currentPage: this.currentPage
       };
       userlistpage(parms).then(res => {
+        console.log("-用户列表--");
+        console.log(res);
         if (res.data.code == 0) {
           this.usertableData = res.data.data.list;
           this.paggtatol = res.data.data.total;

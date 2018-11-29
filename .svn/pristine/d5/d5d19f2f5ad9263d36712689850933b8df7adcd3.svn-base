@@ -70,7 +70,7 @@
                             <el-badge   :is-dot="noicemessage" class="item">
                                  <i class="fa fa-bell-o fa-2x" aria-hidden="true" @click="findnoice"></i>
                             </el-badge>
-                           </span>
+                    </span>
                        </el-popover>
                         <span class="UserName">{{Username.name}}</span>
                         <el-dropdown  @command="handleCommand"  trigger="click">   
@@ -121,8 +121,7 @@ import {
   indexnotifys,
   notifyupdate,
   notifydelect,
-  announcementweb,
-  updatepassword
+  announcementweb
 } from "@/api/api";
 export default {
   data() {
@@ -202,10 +201,12 @@ export default {
       });
     },
     delectnoice(index) {
+      console.log(index);
       var parms = {
         notificationId: index.notifyId
       };
       notifydelect(parms).then(res => {
+        console.log(res);
         if (res.data.code == 0) {
           this.getindexnotifys();
         }
@@ -225,11 +226,13 @@ export default {
       this.getindexnotifys();
     },
     looknoice(index) {
+      console.log(index);
       var parms = {
         status: 1,
         notificationId: index.notifyId
       };
       notifyupdate(parms).then(res => {
+        console.log(res);
       });
       this.getindexnotifys();
     },
@@ -237,6 +240,8 @@ export default {
     getnotifynumber() {
       //消息显示红点
       notifynumber().then(res => {
+        console.log("==========xiaoxi====");
+        console.log(res);
         if (res.data.code == 0) {
           if (res.data.data.unread == 0) {
             this.noicemessage = false;
@@ -267,27 +272,10 @@ export default {
       }
     },
     Submitpassword() {
-        var parms={
-               userAccount:this.formInline.UserName,
-               old:this.formInline.oldpassword,
-               password:this.formInline.newpassword,
-        }
       //提交密码
-      this.$refs["passwordrules"].validate(valid => {
+      this.$resf["passwordrules"].validate(valid => {
         if (valid) {
-               updatepassword(parms).then(res=>{
-                          console.log(res)
-                          if(res.data.code==0){
-                               this.$message({
-                                 type:'success',
-                                 message:'修改成功退出从新登录'
-                               })
-                               this.dialogmessage=false
-                               setTimeout(()=>{
-                                   this.$router.push("/Login");   
-                               },2000)
-                          }
-               })    
+                 
          } 
       });
     },
@@ -296,7 +284,11 @@ export default {
         userAccount: this.Username.name
       };
       menulist(parms).then(res => {
+        console.log("cifan");
+        console.log(res);
         if (res.data.code == 0) {
+          console.log("菜单栏");
+          console.log(res);
           this.routerurl = res.data.data;
         } else {
           this.$router.push("/Login");
@@ -320,7 +312,11 @@ export default {
   },
   mounted() {
     this.Username = JSON.parse(sessionStorage.getItem("user"));
+    console.log("用户名");
+    console.log(this.Username);
     this.tocken = sessionStorage.getItem("token");
+    console.log("tocken");
+    console.log(this.tocken);
     this.getmenulist();
     this.getnotifynumber();
     this.getnoice();
@@ -396,6 +392,7 @@ export default {
       .collapseicon {
         height: 60px;
         text-align: center;
+        //  background:url(../assets/img/headback.png);
         background: #1b2c3e;
         border: 1px solid #3c3c3c;
         .logoname {
@@ -408,11 +405,8 @@ export default {
     }
   }
   .noice {
-    display: inline-block;
-    vertical-align: top;
-    margin-top: 7px;
     .item {
-      margin-right: 10px;
+      margin-right: 20px;
     }
   }
 

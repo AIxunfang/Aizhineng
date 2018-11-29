@@ -1,0 +1,121 @@
+<template>
+    <el-row>
+        <el-col :span="24">
+            <div class="navigationbar"> 
+                <span class="navigationname">首页<i class="el-icon-arrow-right" aria-hidden="true"></i>
+                    课程体系<i class="el-icon-arrow-right" aria-hidden="true"></i>课程分类<i class="el-icon-arrow-right" aria-hidden="true"></i>课程模块
+                </span>
+            </div>
+        
+              <!-- <el-button  v-for="item of defaultText" @click="routerPush(item.router)" :key='item.router'>{{ item.title }}</el-button> -->
+              <el-button type="primary" size="mini"  style="float:right;margin:20px 20px 0px 0px" @click="goback"  >返回上一级</el-button>
+        </el-col>
+
+        <el-col :span="24">
+            <div   class="stytemstylechek"      v-for="item in  systemdata" :key="item.id" @click="stytemclick(item)">
+                    <img  src="../../assets/img/modelicon.jpg" alt="" class="stytemcovercheck">
+                    <div class="courseStructureName">{{item.courseContentName}}</div>
+                <el-popover
+                     placement="bottom"
+                      width="210"
+                      trigger="hover"
+                     :content="item.courseContentDesc">
+                    <div class="coursename" slot="reference" >{{item.childrenlength}}个课时</div> 
+                 </el-popover>
+            </div> 
+        </el-col>
+
+    </el-row>
+</template>
+<script>
+import { mapGetters, mapActions } from "vuex";
+import{courseContentpage,videoResourcepage} from "@/api/api"
+export default {
+    data(){
+         return{
+              itemsystem:"",   
+             systemdata:[],
+         }
+    },
+      computed: {
+    ...mapGetters(["defaultText"])
+  },
+    methods:{
+          ...mapActions(["commitDefaultText"]),
+            routerPush(router) {
+                console.log(router)
+                this.$router.push(router)
+            },
+
+
+
+            getcontent(){
+                    var parms={
+                                currentPage:1,
+                                pageSize:100,
+                                courseClassificationId:this.$route.params.id
+                        }
+                        courseContentpage(parms).then(res=>{
+                                    console.log("内容")
+                                    console.log(res) 
+                                    if(res.data.code==0){
+                                           this.systemdata=res.data.data.list      
+                                            this.systemdata.forEach((item,index)=>{
+                                                    var parms={
+                                                            currentPage:1,
+                                                             pageSize:100, 
+                                                             courseContentId:item.courseContentId
+                                                    }
+                                                  videoResourcepage(parms).then(res=>{
+                                                            console.log("视频资源")
+                                                            console.log(res)
+                                                        if(res.data.code==0){
+                                                           this.$set(this.systemdata[index],'childrenlength',res.data.data.total)       
+                                                        }
+                                                        
+                                                  })
+                                            })  
+                                           
+                                    }
+                        }) 
+            },
+        
+
+            stytemclick(index){
+                  console.log(index)
+                 if(index.childrenlength>0){
+                    this.$router.push({name:"videoclass",params:{videoid:index.courseContentId,CourseDesc:index.courseContentDesc}})
+                 }
+             
+            },
+            goback(){
+                 this.$router.go(-1) 
+            }
+    },
+    mounted(){
+           console.log("neirong")
+          console.log(this.$route.params.id)
+          this.getcontent()
+         // console.log()
+
+    }
+}
+</script>
+<style scoped>
+     .stytemstylechek{
+                width: 235px;
+                height: 182px;
+                border: 1px solid #ebebeb;
+                margin: 20px 0px 0px 20px;
+                border-radius: 5px;
+                cursor: pointer;
+                float: left;
+     }
+     .stytemcovercheck{
+            display: inline-block;
+            width: 100%;
+            height: 116px;
+     }
+</style>
+
+
