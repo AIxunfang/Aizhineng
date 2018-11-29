@@ -16,7 +16,6 @@
                         <video   
                                 poster='../../assets/img/backvideo.jpg'
                                 :src="videosrc" 
-                                
                                 class="videoplayer" 
                                 controls="controls"
                             >
