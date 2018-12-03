@@ -17,8 +17,6 @@ import NewDrill from '@/pages/Trainmanagement/NewDrill'//训练管理-->新建�
 import Addmodel from '@/pages/ModelManagement/Addmodel'//模块管理-->新建模块
 import Modelform from '@/pages/ModelManagement/Modelform'//模块管理-->模块列表
 import ModelformDetail from '@/pages/ModelManagement/ModelformDetail'//模块管理-->模块详情
-import DrillResourceManagement from '@/pages/ResourceManagement/DrillResourceManagement'//资源管理--->训练资源管理
-import PublishResourceManagement from '@/pages/ResourceManagement/PublishResourceManagement'//资源管理--->发布资源管理
 import NewShare from '@/pages/ProjectShare/NewShare'//项目分享--->新建项目
 import ShareList from '@/pages/ProjectShare/ShareList'//项目分享--->项目列表
 import Userinfo from '@/pages/PersonalCenter/Userinfo'//个人中心--用户资料\
@@ -69,9 +67,7 @@ export default new Router({
         { path: 'DrillList', name: 'DrillList', component: DrillList},
         { path: 'NewDrill', name: 'NewDrill', component: NewDrill},  
         { path: 'Addmodel', name: 'Addmodel', component: Addmodel}, 
-        { path: 'Modelform', name: 'Modelform', component: Modelform}, 
-        { path: 'DrillResourceManagement', name: 'DrillResourceManagement', component: DrillResourceManagement},  
-        { path: 'PublishResourceManagement', name: 'PublishResourceManagement', component: PublishResourceManagement},  
+        { path: 'Modelform', name: 'Modelform', component: Modelform},   
         { path: 'NewShare', name: 'NewShare', component: NewShare},  
         { path: 'ShareList', name: 'ShareList', component: ShareList},  
         { path: 'Userinfo', name: 'Userinfo', component: Userinfo},  

@@ -11,7 +11,7 @@
                              <el-form-item label="上传视频(只接受mp4格式)"  prop="videourlshow" ref="uploadurl">
                                   <el-upload
                                      class="avatar-uploader"
-                                     action="http://192.168.80.63:30005/api/course/upload/video"
+                                     :action="`${baseUrl}`/course/upload/video"
                                     :show-file-list="false"
                                     :on-success="handleAvatarSuccess"
                                     :before-upload="beforeAvatarUpload" 
@@ -69,6 +69,7 @@
           </el-row>
 </template>
 <script>
+import {baseUrl} from '../../../static/baseurl'
 import {
   courseStructurepage,
   courseClassificationpage,
@@ -81,6 +82,7 @@ import {
 export default {
   data() {
     return {
+      baseUrl,
       editisrrue: false,
       editload: "",
       loading: false,
@@ -314,7 +316,7 @@ export default {
             this.$route.params.isadd
           ].videoLevel;
           this.formvideo.videourlshow =
-            "http://192.168.80.63:30005/api/file/" +
+            `${baseUrl}`+"/file/" +
             `${this.videotableData[this.$route.params.isadd].videoUrl} `;
 
           var parms = {

@@ -52,7 +52,7 @@
                       <div style="margin:20px">
                         <el-carousel  type="card" height="200px" indicator-position="none"   :autoplay="false"   ref="carousel"   @change="pictrueclick">
                                 <el-carousel-item v-for="(item,index) in picturedata" :key="item.id" trigger="click"  >
-                                          <img  :src=" 'http://192.168.80.63:30005/api/file/'+`${item.resourceUrl}` "   style="width:330px;height:200px" @click="changepic(index)"  >
+                                          <img  :src="`${baseUrl}/file/'${item.resourceUrl}` "   style="width:330px;height:200px" @click="changepic(index)"  >
                                 </el-carousel-item> 
                             
                             </el-carousel>
@@ -111,6 +111,7 @@
   </el-row>
 </template>
 <script>
+import {baseUrl} from '../../../static/baseurl'
 import { timeFormattershowsecod } from "@/assets/js/common";
 import {
   publishfinddetail,
@@ -123,6 +124,7 @@ import {
 export default {
   data() {
     return {
+      baseUrl,
       astep:0,
       unzip:false,
       pictureurlreadonly:'',
@@ -153,10 +155,6 @@ export default {
         publishId: this.$route.params.id
       };
       publishfinddetail(parms).then(res => {
-           console.log('--')
-           console.log(res)
-
-
         if (res.data.code == 0) {
           this.publishfindmodel = res.data.data.publishModel;
           this.publishdata = res.data.data.tfParams;
@@ -175,22 +173,15 @@ export default {
     },
     pictrueclick(index) {
       this.autoplay = false;
-      console.log("--666666--")
-      console.log(index)
       var imagread=index
       this.imgUrl = this.picturedata[index].resourceUrl;
       this.pictureurl = this.picturedata[index].resourceUri;
       var imgread=this.picturedata[index].resourceUri
       const readdataimg= imgread.indexOf('images')
-       console.log(readdataimg)
       this.pictureurlreadonly=imgread.substring(readdataimg)
-
-
     },
 
     changepic(index) {
-      console.log("点中");
-      console.log(this.picturedata[index].resourceUri);
     },
 
     uploadpic() {
@@ -207,8 +198,6 @@ export default {
       formData.append("file", this.filetreams);
       formData.append("publishId", this.$route.params.id);
       formData.append("token", token);
-      console.log(formData);
-      console.log("11111111111111");
       $.ajax({
         type: "post",
         cache: false,
@@ -216,16 +205,11 @@ export default {
         contentType: false,
         headers: { token: token },
         mimeType: "multipart/form-data",
-        url: "http://192.168.80.63:30005/api//publish/upload/img",
+        url: `${baseUrl}`+"/publish/upload/img",
         data: formData,
         success: function(res) {
-          console.log("===图片==");
-          console.log(res);
-          console.log(formData);
           var parseres = JSON.parse(res);
-          console.log(parseres);
           if (parseres.code == 0) {
-            console.log("zhengque");
             _this.$message({
               type: "success",
               message: "上传成功"
@@ -237,28 +221,22 @@ export default {
           }
         },
         error: function(res) {
-          console.log("666");
         }
       });
     },
     Detection() {
       //检测
       this.fobenbut = true;
-      console.log("dinle");
       var parms = {
         param: this.pictureurl,
         publishId: this.$route.params.id
       };
       publishtestapi(parms).then(res => {
-        console.log("--jiance-");
-        console.log(res);
         if (res.data.code == 0) {
           this.fobenbut = false;
         if(  res.data.data.response !==''){
            this.textjson = JSON.parse(res.data.data.response);
         }else if(res.data.data.response =='') {
-               //     alert('baocuo')
-                  
                     if( this.shareprojectpub==true){
                          this.$confirm('接口异常, 是否重启?', '提示', {
                             confirmButtonText: '确定',
@@ -309,8 +287,6 @@ export default {
         this.$refs["describeValidateForm"].validate(valid => {
           if (valid) {
             projectShareadd(parms).then(res => {
-              console.log("===");
-              console.log(res);
               if (res.data.code == 0) {
                 this.$message({
                   type: "success",
@@ -328,8 +304,6 @@ export default {
       }
     },
     getshare(){
-
-
     },
  downloaddata(){
          var parms={
@@ -340,37 +314,26 @@ export default {
           setTimeout(()=>{
                     this.astep=2
                },3000) 
-
          projectSharedownload(parms).then(res=>{
                     if(res.data.code==0){
                           setTimeout(()=>{
                               this.astep=3
                               this.unzip=false
-                              window.location.href= 'http://192.168.80.63:30005/api/file/'+res.data.data.fileName
+                              window.location.href= `${baseUrl}`+'/file/'+res.data.data.fileName
                           },3000)
                        }
          })
  },
-
   },
   mounted() {
-    console.log("项目ID===");
-    console.log(this.$route.params.projectId);
-    console.log(this.$route.params.isshare)
     if (this.$route.params.isshare == false||this.$route.params.isshare == 'false') {
             this.shareprojectpub = false;
             this.issharedown=true
-            console.log("------------");
        }
        if(this.$route.params.isshare == true||this.$route.params.isshare == 'true'){
              this.issharedown=false
               this.shareprojectpub = true;
        }
-      
-
-
-   
-
     this.getpublishfinddetail();
     this.getpublishimglist();
     this.getshare()

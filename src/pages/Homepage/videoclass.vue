@@ -52,6 +52,7 @@
     </el-row>
 </template>
 <script>
+import {baseUrl} from '../../../static/baseurl'
 import{videoResourcepage,findcourseMaterial}from "@/api/api"
 export default {
     data(){
@@ -75,7 +76,7 @@ export default {
                     if(res.data.code==0){      
                             if(res.data.data.list.length>0){
                                    this.videourlshowdata=res.data.data.list
-                                  this.videosrc ='http://192.168.80.63:30005/api/file/'+res.data.data.list[0].videoUrl;
+                                  this.videosrc =`${baseUrl}`+'/file/'+res.data.data.list[0].videoUrl;
                                   this.titlename=res.data.data.list[0].videoName
 
                             }   
@@ -84,7 +85,7 @@ export default {
         },
        current(index){
                this.select=index
-               this.videosrc ='http://192.168.80.63:30005/api/file/'+this.videourlshowdata[this.select].videoUrl
+               this.videosrc =`${baseUrl}`+'/file/'+this.videourlshowdata[this.select].videoUrl
                  this.titlename=this.videourlshowdata[this.select].videoName
        },
       goback(){
@@ -99,7 +100,7 @@ export default {
                      console.log("====")
                      console.log(res)
                      if(res.data.code==0){
-                          window.location.href= 'http://192.168.80.63:30005/api/file/'+res.data.data.materialUrl
+                          window.location.href= `${baseUrl}`+'/file/'+res.data.data.materialUrl
                      }
              })
         },

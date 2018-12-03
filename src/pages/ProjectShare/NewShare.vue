@@ -24,7 +24,7 @@
                         <template v-for="item in sharedata">
                          <div class="sharemodel" :key="item.shareId">
                                <div style="padding:10px ; cursor:pointer"  @click="lookapi(item)">
-                               <img  :src="'http://192.168.80.63:30005/api/file/'+`${item.imgUrl}`" style="height:200px" width="100%"  > 
+                               <img  :src="`${baseUrl}/file/${item.imgUrl}`" style="height:160px" width="100%"  > 
                              </div>
                             <div  style="margin:10px">
                                 {{item.publishName}}
@@ -45,21 +45,18 @@
                                 </span>
                             </div>
                          </div>
-
-
                        </template>
-
-                   </el-col>
-                   
+                   </el-col>   
           </el-col>
-
       </el-row>
 </template>
 <script>
 import{modeltype,projectSharefinduserName} from "@/api/api"
+import {baseUrl} from '../../../static/baseurl'
 export default {
          data(){
             return{
+                  baseUrl,
                   SelectType:'',
                   modelnamedata:[],
                   currPage:1,
@@ -125,8 +122,8 @@ export default {
 <style lang="scss" scoped>
       .shareprojectmodel{
              .sharemodel{
-                   width: 280px;
-                   height: 260px;
+                   width: 240px;
+                   height: 220px;
                    border: 1px solid #dedede;
                    border-radius:5px;
                    margin-left: 20px;

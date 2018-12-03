@@ -24,7 +24,7 @@
                              </el-dropdown-item>
                               <el-dropdown-item  command="2" >
                                    <el-upload
-                                     action="http://192.168.80.63:30005/api/common/upload"
+                                     :action="`${baseUrl}`/common/upload"
                                      :show-file-list="false"
                                      :on-success="handleAvatarSuccess"
                                      :headers="headers"
@@ -195,6 +195,7 @@
 <script>
 import timeago from "timeago.js";
 import { timeFormattershowsecod, bytesToSize } from "@/assets/js/common";
+import {baseUrl} from '../../../static/baseurl'
 import {
   commonlist,
   commoncreat,
@@ -205,8 +206,10 @@ import {
   commonunzip
 } from "@/api/api";
 export default {
+    inject:['reload'],
   data() {
     return {
+       baseUrl,
        moveone:false,
        foldertableData: [],
        movecurent: [],
@@ -246,8 +249,6 @@ export default {
           path: this.moveone == false ? this.delectdata : [this.seleoldpath],
           newName: this.movepath 
       };
-      console.log(parms)
-
       commondownmove(parms).then(res => {
         if (res.data.code == 0) {
           this.getcommonlist();
@@ -264,8 +265,6 @@ export default {
        this.movehdfs();
     },
     moveCurrentChange(row, column) {
-      console.log(row)
-      console.log(column)
       if (column.label == "文件夹") {
         this.movepath = row.filePath+'/';
         this.movehdfs();
@@ -306,8 +305,6 @@ export default {
       }
 
       commonlist(params).then(res => {
-        console.log("列表");
-        console.log(res);
         if (res.data.code == 0) {
           this.filedata = res.data.data;
           this.filedata.forEach((item, index) => {
@@ -321,7 +318,6 @@ export default {
                 fileNamelower === ".gif" ||
                 fileNamelower === ".psd"
               ) {
-                console.log("tupian");
                 item.type = 1;
               } else if (
                 fileNamelower === ".mp4" ||
@@ -351,7 +347,6 @@ export default {
       //选中的时候,显示删除功能按钮
       this.delectdata = [];
       this.multipleSelection = val;
-      console.log(this.multipleSelection);
       if (this.multipleSelection.length > 0) {
         this.ischecked = true;
       } else {
@@ -386,7 +381,6 @@ export default {
                 var parms={
                      filePath:this.currentfileyasuo
                 } 
-                console.log(parms)
                 commonunzip(parms).then(res=>{
                       console.log(res)
                       if(res.data.code==0){
@@ -428,7 +422,7 @@ export default {
        commondownload(parms).then(res=>{
               if(res.data.code==0){
                window.location.href =
-                        "http://192.168.80.63:30005/api/file/" + res.data.data.fileName;
+                        `${baseUrl}`+"/file/"+ res.data.data.fileName;
               }
           })
     },
@@ -572,7 +566,9 @@ export default {
       console.log(res);
       console.log(file);
       if (res.code == 0) {
+
         this.getcommonlist();
+        this.reload()
       }else{
          this.$message.error('上传失败')
       }

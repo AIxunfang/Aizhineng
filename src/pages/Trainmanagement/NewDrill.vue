@@ -396,8 +396,6 @@ export default {
     },
     creatmodel() {
       //创建模块
-      console.log("--")
-      console.log(this.modelparameter.resource)
       const uid = sessionStorage.getItem("uid");
       this.modelparameter.comprehensionarry.forEach((item, index) => {
         if (item.tfParamType == 1) {

@@ -45,11 +45,12 @@
                   </div>
                    <div class="projectbottom">
                          <div class="menukey">
-                               <el-button  size="small"  icon="el-icon-download" v-if='item.trainingStatus==3'  @click='doenmodel(index)'  >下载</el-button>
+                               <el-button  size="small"  icon="el-icon-download" v-if='item.trainingStatus==3'  @click='doenmodel(index)'  >模型下载</el-button>
                               <span v-else   :class='{"startdisabled":modelarry[index].trainingStatus !== 1}'><el-button   size="small"  icon="el-icon-caret-right" @click.once="startmodel(index)" >启用</el-button></span>   
                         </div>
                           <div class="menukey">
-                                  <el-button  size="small"  icon="el-icon-delete" @click="delecttaring(index)" >删除</el-button>
+                                   <el-button  v-if='item.trainingStatus==2'       size="small"  icon="el-icon-caret-bottom" @click="stoptaring(index)" >终止</el-button>
+                                  <el-button   v-else    size="small"  icon="el-icon-delete" @click="delecttaring(index)" >删除</el-button>
                         </div>  
                          <div class="menukey">
                              <el-button  :disabled="item.trainingStatus==1"     size="small"  icon="el-icon-search"  @click="deails(index)">详情</el-button>
@@ -71,10 +72,12 @@
   </el-row>
 </template>
 <script>
-import {findpage,trainingstart,trainingdelete,modeldownload} from '@/api/api'
+import {baseUrl} from '../../../static/baseurl'
+import {findpage,trainingstart,trainingdelete,modeldownload,trainingterminate} from '@/api/api'
 export default {
        data(){
            return{
+                 baseUrl,
                  currpage:1,
                  pageSize:8,
                  paggtatol:null,
@@ -92,17 +95,28 @@ export default {
                    var parms={
                           trainingId:this.modelarry[index].trainingId
                    }
-
                  modeldownload(parms).then(res=>{
                            console.log(res)
                            if(res.data.data.status==0){
                       window.location.href =
-                        "http://192.168.80.63:30005/api/file/" + res.data.data.msg;   
+                        `${baseUrl}`+"/file/" + res.data.data.msg;   
                            }else{
                                   this.$message.error(res.data.data.msg)
                            }
                  })  
              },
+              stoptaring(index){
+                 var parms={
+                              trainingId: this.modelarry[index].trainingId
+                        }   
+                     trainingterminate(parms).then(res=>{
+                           if(res.data.code==0){
+                                    this.getfindpage()  
+                           }else{
+                                  this.$message.error(res.data.message)
+                           }
+                     })       
+              },
                startmodel(index){//开始训练
                         var parms={
                               trainingId: this.modelarry[index].trainingId

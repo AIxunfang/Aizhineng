@@ -28,9 +28,9 @@
                   <div style="float:right;display:inline-block;margin-right:80px" >
                          <el-button size='mini'  @click='batckdown'>导入模版</el-button>
                           <el-upload
-                            style="display:inline-block"
+                            style="display:inline-block"   
+                            :action="uploadurl"
                             accept='.xlsx,.xls'
-                            action="http://192.168.80.63:30005/api/user/import/users"
                             :show-file-list="false"
                             :on-success="handleAvatarSuccess"
                             :data="dataform"
@@ -186,6 +186,7 @@
      </el-row>
 </template>
 <script>
+import {baseUrl} from '../../../static/baseurl'
 import { timeFormattershowsecod } from "@/assets/js/common";
 import {
   userAdd,
@@ -198,6 +199,8 @@ import {
 export default {
   data() {
     return {
+      uploadurl:baseUrl+"/user/import/users",
+      baseUrl,
       dataform:{
             token:''
       },
@@ -256,7 +259,7 @@ export default {
   },
   methods: {
     batckdown(){//批量下载模版
-       window.location.href='http://192.168.80.63:30005/api/file/template/user/userImportTemplate.xlsx'
+       window.location.href= `${baseUrl}` +'/file/template/user/userImportTemplate.xlsx'
     },
     beforeAvatarUpload(){
             const token = sessionStorage.getItem("token");

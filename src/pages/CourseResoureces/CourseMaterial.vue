@@ -97,7 +97,7 @@
                      <el-form   :model="cousecouseformInline"  class="formcourse" label-width="100px" :rules="rules" ref="cousecouseformInline"   >
                                <el-form-item label="上传资料" prop="materialUrl">
                                         <el-upload
-                                                action="http://192.168.80.63:30005/api/course/upload/material"
+                                                :action="`${baseUrl}`/course/upload/material"
                                                 :show-file-list="false"
                                                 :on-success="handleAvatarSuccess"
                                                  accept=".zip"
@@ -156,6 +156,7 @@
       </el-row>
 </template>
 <script>
+import {baseUrl} from '../../../static/baseurl'
 import { timeFormattershowsecod } from "@/assets/js/common";
 import {
   courseContentpage,
@@ -169,6 +170,7 @@ import {
 export default {
   data() {
     return {
+      baseUrl,
       couredit:'',
       timeFormattershowsecod,
       informationtableData: [],

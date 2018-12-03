@@ -208,6 +208,8 @@ export default {
       notifydelect(parms).then(res => {
         if (res.data.code == 0) {
           this.getindexnotifys();
+          this.getnoice()
+
         }
       });
     },

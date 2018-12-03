@@ -12,7 +12,7 @@
       </el-col>
      <el-col :span="24">
                     <div   class="stytemstyle"      v-for="item in  systemdata" :key="item.id" @click="stytemclick(item)">
-                          <img  :src=" 'http://192.168.80.63:30005/api/file/'+`${item.imageUrl}`" alt="" class="stytemcover">
+                          <img  :src=" `${baseUrl}/file/${item.imageUrl}`" alt="" class="stytemcover">
                             <div class="courseStructureName">{{item.courseStructureName}}</div>
                             <div class="coursename" >{{item.childrenlength}}个专题</div>
                     </div>
@@ -22,9 +22,11 @@
 <script>
 import { mapGetters, mapActions } from "vuex";
 import { courseStructurepage, courseClassificationpage } from "@/api/api";
+import {baseUrl} from '../../../static/baseurl'
 export default {
   data() {
     return {
+      baseUrl,
       currentPage: 1,
       pageSize: 10,
       systemdata: [],

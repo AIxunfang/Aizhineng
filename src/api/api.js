@@ -1,7 +1,9 @@
 import axios from 'axios'
 import qs from 'qs'
+import {baseUrl} from '../../static/baseurl'
+axios.defaults.baseURL = baseUrl
 //axios.defaults.baseURL = 'http://192.168.98.120:9999/api';
-axios.defaults.baseURL = 'http://192.168.80.63:30005/api';
+// axios.defaults.baseURL = 'http://192.168.80.63:30005/api';
 const getip = sessionStorage.getItem('getip')
 // axios.defaults.baseURL ="http://nedn26.natappfree.cc/api"
 // 请求的拦截器
@@ -37,10 +39,6 @@ axios.interceptors.request.use(function (config) {
             return config;
         };
         if(config.url === '/common/download'){
-            console.log("zheshi xiazai")
-  
-            console.log(config)
-          
             let data = config.data
              console.log(data)
             config.headers = { 'Content-type': 'application/json;charset=UTF-8' };
@@ -50,10 +48,6 @@ axios.interceptors.request.use(function (config) {
             }
             return config;
         }
-
-
-
-
         let data = qs.parse(config.data)
         config.data = qs.stringify({
             token: token,
@@ -65,7 +59,6 @@ axios.interceptors.request.use(function (config) {
             config.params = {
                 token: token,
                 ...config.params,
-
             }
             return config;
         };
@@ -149,6 +142,11 @@ export const findimage = (parms) => {
 export const paramanalysis = (parms) => {
     return axios
         .get('/training/param/analysis', { params: parms })
+}
+//训练终止
+export const trainingterminate = (parms) => {
+    return axios
+        .get('/training/terminate', { params: parms })
 }
 //验证模块名称是否存在
 export const checktrainingName = (parms) => {

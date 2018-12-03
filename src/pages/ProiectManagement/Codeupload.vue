@@ -25,13 +25,15 @@
                      <div style="display:inline-block">
                           <div style="display:inline-block">
                             <el-upload  
-                             action="http://192.168.80.63:30005/api/project/upload"
+                             id="fileform"
+                             :action="`${baseUrl}`/project/upload"
                             :limit="1"
                              :on-progress="progressfunc"
                             :data='dataformcode'
                             :show-file-list="false"
                             :on-success="handleAvatarSuccess"
                             accept=".zip,.py"
+                            :on-change="changefilename"
                             :headers='headers'
                             :before-upload="beforeRemovecode"
                             >
@@ -44,7 +46,7 @@
                       <div style="margin-top:20px;display:inline-block"   v-show="this.public ==0"  >
                           <div style="display:inline-block">
                             <el-upload  
-                            action="http://192.168.80.63:30005/api/project/upload"
+                            :action="`${baseUrl}`/project/upload"
                             :limit="1"
                              :on-progress="progressfunc"
                             :data='dataformdata'
@@ -89,10 +91,12 @@
 <script>
 import axios from 'axios'
 import{projectupload,deletefile,getfileSize,projectprocess}from "@/api/api"
+import {baseUrl} from '../../../static/baseurl'
 export default {
+       inject:['reload'],
        data(){
            return{
-                 
+                baseUrl,
                  public:'',
                   headers:{
                     token:"",
@@ -148,25 +152,23 @@ export default {
             },
                beforeRemovedata(){
                    this.dataformdata.projectId=this.prodetail.projectId  
-                  const token = sessionStorage.getItem("token");
+                   const token = sessionStorage.getItem("token");
                    this.dataformdata.token=token
-                  this.headers.token = token;
+                   this.headers.token = token;
             },
+           changefilename(file, fileList){
+           },
             handleAvatarSuccess(res, file){
-                    console.log(res)
-                    console.log(file)
-
                     if(res.code==0){
                            this.progressshow=false
                            this.noiceuser=false
+                           this.reload()
                          setTimeout(()=>{
                             this.getgetfileSize()  
-                         },1000)
-                        
-
-
+                         },1000) 
                     }else{
-                         this.$message.error(res.message)
+                          this.$message.error(res.message)
+                          this.reload()
                     }
             },
    //进度条code
@@ -178,9 +180,9 @@ export default {
                }
      
             },
-           closevisble(){//关闭浏览器清空input\
-                document.getElementById('fileform').reset()
-           },
+        //    closevisble(){//关闭浏览器清空input\
+        //         document.getElementById('fileform').reset()
+        //    },
             delectfile(value){//删除文件 
                  let type=""
                 if(value==0){

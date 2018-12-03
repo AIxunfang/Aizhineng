@@ -99,7 +99,7 @@
                              <el-form-item label="上传封面图"   prop="uri"  v-show='this.formStructuredata.type ==1|| this.formStructuredata.type ==2'  >
                                   <el-upload
                                     class="avatar-uploader"
-                                    action="http://192.168.80.63:30005/api/course/upload/img"
+                                    :action="`${baseUrl}`/course/upload/img"
                                     :show-file-list="false"
                                     :on-success="handleAvatarSuccess"
                                     :before-upload="beforeAvatarUpload"
@@ -120,6 +120,7 @@
     </el-row>
 </template>
 <script>
+import {baseUrl} from '../../../static/baseurl'
 import {
   courseaddcourse,
   courseStructurepage,
@@ -136,6 +137,7 @@ import {
 export default {
   data() {
     return {
+      baseUrl,
       selectdisbledfenlei: false,
       selectdisabledfelei: false,
       defaultProps: {
@@ -351,7 +353,7 @@ export default {
       this.formStructuredata.uri = data.itemcon.imageUri;
       this.formStructuredata.url = data.itemcon.imageUrl;
       this.imageUrlshow =
-        "http://192.168.80.63:30005/api/file/" + `${data.itemcon.imageUrl}`;
+          `${baseUrl}`+"/file/" + `${data.itemcon.imageUrl}`;
 
       this.formStructuredata.type = node.level;
       switch (String(node.level)) {

@@ -127,8 +127,6 @@ export default {
                  }
                  console.log()
                finddetai(params).then(res=>{
-                        console.log("详情显示")
-                        console.log(res)
                         if(res.data.code==0){
                             this.tarinmodelobj=res.data.data.trainingModel
                             this.tfParams=res.data.data.tfParams
@@ -147,8 +145,6 @@ export default {
                      trainingId:this.$route.params.id
                 }
                 findlog(params).then(res=>{
-                     console.log("日志")
-                    console.log(res)
                           if(res.data.code==0){
                                this.logdata=res.data.data  ;
                                this.logdatalength=this.logdata.length ;   

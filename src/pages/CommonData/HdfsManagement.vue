@@ -25,7 +25,7 @@
                              </el-dropdown-item>
                               <el-dropdown-item  command="2" >
                                    <el-upload
-                                     action="http://192.168.80.63:30005/api/hdfs/upload"
+                                     :action="`${baseUrl}`/hdfs/upload"
                                      :show-file-list="false"
                                      :on-success="handleAvatarSuccess"
                                      :headers="headers"
@@ -205,6 +205,7 @@
 <script>
 import timeago from "timeago.js";
 import { timeFormattershowsecod, bytesToSize } from "@/assets/js/common";
+import {baseUrl} from '../../../static/baseurl'
 import {
   hdfsupload,
   hdfslist,
@@ -217,6 +218,7 @@ import {
 export default {
   data() {
     return {
+      baseUrl,
       movecurent: [],
       moveone: true,
       movepath: "/",
@@ -397,7 +399,7 @@ export default {
       hdfsdown(params).then(res => {
         if (res.data.code == 0) {
           window.location.href =
-            "http://192.168.80.63:30005/api/file/" + res.data.data;
+            `${baseUrl}`+"/file/" + res.data.data;
           this.gethdfslist();
         }
       });
@@ -445,6 +447,7 @@ export default {
       console.log(file);
       if (res.code == 0) {
         this.gethdfslist();
+        this.reload()
       }
     },
     handleCurrentChange(row, column, cell, event) {
