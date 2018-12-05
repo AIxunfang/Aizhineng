@@ -103,6 +103,7 @@ export default {
                                  console.log(res)
                                 this.distributelist=res.data.data.list
                                 this.paggtatol=res.data.data.total
+
                            } 
                      }) 
             },
@@ -165,15 +166,11 @@ export default {
       },
       mounted(){
             this.getpublishfindpage()
-       var timese= setInterval(()=>{
+            setInterval(()=>{
                   if(this.$route.name=='Modelform'){ 
                         this.getpublishfindpage() 
                   }
             },8000)
-
-          // console.log(this.distributelist)
-
-
       }
 
  }

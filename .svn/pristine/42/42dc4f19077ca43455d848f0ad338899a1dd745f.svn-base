@@ -246,6 +246,8 @@ export default {
         keyword: this.keyword
       };
       monitorfindpage(parms).then(res => {
+        console.log("fenye");
+        console.log(res);
         if (res.data.code == 0) {
           this.rouce_user_tableData = res.data.data.list;
           this.paggtatol = res.data.data.total;
@@ -263,7 +265,11 @@ export default {
                         this.$message.error(res.data.message)
                   }
             }) 
+
   },
+
+
+
     Seachuser() {
       this.getmonitorfindpage();
     },

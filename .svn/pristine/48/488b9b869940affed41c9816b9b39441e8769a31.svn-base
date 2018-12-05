@@ -1,0 +1,535 @@
+<template>
+  <el-row class="NewDrill"> 
+      <el-col :span='24'>
+             <div class="navigationbar"> 
+               <span class="navigationname">训练管理<i class="el-icon-arrow-right" aria-hidden="true"></i>
+                       新建训练
+                </span>
+            </div>
+             <div class="modeldataname"> <span style="margin-left:20px;">训练参数</span></div>
+      </el-col>
+       <el-col :span="24">
+              <el-form :inline="true" :model="modelparameter"  ref="modelparameter"  class="modelfrom" label-width="130px" :rules="modelrules">
+                     <div>
+                          <el-form-item label="训练名称:" prop="modelname">
+                                <el-input v-model="modelparameter.modelname" placeholder="填写模块名称" @blur="verifyname"></el-input>
+                                <div style="height:5px; color:red ;line-height:24px" v-show="Namerepeat" >项目名称重复</div>
+                          </el-form-item>
+                          <el-form-item label="所属项目:">
+                            <el-select v-model="modelparameter.pid" placeholder="选择项目"  @change="changedataname"  >
+                                <el-option  
+                                   v-for="(item,index) in projectdata"
+                                  :key="index"
+                                  :label="item.projectNameZh"
+                                  :value="item.projectId"
+                                 ></el-option>
+                            </el-select>
+                          </el-form-item>
+                           <el-form-item label="资源类型:" prop="resource">
+                                   <el-radio-group v-model="modelparameter.resource" size="small">
+    
+                                       <el-radio label="1"   style="width:80px">CPU</el-radio>
+                                            <div class="selectshow"  v-if="modelparameter.resource==1">
+                                                    <div>CPU:{{projectcpu}}</div>  
+                                                    <div>内存:{{projectmemory}}</div> 
+                                              </div>
+                                       <el-radio label="2">GPU</el-radio>
+                                        <div class="selectshow"   :class="{'selectgpu': modelparameter.resource==2}"  v-if="modelparameter.resource==2" >
+                                          <div>  GPU:{{projectgpu}}</div>
+                                           <div> CPU:{{projectcpu}}</div>
+                                          <div>  内存:{{projectmemory}}</div>
+                                        </div> 
+                                  </el-radio-group>
+                       </el-form-item>
+                          <el-form-item>
+                             <el-popover placement="top"  width="200" trigger="hover"  
+                              content="如需申请,请前往资源申请页面">
+                            <i class="el-icon-info" slot="reference"></i>
+                          </el-popover>
+                       </el-form-item>
+                      </div>
+                      <div>
+                        <el-form-item label="模型类别:">
+                              <el-select v-model="modelparameter.projectsort" placeholder="选择类别">
+                                  <el-option  v-for="item in  modelnamedata"
+                                   :label="item.value" 
+                                   :value="item.index"
+                                   :key="item.index">
+                                   </el-option>
+                                  
+                              </el-select>  
+                        </el-form-item>
+                      <el-form-item label="镜像名称:">
+                              <el-input   v-model="modelparameter.projectmirror" disabled="disabled"></el-input>
+                        </el-form-item>
+                      </div>
+                      <div>
+                        <el-form-item label="模型描述:">
+                                  <el-input
+                                    type="textarea"
+                                   :autosize="{ minRows: 2, maxRows: 4}"
+                                    placeholder="描述模块作用"
+                                    v-model="modelparameter.modeldescribe">
+                                  </el-input>
+                        </el-form-item>
+                      </div>
+                       <div>
+                          <el-form-item label="参数脚本:" prop="selectedOptionsscript">
+                                          <el-cascader
+                                              @change="changecodeval"
+                                              v-model="modelparameter.selectedOptionsscript"
+                                              :options="optionsscript"
+                                              :show-all-levels="false"
+                                               @active-item-change="handleItemChange"
+                                               :clearable="true"
+                                          ></el-cascader>
+                          </el-form-item>
+                          <el-form-item>
+                                 <el-button type="primary" size="small"  @click="analysis()">解析参数</el-button>
+                          </el-form-item>
+                            <el-form-item label="训练脚本:" prop="selectedOptionsscriptchireden">
+                                          <el-cascader
+                                              @change="changecodevalchirden"
+                                              v-model="modelparameter.selectedOptionsscriptchireden"
+                                              :options="optionsscript"
+                                              :show-all-levels="false"
+                                               @active-item-change="handleItemChange" 
+                                               :clearable="true"
+                                          ></el-cascader>
+                          </el-form-item>
+                       </div>
+                         <div>
+                            <div  v-show="comprehensionshow"   style="margin-left:100px">
+                                <el-form-item>
+                                       <span>解析无数据!请重新选择python脚本</span>
+                                </el-form-item>
+                            </div>
+                            <div    class="variablename"  v-for="(item,index) in modelparameter.comprehensionarry" :key="item.index"  >
+                                <el-form-item label="变量"  >
+                                        <el-input readonly="readonly" v-model="item.tfParamKey"> </el-input>
+                                </el-form-item>
+ 
+                                <el-form-item  label="值" 
+                                    :rules="{
+                                     required: true, message: '值不能为空', trigger: 'blur'
+                                        }"  
+                                      :prop="'comprehensionarry.' + index + '.tfParamValue'"           
+                                              >
+                                           <el-cascader
+                                                v-if="item.tfParamType ==1"
+                                                v-model="item.trandata"
+                                                @change="handleItemChangedata"
+                                                :options="optionsscriptdata"
+                                                :show-all-levels="false"
+                                                change-on-select  
+                                          ></el-cascader>
+                                           <el-input v-model="item.tfParamValue" v-if="item.tfParamType !==1"> </el-input>
+                                </el-form-item>
+                                <el-form-item >
+                                        <template slot-scope="scope">
+                                     <el-radio-group v-model="item.tfParamType">
+                                        <el-radio :label="0">文本值</el-radio>
+                                        <el-radio :label="1">数据目录</el-radio>
+                                        <el-radio :label="2">模型目录</el-radio>
+                                    </el-radio-group>
+
+                                   </template>
+                                </el-form-item>
+                            </div> 
+                        </div>
+                </el-form>  
+                <div> <el-button @click="creatmodel" size="small" type="primary" style="float:right;margin-right: 50px ;50px;50px; " > 创建训练 </el-button>  </div>
+       </el-col>
+  </el-row>
+</template>
+<script>
+import qs from "qs";
+import {
+  dirsAndFiles,
+  modeltype,
+  findimage,
+  findprojects,
+  paramanalysis,
+  createtraining,
+  checktrainingName
+} from "@/api/api";
+export default {
+  data() {
+    return {
+
+      Namerepeat: false,
+      sendarry: [], //发给后台的
+      Username: "",
+      comprehensionshow: false, //解析无数据的时候显示,
+      selectedOptionsscriptdata: [],
+      dynamicurl: "", //动态url做比较
+      projectcpu: "", //cpu
+      projectgpu: "",
+      projectmemory: "",
+      modelnamedata: [],
+      meupath: "",
+      sendcodepy: "", //发送给后台的py文件
+
+      optionsscript: [
+        {
+          value: "code",
+          label: "code",
+          children: []
+        }
+      ],
+
+      optionsscriptdata: [
+        {
+          value: "data",
+          label: "data",
+          children: []
+        }
+      ],
+      datapath: "",
+      projectdata: [],
+      modelparameter: {
+        modelname: "",
+        projectName: "",
+        projectNameZh: "",
+        projectsort: "",
+        projectmirror: "",
+        modeldescribe: "",
+        cpu: "1",
+        memory: "4",
+        gpu: "2",
+        pid: "",
+        ActionScript: "",
+        resource: "",
+        path: "",
+        resource: "",
+        comprehensionarry: [],
+
+        selectedOptionsscript: [],
+        selectedOptionsscriptchireden: []
+      },
+      trainingParamShell: "", //xunliancanhsu
+      modelrules: {
+        modelname: [
+          { required: true, message: "输入模块名称", trigger: "blur" }
+        ],
+        resource: [
+          { required: true, message: "选择运行环境", trigger: "change" }
+        ],
+        selectedOptionsscript: [
+          { required: true, message: "选择参数定义脚本", trigger: "change" }
+        ],
+        selectedOptionsscriptchireden: [
+          { required: true, message: "选择需要训练的脚本", trigger: "change" }
+        ],
+        tfParamValue: [{ required: true, message: "填写值", trigger: "blur" }],
+        addrule: [{ required: true, message: "填写值", trigger: "blur" }]
+      }
+    };
+  },
+  methods: {
+    myevent() {},
+    verifyname() {
+      //验证名字是不是重复
+      console.log("shiqu");
+      var parms = {
+        userAccount: this.Username.name,
+        trainingName: this.modelparameter.modelname
+      };
+      checktrainingName(parms).then(res => {
+        console.log(res);
+        if (res.data.code == 0) {
+          if (res.data.data == true) {
+            this.Namerepeat = true;
+          } else {
+            this.Namerepeat = false;
+          }
+        }
+      });
+    },
+    swicthFacility(val, index) {
+      console.log(index);
+      console.log(val);
+    },
+
+    changedataname(index) {
+      this.modelparameter.resource = "";
+      let obj = {};
+      obj = this.projectdata.find(item => {
+        //这里的userList就是上面遍历的数据源
+        return item.projectId === index; //筛选出匹配数据
+      });
+      console.log(obj);
+      this.projectcpu = obj.projectCpu;
+      this.projectgpu = obj.projectGpu;
+      this.projectmemory = obj.projectMemory;
+      this.modelparameter.projectName = obj.projectNameEn;
+      this.modelparameter.projectNameZh = obj.projectNameZh;
+    },
+    getmodeltype() {
+      //获取模型分类
+      modeltype().then(res => {
+        console.log("--模块类型--");
+        console.log(res);
+        if (res.data.code == 0) {
+          this.modelnamedata = res.data.data;
+          this.modelparameter.projectsort = this.modelnamedata[0].index;
+          console.log(this.modelnamedata[0].index);
+        }
+      });
+    },
+    handleClicktab(tab, event) {
+      console.log(tab);
+      console.log(event);
+    },
+
+    getfindimage() {
+      findimage().then(res => {
+        this.modelparameter.projectmirror = res.data.data[0];
+      });
+    },
+    getfindprojects() {
+      //项目列表
+      const uid = sessionStorage.getItem("uid");
+      var parms = {
+        uid: uid
+      };
+      findprojects(parms).then(res => {
+        if (res.data.code == 0) {
+          this.projectdata = res.data.data;
+          this.modelparameter.pid = this.projectdata[0].projectId;
+          this.modelparameter.projectName = this.projectdata[0].projectNameEn;
+          this.projectcpu = this.projectdata[0].projectCpu;
+          this.projectgpu = this.projectdata[0].projectGpu;
+          this.projectmemory = this.projectdata[0].projectMemory;
+          this.modelparameter.projectNameZh = this.projectdata[0].projectNameZh;
+        }
+      });
+    },
+
+    changecodeval(val) {
+      //解析参数选中的值
+      this.comprehensionarry = [];
+      this.comprehensionshow = false; //改变选择的值的之后,,
+      this.sendcodepy = val.join("/");
+    },
+    changecodevalchirden(val) {
+      //  console.log(this.selectedOptionsscriptchireden.join("/"))
+      this.trainingParamShell = val.join("/");
+    },
+    analysis() {
+      //解析参数
+      var parm = {
+        pyPath: this.sendcodepy,
+        projectId: this.modelparameter.pid,
+       
+      };
+      this.modelparameter.comprehensionarry = [];
+      paramanalysis(parm).then(res => {
+        if (res.data.code == 0) {
+          if (res.data.data.length == 0) {
+            this.comprehensionshow = true;
+          } else {
+            this.comprehensionshow = false;
+          }
+          res.data.data.forEach((item, index) => {
+            item.trandata = [];
+            item.tfParamType=0
+            this.modelparameter.comprehensionarry.push(item);
+          });
+        }
+      });
+    },
+    handleItemChangedata(val) {
+      //打开switch开关时候,选择目录的时候
+      this.datapath = "";
+      this.datapath = val.join("/");
+      //点击选择项目获得解析
+      var parms = {
+        currentPath: this.datapath,
+        projectId: this.modelparameter.pid,
+        type:'data'
+      };
+      console.log(parms);
+      dirsAndFiles(parms).then(res => {
+        //这个是后台的接口发的参数
+        if (res.data.code == 0) {
+          var indexArr = [];
+          var data = this.optionsscriptdata;
+          var _this = this;
+          for (var i = 0; i < val.length; i++) {
+            var flagI = "";
+            data.map((item, index) => {
+              if (item.value == val[i]) {
+                indexArr.push(index);
+                flagI = index;
+              }
+            });
+            data = data[flagI].children;
+          }
+          if (
+            eval(
+              "_this.optionsscriptdata[" + indexArr.join("].children[") + "]"
+            ).children.length > 0
+          ) {
+            return;
+          }
+          for (var i = 0; i < res.data.data.dirs.length; i++) {
+            eval(
+              "_this.optionsscriptdata[" + indexArr.join("].children[") + "]"
+            ).children.push({
+              value: res.data.data.dirs[i],
+              label: res.data.data.dirs[i],
+              children: []
+            });
+          }
+          for (var k = 0; k < res.data.data.files.length; k++) {
+            eval(
+              "_this.optionsscriptdata[" + indexArr.join("].children[") + "]"
+            ).children.push({
+              value: res.data.data.files[k],
+              label: res.data.data.files[k],
+              disabled: true
+            });
+          }
+        }
+      });
+    },
+    creatmodel() {
+      //创建模块
+      const uid = sessionStorage.getItem("uid");
+      this.modelparameter.comprehensionarry.forEach((item, index) => {
+        if (item.tfParamType == 1) {
+               item.tfParamValue = item.trandata.join("/");
+            }
+      });
+      var parms = {
+        uid: uid,
+        pid: this.modelparameter.pid,
+        projectName: this.modelparameter.projectName,
+        projectNameZh: this.modelparameter.projectNameZh,
+        trainingName: this.modelparameter.modelname,
+        trainingImage: this.modelparameter.projectmirror,
+        imageType: Number(this.modelparameter.resource),
+        trainingExecuteShell: this.trainingParamShell,
+        trainingParamShell: this.sendcodepy,
+        trainingRemind: this.modelparameter.modeldescribe,
+        trainingType: this.modelparameter.projectsort,
+        userAccount: this.Username.name,
+        tfParams: this.modelparameter.comprehensionarry
+      };
+      this.$refs["modelparameter"].validate(valid => {
+        if (valid) {
+          console.log(parms)
+          createtraining(parms).then(res => {
+            console.log("chuangjian");
+            console.log(res);
+            if (res.data.code == 0) {
+              this.$message({
+                message: "创建模块成功",
+                type: "success"
+              });
+              setTimeout(() => {
+                this.$router.push("/DrillList");
+              }, 1000);
+            } else {
+              this.$message.error(res.data.message);
+            }
+          });
+        }
+      });
+    },
+    handleItemChange(val) {
+      console.log("active-change");
+      console.log(val); //我说的是这个
+      this.meupath = "";
+      this.meupath = val.join("/");
+      //点击选择项目获得解析
+      var parms = {
+        currentPath: this.meupath,
+        projectId: this.modelparameter.pid,
+        type:'code'
+      };
+      dirsAndFiles(parms).then(res => {
+        //这个是后台的接口发的参数
+
+        console.log("code");
+        console.log(res);
+        if (res.data.code == 0) {
+          var indexArr = [];
+          var data = this.optionsscript;
+          var _this = this;
+          for (var i = 0; i < val.length; i++) {
+            var flagI = "";
+            data.map((item, index) => {
+              if (item.value == val[i]) {
+                indexArr.push(index);
+                flagI = index;
+              }
+            });
+            data = data[flagI].children;
+          }
+          if (
+            eval("_this.optionsscript[" + indexArr.join("].children[") + "]")
+              .children.length > 0
+          ) {
+            return;
+          }
+          for (var i = 0; i < res.data.data.dirs.length; i++) {
+            eval(
+              "_this.optionsscript[" + indexArr.join("].children[") + "]"
+            ).children.push({
+              value: res.data.data.dirs[i],
+              label: res.data.data.dirs[i],
+              children: []
+            });
+          }
+          for (var k = 0; k < res.data.data.files.length; k++) {
+            eval(
+              "_this.optionsscript[" + indexArr.join("].children[") + "]"
+            ).children.push({
+              value: res.data.data.files[k],
+              label: res.data.data.files[k]
+            });
+          }
+        }
+      });
+    }
+  },
+  mounted() {
+    this.Username = JSON.parse(sessionStorage.getItem("user"));
+    this.getmodeltype();
+    this.getfindimage();
+    this.getfindprojects();
+  }
+};
+</script>
+<style lang="scss" scoped>
+.NewDrill {
+  .modelfrom {
+    margin: 20px 0px 0px 20px;
+    .el-input {
+      width: 217px;
+    }
+    .el-textarea {
+      width: 217px;
+    }
+  }
+ .selectshow{
+     line-height: 25px;
+    border: 1px solid #ebebeb;
+    font-size: 12px;
+    height: 80px;
+    width: 50px;
+    top: 41px;
+    position: absolute;
+    text-align: center;
+    font-family: "微软雅黑";
+    z-index: 100;
+    border-radius: 10px;
+ }
+  .selectgpu{
+     left: 140px;
+  }
+
+}
+</style>

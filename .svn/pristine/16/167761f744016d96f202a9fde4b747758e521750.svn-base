@@ -268,7 +268,7 @@ export default {
     handleAvatarSuccess(res,file ){
              if(res.code==0){
                 this.$message({
-                   type:'success',
+                   type:'sucess',
                    message:res.data
                 })
              }else{

@@ -268,11 +268,11 @@ export default {
     handleAvatarSuccess(res,file ){
              if(res.code==0){
                 this.$message({
-                   type:'success',
+                   type:'sucess',
                    message:res.data
                 })
              }else{
-                this.$message.error(res.message)
+                this.message.error(res.message)
              }
     },
     closeuserdislog() {
@@ -309,6 +309,8 @@ export default {
     getrolelist() {
       //角色列表
       rolelist().then(res => {
+        console.log("jiaose");
+        console.log(res);
         if (res.data.code == 0) {
           this.tableData = res.data.data;
         }
@@ -332,6 +334,8 @@ export default {
 
             if (this.userinfo == "增加用户") {
               userAdd(parms).then(res => {
+                console.log("-zengjia--");
+                console.log(res);
                 if (res.data.code == 0) {
                   this.UserdialogVisible = false;
                   this.getuserlistpage();
@@ -340,11 +344,18 @@ export default {
                 }
               });
             } else {
+                 
+
+
                if(valid){
+                    console.log("编辑数据");
+                    console.log(this.formuserAdd);
+ 
               updateaccountedit(this.formuserAdd).then(res => {
                 if (res.data.code == 0) {
                     this.UserdialogVisible = false;
                      this.getuserlistpage();
+                    console.log(res)
                 } else {
                   this.$message.error(res.data.message);
                 }
@@ -357,6 +368,7 @@ export default {
     },
     check_user_acount() {
       //验证登录名
+      console.log("验证");
       var parms = {
         userAccount: this.formuserAdd.userAccount
       };
