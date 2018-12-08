@@ -57,7 +57,7 @@
                             <el-input v-model="formuserAdd.userAccount"  :disabled="Diseditsfalse"    placeholder="用户名"  @blur="check_user_acount" ></el-input>
                             <div style="height:5px; color:red ;line-height:24px" v-show="Namerepeat" >登录账号已存在</div>
                         </el-form-item>
-                        <el-form-item label="密码" prop='password'>
+                        <el-form-item label="密码">
                                  <el-input v-model="formuserAdd.password" placeholder="默认密码admin"></el-input>
                         </el-form-item>
                           <el-form-item label="真实姓名">
@@ -242,8 +242,7 @@ export default {
       },
       rules: {
         userAccount: [
-            { min: 5, message: "最少5位", trigger: "blur" },
-            { required: true, message: "输入登录帐号", trigger: "blur" },
+          { required: true, message: "输入登录帐号", trigger: "blur" },
           {
             pattern: /^[0-9a-zA-Z_]{1,}$/,
             message: "由数字英文字母或下划线组成"
@@ -265,9 +264,6 @@ export default {
             message: "选择用户角色",
             trigger: "change"
           }
-        ],
-        password:[
-             { min: 6, max: 20, message: "密码最短6位最长20位", trigger: "blur" },
         ]
       },
       multipleSelection:[],
@@ -275,6 +271,7 @@ export default {
   },
   methods: {
    batchdelect(){
+        console.log(this.multipleSelection)
        if(this.multipleSelection.length==0){
             this.$message('选择需要删除的用户')
        }else{
@@ -283,10 +280,7 @@ export default {
             }
           deletbatch(parms).then(res=>{
                     if(res.data.code==0){
-                      // this.reload(); 
-                     setTimeout(()=>{
-                        this.getuserlistpage();
-                     },1000)
+                       this.reload(); 
                     }else{
                        this.$message.error(res.data.message)
                     }

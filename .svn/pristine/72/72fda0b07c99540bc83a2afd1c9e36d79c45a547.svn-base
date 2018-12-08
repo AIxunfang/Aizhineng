@@ -173,6 +173,8 @@ export const modeldownload = (parms) => {
     return axios
         .get('/training/model/download', { params: parms })
 }
+
+
 //启用项目的时候的打印日志
 export const findlog = (parms) => {
     return axios
@@ -357,13 +359,6 @@ export const deletequeue = (parms) => {
     return axios
         .get('/queue/delete/queue', { params: parms })
 }
-//队列任务清空
-export const emptydelect = (parms) => {
-    return axios
-        .get('/queue/empty/queue', { params: parms })
-}
-
-
 //队列优先级设置
 export const queueupdateorder = (parms) => {
     return axios

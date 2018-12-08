@@ -14,8 +14,6 @@
                   </div>
                  <div class="uploadfile">
                 <div style="width:600px" >
-                     
-                       
                     <div style="margin-bottom:20px; width:500px;display:inline-block " v-show='progressshow' >
                         <el-progress :text-inside="true" :stroke-width="18" :percentage="this.percentage" status="success"></el-progress>  
                     </div>
@@ -23,7 +21,6 @@
                      <span style="font-size:10px;"> 解压中请稍等</span>
                      <i class="el-icon-loading"> </i>
                      </p>
-  
                 </div>
                      <div style="display:inline-block">
                           <div style="display:inline-block">
@@ -71,7 +68,7 @@
           </el-col>
           <el-col :span="24">
                 <div class="uploaddata">
-                <el-table border style="widtth:100%"  :data="codedata"   v-loading="loading"   element-loading-text="请稍等">
+                <el-table border style="widtth:100%"  :data="codedata"  >
                          <el-table-column label="名称">
                                 <template slot-scope="scope">
                                     <i class="fa fa-file" aria-hidden="true"></i>
@@ -97,12 +94,9 @@ import axios from 'axios'
 import{projectupload,deletefile,getfileSize,projectprocess}from "@/api/api"
 import {baseUrl} from '../../../static/baseurl'
 export default {
-     name: 'test-keep-alive',
        inject:['reload'],
        data(){
            return{
-                 loading:false,
-                 includedComponents: "test-keep-alive",
                  disabledupload:false,
                  baseUrl,
                  projectupload:baseUrl+'/project/upload',
@@ -139,8 +133,6 @@ export default {
            }
        },
        methods:{
-  
-
               goback(){//返回上一页
                     this.$router.go(-1)
               },
@@ -149,12 +141,8 @@ export default {
                     var parms={
                           projectId:this.prodetail.projectId
                     }
-                    console.log('---文件大小--')
-                    console.log(parms)
                  getfileSize(parms).then(res=>{
-                          console.log(res)
                           if(res.data.code==0){//可能值传了一个值,遍历一遍
-                              this.loading=false
                               this.codedata=res.data.data
                           }
                  })      
@@ -179,12 +167,9 @@ export default {
                            this.progressshow=false
                            this.noiceuser=false
                            this.reload()
-                           setTimeout(()=>{
-                               console.log('请求数据接口')
-                             this.getgetfileSize()
-                           },2000)
-
-
+                         setTimeout(()=>{
+                            this.getgetfileSize()  
+                         },1000) 
                     }else{
                           this.$message.error(res.message)
                           this.disabledupload=false
@@ -193,17 +178,11 @@ export default {
             },
    //进度条code
             progressfunc(event, file, fileList) {
-              console.log("进度")
-              console.log(event.percent)
               this.progressshow=true
               this.disabledupload=true  //如果正在上传禁止上传其他的
                this.percentage = parseInt(event.percent);
-           var progress= localStorage.setItem('percentage', this.percentage);
-        
             if (this.percentage == 100) {
                    this.noiceuser=true
-                   
-                   
                }
      
             },
@@ -221,15 +200,12 @@ export default {
                      projectId:this.prodetail.projectId,
                      type:this.type
                 }
-                    
                     this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
                         confirmButtonText: '确定',
                         cancelButtonText: '取消',
                         type: 'warning'
                         }).then(() => {
-                             this.loading=true
                             deletefile(parms).then(res=>{
-                                  this.loading=false
                                     if(res.data.code==0){
                                         this.$message({
                                                 type:'success',
@@ -249,15 +225,13 @@ export default {
                     }
        },
        mounted(){
-               
                  this.prodetail=JSON.parse(sessionStorage.getItem('prodetail'))   
                  this.projectNameZh= this.prodetail.projectNameZh
                  this.routefile=this.prodetail.projectDataPath
                  this.routefilesubstr=this.routefile.substring(0,this.routefile.length-6)  
                  this.public=this.prodetail.dataDirectory
+                 this.getgetfileSize()     
                  this.percentages = this.percentage
-                 var noiceuser= localStorage.setItem('noiceuser',  this.noiceuser);
-                  this.getgetfileSize()    
        }
 }
 </script>

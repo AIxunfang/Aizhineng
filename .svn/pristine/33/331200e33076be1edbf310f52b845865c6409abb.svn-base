@@ -130,7 +130,7 @@ export default {
                         }
                       trainingstart(parms).then(res=>{
                             if(res.data.code==0){
-                               this.$router.push({name:'Trainstart',params:{id:this.modelarry[index].trainingId,type:this.modelarry[index].trainingStatus}}) 
+                               this.$router.push({name:'Trainstart',params:{id:this.modelarry[index].trainingId}}) 
                             }else{
                                   this.$message.error(res.data.message);
                             }
@@ -148,14 +148,10 @@ export default {
                            currentPage:this.currpage,
                            pageSize:this.pageSize,
                            userAccount:this.Username.name,
-                           name:this.projectName,
+                           trainingName:this.projectName,
                            type:Number(this.type)
                    }
                   findpage(parms).then(res=>{
-                        
-                          console.log(res)
-                          console.log(parms)
-
                         if(res.data.code==0){
                               this.modelarry=res.data.data.list
                               this.paggtatol=res.data.data.total

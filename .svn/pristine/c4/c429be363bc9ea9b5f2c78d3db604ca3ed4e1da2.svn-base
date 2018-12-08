@@ -28,6 +28,19 @@ Vue.use(uploader)//vue 上传
 
 
 router.beforeEach((to, from, next ) => {
+  console.log(to)
+const getprojess=localStorage.getItem('percentage');   
+const noiceuser=localStorage.getItem('noiceuser');  
+  console.log('--进程-')
+  console.log(noiceuser)
+  if(to.name=='Codeupload'){
+    if(getprojess==100){
+       to.meta.keepAlive=false
+       console.log("不缓存,")
+    }else{
+      console.log('缓存')
+    }
+  }
 
   if(to.path == '/Login') {
      sessionStorage.removeItem('user')

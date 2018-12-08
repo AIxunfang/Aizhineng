@@ -2,14 +2,26 @@
     <div>
             <el-pagination
                     background
-                   
-                    layout="prev, pager, next"
-                    :total="1000">
+                      layout="prev, pager, next"
+                      @current-change="pageIndexChange"
+                      :total="pagetotal"
+                     >
             </el-pagination>
     </div>
 </template>
 <script>
 export default {
-       
+         props:[
+              'pagetotal',
+           ], 
+        methods:{
+              pageIndexChange(idx){
+                   this.$emit('fanye',idx)
+              },
+              
+        },
+        mounted(){
+
+        }
 }
 </script>

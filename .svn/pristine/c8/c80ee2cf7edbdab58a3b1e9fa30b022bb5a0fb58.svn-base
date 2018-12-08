@@ -130,7 +130,7 @@ export default {
                         }
                       trainingstart(parms).then(res=>{
                             if(res.data.code==0){
-                               this.$router.push({name:'Trainstart',params:{id:this.modelarry[index].trainingId,type:this.modelarry[index].trainingStatus}}) 
+                               this.$router.push({name:'Trainstart',params:{id:this.modelarry[index].trainingId}}) 
                             }else{
                                   this.$message.error(res.data.message);
                             }

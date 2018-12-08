@@ -149,10 +149,10 @@ export default {
                     var parms={
                           projectId:this.prodetail.projectId
                     }
-                    console.log('---文件大小--')
-                    console.log(parms)
                  getfileSize(parms).then(res=>{
+                          console.log('---文件大小--')
                           console.log(res)
+
                           if(res.data.code==0){//可能值传了一个值,遍历一遍
                               this.loading=false
                               this.codedata=res.data.data
@@ -178,11 +178,7 @@ export default {
                            this.disabledupload=false
                            this.progressshow=false
                            this.noiceuser=false
-                           this.reload()
-                           setTimeout(()=>{
-                               console.log('请求数据接口')
-                             this.getgetfileSize()
-                           },2000)
+                           this.reload()  
 
 
                     }else{
@@ -202,7 +198,6 @@ export default {
         
             if (this.percentage == 100) {
                    this.noiceuser=true
-                   
                    
                }
      
@@ -251,13 +246,15 @@ export default {
        mounted(){
                
                  this.prodetail=JSON.parse(sessionStorage.getItem('prodetail'))   
+                  this.getgetfileSize()    
                  this.projectNameZh= this.prodetail.projectNameZh
                  this.routefile=this.prodetail.projectDataPath
                  this.routefilesubstr=this.routefile.substring(0,this.routefile.length-6)  
                  this.public=this.prodetail.dataDirectory
                  this.percentages = this.percentage
+
+
                  var noiceuser= localStorage.setItem('noiceuser',  this.noiceuser);
-                  this.getgetfileSize()    
        }
 }
 </script>

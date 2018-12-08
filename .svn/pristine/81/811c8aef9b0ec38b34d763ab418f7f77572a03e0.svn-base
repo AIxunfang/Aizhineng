@@ -217,13 +217,12 @@ export default {
       }
     },
     handleAvatarSuccess(res, file) {
-       console.log(res)
       this.imageUrlshow = URL.createObjectURL(file.raw);
       if (res.code == 0) {
         this.formStructuredata.uri = res.data.imageUri;
         this.formStructuredata.url = res.data.imageUrl;
       } else {
-        this.$message.error(res.message);
+        this.$message.error(res.data.message);
       }
     },
     beforeAvatarUpload(file) {

@@ -54,10 +54,10 @@
             </div>
             <div class="delifrom">
               <el-form-item label="参数脚本:">
-                <el-input v-model="this.tarinmodelobj.trainingParamShell"></el-input>
+                <el-input v-model="this.tarinmodelobj.trainingExecuteShell"></el-input>
               </el-form-item>
               <el-form-item label="训练脚本:">
-                <el-input v-model="this.tarinmodelobj.trainingExecuteShell"></el-input>
+                <el-input v-model="this.tarinmodelobj.trainingParamShell"></el-input>
               </el-form-item>
             </div>
             <div class="delifrom">
@@ -143,10 +143,8 @@ export default {
       var params = {
         trainingId: this.$route.params.id
       };
-       console.log("详情")
-      
+
       finddetai(params).then(res => {
-         console.log(res)
         if (res.data.code == 0) {
           this.tarinmodelobj = res.data.data.trainingModel;
           this.tfParams = res.data.data.tfParams;
@@ -155,9 +153,6 @@ export default {
           } else {
             this.tarinmodelobj.imageType = "CPU";
           }
-           
-
-
         }
       });
     },
@@ -166,8 +161,6 @@ export default {
         trainingId: this.$route.params.id
       };
       findlog(params).then(res => {
-
-        console.log('rizhi===============================')
         if (res.data.code == 0) {
           this.logdata = res.data.data;
           this.logdatalength = this.logdata.length;
@@ -180,27 +173,21 @@ export default {
     this.getfinddetai();
     this.getmodeltype();
     let _this = this;
+
     var setid = setInterval(() => {
-      if (_this.$route.name=== 'Trainstart') {
+      if (_this.$route.path === `/Trainstart/${this.$route.params.id}`) {
         _this.getfindlog();
-       
       }
-    }, 5000);
+    }, 3000);
 
     var setinlog = setInterval(() => {
-      if (_this.$route.name=== 'Trainstart') {
+      if (_this.$route.path === `/Trainstart/${this.$route.params.id}`) {
         $("#mylogdoing").scrollTop(_this.logdatalength * 20);
       }
-    }, 8000);
-  console.log("---类型---")
-  console.log(this.$route)
-  if(this.$route.params.type==3){
-         clearInterval(setid)
-          clearInterval(setinlog)
+    }, 6000);
 
-  }
+  console.log(this.$route.params.type)
 
-  
   }
 };
 </script>

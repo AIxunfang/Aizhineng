@@ -56,14 +56,13 @@
      </el-col>
       <el-col :span='24'>
          <div class="paagenumber">
-             <!-- <el-pagination
+             <el-pagination
                         background
                         layout="prev, pager, next, total"
                         :page-size='pageSize'
                         @current-change="pageIndexChange"
                         :total="paggtatol">
-            </el-pagination> -->
-            <page-compent  :pagetotal='paggtatol' @fanye="currentpage" ></page-compent>
+            </el-pagination>
          </div>
       </el-col>
    </el-row>
@@ -71,11 +70,7 @@
 <script>
 import {projectlist,deleteprojectId} from "@/api/api"
 import { timeFormattershowsecod} from "@/assets/js/common";
-import  pageCompent from '../Repackpaging/pagination'
 export default {
-      components:{
-            pageCompent
-      },
         data(){
           return{
                 timeFormattershowsecod,
@@ -87,10 +82,6 @@ export default {
           }
         },
         methods:{
-              currentpage(index){//fanye 
-                  this.currPage=index
-                  this. getprojectlist()
-              },
                 getprojectlist(){
                       var parms={
                             currPage:this.currPage,
