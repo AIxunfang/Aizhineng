@@ -131,8 +131,6 @@ export default {
                    }
                    
                   queuefindpage(parms).then(res=>{
-                              console.log("---duilie---")
-                              console.log(res)
                               if(res.data.code==0){
                                    this.queuetableData=res.data.data.list 
                                    this.paggtatol=res.data.data.total    
@@ -140,17 +138,11 @@ export default {
                      
                   })
             },
-            editsort(index,event){//点击编辑顺序
-                   console.log(index)
-                   console.log(event)
+            editsort(index,event){
                    this.queueOrdernumber=event.queueOrder
                     this.trainingId=event.trainingId
            },
            submitsort(index,event){
-
-
-                
-                   console.log(event)
                    var parms={
                          queueOrder: Number(this.queueOrdernumber),
                          trainingId:this.trainingId
@@ -192,7 +184,6 @@ export default {
 
            },
            delectqueue(index){
-                  console.log(index)
                   var parms={
                       trainingId:index.trainingId
                   }

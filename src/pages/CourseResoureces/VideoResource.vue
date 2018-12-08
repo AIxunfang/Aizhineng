@@ -195,8 +195,7 @@ export default {
                         });          
                    });
             },
-      editvideo(index){//编辑
-                console.log(index)
+      editvideo(index){
                 this.$router.push({ name:'CourseStructure',params:{isadd:index}})    
        },
        pageIndexChange(index){
@@ -228,8 +227,6 @@ export default {
                               courseContentId:this.courseContentId
                          }
                     videoResourcepage(params).then(res=>{
-                            console.log("------")
-                            console.log(res)
                             if(res.data.code==0){
                                    this.videotableData=res.data.data.list
                                    this.paggtatol=res.data.data.total
@@ -239,16 +236,12 @@ export default {
                                                  type:4
                                           }
                                          listparentStructure (parms).then(res=>{
-                                                  console.log('腹肌即将')
-                                                  console.log(res)
                                                   if(res.data.code==0){
                                                          item.fatherdata=res.data.data[0].courseStructureName+ ' / ' +res.data.data[1].courseClassificationName+ ' / ' +res.data.data[2].courseContentName
                                                   }
                                                 
                                          })   
                                     } )   
-
-
                             }  
                             setTimeout(()=>{
                                this.videcocont=this.videotableData

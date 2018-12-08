@@ -161,8 +161,6 @@ export default {
       };
       courseStructurepage(params).then(res => {
         if (res.data.code == 0) {
-          console.log(res);
-
           let lists = res.data.data.list;
           lists.forEach((item, index) => {
             this.optionselect.push({
@@ -215,16 +213,9 @@ export default {
       });
     },
     beforeAvatarUpload(file) {
-      //上传前加一个参数.
       this.loading = true;
-      console.log("上传前");
       const token = sessionStorage.getItem("token");
       this.dataform.token = token;
-      // const isLtM = file.size / 1024 / 1024 < 100; //视频不能大于100M
-      // if (!isLtM) {
-      //   this.$message.error("上传大小不能超过 100MB!");
-      // }
-      // return isLtM;
     },
     savedata() {
       var params = {

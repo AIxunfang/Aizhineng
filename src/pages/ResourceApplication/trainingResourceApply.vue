@@ -85,14 +85,12 @@ export default {
                                   }
                             })  
                     },
-                        //下拉框选中事件
-                 selectGet(vId){//这个vId也就是value值
+                 selectGet(vId){
                          console.log(vId)
                         let obj = {};
                         obj = this.projectdata.find((item)=>{//这里的projectdata就是上面遍历的数据源
-                            return item.projectId === vId;//筛选出匹配数据
+                            return item.projectId === vId;
                         });
-                        console.log(obj);//我这边的name就是对应label的
                         this.formInline.cpu=obj.projectCpu
                         this.formInline.storge=obj.projectMemory
                         this.formInline.gpu=obj.projectGpu
@@ -109,7 +107,6 @@ export default {
                         this.$refs['formInline'].validate((valid)=>{
                        if(valid){
                              approveadd(parms).then(res=>{
-                                console.log(res)
                                  if(res.data.code==0){
                                        this.$message({
                                            type:"success",

@@ -104,7 +104,6 @@ export default {
   methods: {
     getconfiggetpublish() {
       configgetpublish().then(res => {
-        console.log(res);
         if (res.data.code == 0) {
           this.formmemory.cpuamend = res.data.data.cpu;
           this.formmemory.memoryamend = res.data.data.memory;

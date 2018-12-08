@@ -64,7 +64,7 @@ export default {
               }
             },
             methods:{
-             editpproject(){//创建项目
+             editpproject(){
                         var _this =this
                          var parms=this.addprojectfrom 
                          var parms={
@@ -77,8 +77,6 @@ export default {
                this.$refs['addprojectrules'].validate((valid)=>{
                     if(valid){
                        editproject(parms).then(res=>{
-                               console.log(parms)
-                          console.log(res)
                                 if(res.data.code==0){
                                      _this.$message({
                                           message: '编辑成功',
@@ -101,13 +99,7 @@ export default {
 
             },
             mounted(){
-                    console.log("路由跳转")
-                     
-                        this.addprojectfrom= JSON.parse(this.$route.params.id)  
-                        console.log( this.addprojectfrom)
-                        console.log(this.judge)
-                     
-                       
+                        this.addprojectfrom= JSON.parse(this.$route.params.id)                   
       }
 }
 </script>

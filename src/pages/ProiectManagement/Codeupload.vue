@@ -144,16 +144,13 @@ export default {
               goback(){//返回上一页
                     this.$router.go(-1)
               },
-            getgetfileSize(){//获取文件大小和更新时间
+            getgetfileSize(){
               this.codedata=[]
                     var parms={
                           projectId:this.prodetail.projectId
                     }
-                    console.log('---文件大小--')
-                    console.log(parms)
                  getfileSize(parms).then(res=>{
-                          console.log(res)
-                          if(res.data.code==0){//可能值传了一个值,遍历一遍
+                          if(res.data.code==0){
                               this.loading=false
                               this.codedata=res.data.data
                           }
@@ -180,7 +177,6 @@ export default {
                            this.noiceuser=false
                            this.reload()
                            setTimeout(()=>{
-                               console.log('请求数据接口')
                              this.getgetfileSize()
                            },2000)
 
@@ -191,25 +187,16 @@ export default {
                           this.reload()
                     }
             },
-   //进度条code
             progressfunc(event, file, fileList) {
-              console.log("进度")
-              console.log(event.percent)
               this.progressshow=true
               this.disabledupload=true  //如果正在上传禁止上传其他的
                this.percentage = parseInt(event.percent);
            var progress= localStorage.setItem('percentage', this.percentage);
-        
             if (this.percentage == 100) {
                    this.noiceuser=true
-                   
-                   
                }
      
             },
-        //    closevisble(){//关闭浏览器清空input\
-        //         document.getElementById('fileform').reset()
-        //    },
             delectfile(value){//删除文件 
                  let type=""
                 if(value==0){
@@ -221,7 +208,6 @@ export default {
                      projectId:this.prodetail.projectId,
                      type:this.type
                 }
-                    
                     this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
                         confirmButtonText: '确定',
                         cancelButtonText: '取消',

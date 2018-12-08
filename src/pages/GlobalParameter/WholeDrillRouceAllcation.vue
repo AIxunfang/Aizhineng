@@ -200,15 +200,12 @@ export default {
             }
           });
         } else {
-          console.log("error submit!!");
           return false;
         }
       });
     },
     getfindresource() {
       findresource().then(res => {
-        console.log("---ziyuan---");
-        console.log(res);
         if (res.data.code == 0) {
           this.chartData_vebarcpu.rows = [
             {

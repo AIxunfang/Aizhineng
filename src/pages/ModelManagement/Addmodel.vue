@@ -134,8 +134,6 @@ export default {
       methods:{
               getfindimage(){
                       findimage().then(res=>{
-                              console.log("镜像名")
-                              console.log(res)
                              this.mdoelform.publishImage=res.data.data[0]
                       })
                },
@@ -143,17 +141,12 @@ export default {
 
 
           changecodeval(val){//解析参数选中的值
-                    console.log('选中的值')
-                    console.log(val)
                       this.comprehensionarry=[]
                       this.comprehensionshow=false//改变选择的值的之后,,
                     this.sendcodepy=val.join('/')
-                    console.log(this.sendcodepy)  
              },
 
              handleItemChange(val){
-                     console.log("active-change")
-                       console.log(val)//我说的是这个
                       this.meupath='';
                       this.meupath=val.join('/') 
              //点击选择项目获得解析
@@ -166,8 +159,6 @@ export default {
                              console.log(parms)
            dirsAndFiles(parms).then(res=>{
              //这个是后台的接口发的参数
-               console.log("code")
-               console.log(res)
                 if(res.data.code==0){
                           var indexArr = []
                           var data = this.optionsscript;
@@ -209,8 +200,6 @@ export default {
                   }
                   this.mdoelform.comprehensionarry=[]
                 paramanalysis(parm).then(res=>{
-                       console.log("---------------")
-                       console.log(res)
                        if(res.data.code==0){
                           if(res.data.data.length==0){
                                this.comprehensionshow=true
@@ -241,7 +230,6 @@ export default {
                         projectId:value
                    }
                    publishfindprojectstraining(parms).then(res=>{
-                         console.log(res)
                          if(res.data.code==0){
                              this.peojectmodeldata=res.data.data
                          }
@@ -256,7 +244,6 @@ export default {
                     var parms= this.mdoelform
                     this.$refs['mdoelform'].validate((valid) =>{
                             publishcreatemodel(parms).then(res=>{
-                                    console.log(res)
                                     if(res.data.code==0){
                                         this.$message({
                                                 type:'success',

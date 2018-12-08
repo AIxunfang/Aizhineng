@@ -84,9 +84,6 @@
                  </div>
 
             </el-col>
-
-
-
             <el-col :span="24">
                  <el-dialog
                         :title="titlename"
@@ -238,7 +235,6 @@ export default {
       this.getcourseMaterialpage();
     },
     delectmeterial(index) {
-      console.log(index);
       var parms = {
         courseMaterialId: index.courseMaterialId
       };
@@ -275,21 +271,16 @@ export default {
         this.cousecouseformInline.courseMaterialDesc= ""
         this.cousecouseformInline.courseContentId= ""
          this.cousecouseformInline.courseClassificationId= ""
-         this.cousecouseformInline.courseStructureId= ""
-      
-
+         this.cousecouseformInline.courseStructureId= "" 
     },
     changeseleval(val) {
       this.formStructuredata.selectTypemodel = "";
-      //选择系,在选择类,
-      console.log(val);
       var parms = {
         currentPage: 1,
         pageSize: 10000,
         courseStructureId: String(val)
       };
       courseClassificationpage(parms).then(res => {
-        console.log(res);
         if (res.data.code == 0) {
           this.datamodel = res.data.data.list;
         }
@@ -302,8 +293,6 @@ export default {
         courseClassificationId: this.formStructuredata.selectTypemodel
       };
       courseMaterialpage(parms).then(res => {
-        console.log("-------");
-        console.log(res);
         if (res.data.code == 0) {
           this.informationtableData = res.data.data.list;
           this.paggtatol = res.data.data.total;
@@ -317,23 +306,15 @@ export default {
         }
       });
     },
-
     changeval(val) {
-      //选择所属
       this.cousecouseformInline.courseStructureId = val[0];
       this.cousecouseformInline.courseClassificationId = val[1];
       this.cousecouseformInline.courseContentId = val[2];
     },
     beforeAvatarUpload(file) {
-      //上传前加一个参数.
       this.loading = true;
       const token = sessionStorage.getItem("token");
       this.dataform.token = token;
-      // const isLtM = file.size / 1024 / 1024 < 100; //视频不能大于100M
-      // if (!isLtM) {
-      // this.$message.error("上传大小不能超过 100MB!");
-      // }
-      // return isLtM;
     },
     handleAvatarSuccess(res, file) {
       if (file.status == "success") {
@@ -347,15 +328,9 @@ export default {
     },
     savedata() {
       if (this.titlename == "新增") {
-        //   delete this.cousecouseformInline.selectedOptions
         this.$refs["cousecouseformInline"].validate(valid => {
           if (valid) {
-
-                console.log(this.cousecouseformInline)
             addcourseMaterial(this.cousecouseformInline).then(res => {
-              console.log("--xinzeng--");
-              
-              console.log(res);
               if (res.data.code == 0) {
                 this.$refs["cousecouseformInline"].resetFields();
                 this.CoursedialogVisible = false;
@@ -365,12 +340,8 @@ export default {
           }
         });
       }else{
-            console.log("编辑")
            this.cousecouseformInline.courseMaterialId= this.couredit           
-            console.log(this.cousecouseformInline)
            updatecourseMaterial(this.cousecouseformInline).then(res=>{
-                     console.log("编辑")
-                     console.log(res)
                      if(res.data.code==0){
                             this.$message({
                                   type:"success",
@@ -387,7 +358,6 @@ export default {
    editMeterial(index){
          this.titlename ="编辑"
          this.CoursedialogVisible = true;
-         console.log(index)
         this.cousecouseformInline.courseMaterialName=index.courseMaterialName
         this.cousecouseformInline.selectedOptions=index.contdata
         this.cousecouseformInline.materialUri=index.materialUri
@@ -399,7 +369,6 @@ export default {
             this.couredit=index.courseMaterialId    
    },                 
     addcouses() {
-      //点击新增
       this.CoursedialogVisible = true;
       this.titlename = "新增";
     },
@@ -410,8 +379,6 @@ export default {
       };
       courseStructurepage(params).then(res => {
         if (res.data.code == 0) {
-          console.log(res);
-
           let lists = res.data.data.list;
           lists.forEach((item, index) => {
             this.optionselect.push({

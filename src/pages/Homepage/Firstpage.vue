@@ -42,8 +42,6 @@ export default {
         pageSize: 20
       };
       courseStructurepage(parms).then(res => {
-        console.log("--+++++++--");
-        console.log(res);
         if (res.data.code == 0) {
           this.systemdata = res.data.data.list;
           this.systemdata.forEach((item, index) => {

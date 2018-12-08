@@ -263,7 +263,6 @@ export default {
       });
     },
     movecurrentpage(item, index) {
-      //移动时候的当前页
        const moveclickcur = "/" + this.movecurent.slice(0, index + 1).join("/");
        this.movepath = moveclickcur +'/';
        this.movehdfs();
@@ -275,7 +274,6 @@ export default {
       }
     },
      movehomeHdfs() {
-      //移动的首页
       this.movepath = "/";
       this.movehdfs();
     },
@@ -286,13 +284,12 @@ export default {
       this.foldertableData = [];
       hdfslist(parms).then(res => {
         if (res.data.code == 0) {
-          this.movecurent = res.config.params.filepath.split("/").slice(1); //上面点击的菜单,
+          this.movecurent = res.config.params.filepath.split("/").slice(1); 
           res.data.data.forEach((item, index) => {
             if (item.isDir == true) {
               item.currentpath = res.config.params.filepath;
-              var index = item.fileName.lastIndexOf("/"); //截取最后一个/ 后面的作为名字
+              var index = item.fileName.lastIndexOf("/");
               item.tableName = item.fileName.slice(index + 1);
-
               this.foldertableData.push(item);
             }
           });
@@ -305,7 +302,7 @@ export default {
           this.$route.params.id == "/" ? "/" : this.$route.params.id + "/"
       };
       if (this.$route.params.id.split("/").length > 1) {
-        this.routermenu = this.$route.params.id.split("/").slice(1); //上面点击的菜单,
+        this.routermenu = this.$route.params.id.split("/").slice(1);
       }
 
       commonlist(params).then(res => {
@@ -314,7 +311,7 @@ export default {
           this.filedata.forEach((item, index) => {
             item.curentpath = res.config.params.filepath;
             if (item.isDir == false) {
-              var fileNamelower = item.filePath.slice(-4).toLowerCase(); //截取后面四位判断格式
+              var fileNamelower = item.filePath.slice(-4).toLowerCase(); 
               if (
                 fileNamelower === ".png" ||
                 fileNamelower === ".jpg" ||
@@ -348,7 +345,6 @@ export default {
       });
     },
     handleSelectionChange(val) {
-      //选中的时候,显示删除功能按钮
       this.delectdata = [];
       this.multipleSelection = val;
       if (this.multipleSelection.length > 0) {
@@ -362,8 +358,6 @@ export default {
       });
     },
     optioncommand(val, item) {
-      //操作里面的下拉
-      console.log(val);
        if(val==1){
                   var parms = {
                         path: [this.selectdelect]
@@ -386,7 +380,6 @@ export default {
                      filePath:this.currentfileyasuo
                 } 
                 commonunzip(parms).then(res=>{
-                      console.log(res)
                       if(res.data.code==0){
                           this.getcommonlist() 
                       }
@@ -394,10 +387,8 @@ export default {
          }
     },
     actionfun(index) {
-      console.log("选择的值");
-      console.log(index);
        this.selectedit=true
-        this.moveone=true//判断移动单个文件还是数组文件
+        this.moveone=true
        if(index.isDir==false){
             this.selectdelect=index.filePath
             this.selecttype=index.filePath.slice(index.filePath.lastIndexOf("."))
@@ -443,11 +434,11 @@ export default {
       this.foldertableData = [];
       commonlist(parms).then(res => {
         if (res.data.code == 0) {
-        this.movecurent = res.config.params.filepath.split("/").slice(1); //上面点击的菜单,
+        this.movecurent = res.config.params.filepath.split("/").slice(1); 
           res.data.data.forEach((item, index) => {
             if (item.isDir == true) {
               item.currentpath = res.config.params.path;
-              var index = item.filePath.lastIndexOf("/"); //截取最后一个/ 后面的作为名字
+              var index = item.filePath.lastIndexOf("/"); 
               item.tableName = item.filePath.slice(index + 1);
 
               this.foldertableData.push(item);
@@ -457,7 +448,6 @@ export default {
       });
     },
     delect() {
-      //批量删除
       var parms = { path: this.delectdata };
       commondelete(parms).then(res => {
         if (res.data.code == 0) {
@@ -467,8 +457,6 @@ export default {
     },
 
     handleCurrentChange(row, column, cell, event) {
-      //点击当前的额目录
-      //点击的时候是文件夹,就发送下一次请求
       if (column.label == "文件名称") {
         if (row.isDir == true) {
           const datapeth = row.filePath;
@@ -481,13 +469,12 @@ export default {
       }
     },
     filesubmit() {
-      //提交文件夹名称
       if (this.selectedit == false) {
         var parms = {
           dirName:
             this.$route.params.id == "/"
               ? "/" + this.numberValidateForm.filename
-              : this.$route.params.id + "/" + this.numberValidateForm.filename //三木区分是不是第一个目录
+              : this.$route.params.id + "/" + this.numberValidateForm.filename
         };
 
         this.$refs["numberValidateForm"].validate(valid => {
@@ -534,7 +521,6 @@ export default {
       }
     },
     selectcurret(item, index) {
-      //点击选择当前的目录进入
       const pathclick = this.routermenu.slice(0, index + 1);
       this.$router.push({
         name: "FileManagement",
@@ -546,7 +532,6 @@ export default {
       this.$router.push({ name: "FileManagement", params: { id: "/" } });
       this.getcommonlist();
     },
-    //进度条
     progressfunc(event, file, fileList) {
       this.uploadshow = true;
       this.percentage = parseInt(event.percent);
@@ -556,7 +541,6 @@ export default {
     },
     beforeAvatarUpload() {
       this.dataform.filePath =this.$route.params.id == "/" ? "/" : this.$route.params.id + "/";
-      //上传前加参数
       const token = sessionStorage.getItem("token");
       this.headers.token = token;
     },

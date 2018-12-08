@@ -247,7 +247,6 @@ export default {
                                           publishId:this.$route.params.id
                                    }
                                 publishrestart(parms).then(res=>{
-                                           console.log(res)
                                          if(res.data.code==0){
                                               this.$message({
                                                  type:"success",

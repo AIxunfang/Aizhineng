@@ -46,11 +46,9 @@ export default {
         methods:{
             getnoice(){
                    announcementweb().then(res=>{
-                         console.log(res)
                          if(res.data.code==0){
                               this.formLabelAlignnotice.announcementContent=res.data.data.announcementContent
                               this.formLabelAlignnotice.announcementId=res.data.data.announcementId
-                           //   this.formLabelAlignnotice.announcementStatus=Boolean(res.data.data.announcementStatus)
                               if(res.data.data.announcementStatus==1){
                                     this.statrStatus=true
                               }else{
@@ -60,7 +58,6 @@ export default {
                    })
              },
           changestate(val){
-                console.log(val)
                 if(val==false){
                       this.formLabelAlignnotice.announcementStatus=2
                       this.commit()
@@ -76,8 +73,6 @@ export default {
             commit(){
                    var parms=this.formLabelAlignnotice
                   announcementupdate(parms).then(res=>{
-                    console.log('bianjia')
-                                   console.log(res)
                                    if(res.data.code==0){
                                            this.$message('更改成功')
                                            this.getnoice()

@@ -100,8 +100,6 @@ export default {
                              endTime:this.formlogodata.formdata[1],
                     }  
                      logList(parms).then(res=>{
-                             console.log("日志")
-                             console.log(res)
                               if(res.data.code==0){
                                    this.LogtableData=res.data.data.pageInfo.list
                                    this.paggtatol=res.data.data.pageInfo.total
@@ -115,7 +113,6 @@ export default {
                         this.getloglist() 
                  },
                  onSubmit(){
-                        console.log(this.formlogodata.formdata)
                         this.getloglist()
                  }
 

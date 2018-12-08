@@ -201,8 +201,6 @@ export default {
       this.treedata = [];
       permissionlistsort(parms).then(res => {
         if (res.data.code == 0) {
-          console.log("菜单栏权限");
-          console.log(res);
           this.routerurl = res.data.data;
           this.routerurl.forEach((item, index) => {
             this.treedata.push(item[0]);
@@ -211,10 +209,7 @@ export default {
       });
     },
     getfristmenu() {
-      //得到父节点的一级菜单
       permissionlistfirst().then(res => {
-        console.log("父节点");
-        console.log(res);
         if (res.data.code == 0) {
           this.fatherdata = res.data.data;
           this.fatherdata.unshift({
@@ -222,13 +217,9 @@ export default {
             permissionName: "无父节点"
           });
         }
-
-        console.log(this.fatherdata);
       });
     },
     menudelect(index) {
-      // console.log(index)
-
       var parms = {
         id: index.id
       };
@@ -239,8 +230,6 @@ export default {
       })
         .then(() => {
           permissiondelete(parms).then(res => {
-            console.log("shanchu");
-            console.log(res);
             if (res.data.code == 0) {
               this.getmenulist();
             } else {
@@ -256,8 +245,6 @@ export default {
         });
     },
     menuedit(event) {
-    
-      //编辑部分
       this.menudialogVisible = true;
       this.formmenu.permissionName = event.permissionName;
       this.formmenu.permissionParentId = event.permissionParentId;
@@ -280,8 +267,6 @@ export default {
       }
       this.formmenu.permissionType = Number(this.formmenu.permissionType);
       this.formmenu.permissionStatus = Number(this.formmenu.permissionStatus);
-      console.log(this.formmenu);
-
       this.$refs["formmenu"].validate(valid => {
         if (valid) {
           if (
@@ -296,7 +281,6 @@ export default {
             this.$message.error("父节点与类型不一样重新选择");
           } else {
             permissionupdate(this.formmenu).then(res => {
-              console.log(res);
               this.getmenulist();
               if (res.data.code == 0) {
                 this.$message({

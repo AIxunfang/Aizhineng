@@ -234,7 +234,6 @@ export default {
       });
     },
     changedata() {
-      //       this.rouce_user_tableData=[]
       this.getmonitorfindpage();
     },
     getmonitorfindpage() {

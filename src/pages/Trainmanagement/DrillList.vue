@@ -103,7 +103,6 @@ export default {
                           trainingId:this.modelarry[index].trainingId
                    }
                  modeldownload(parms).then(res=>{
-                           console.log(res)
                            if(res.data.data.status==0){
                       window.location.href =
                         `${baseUrl}`+"/file/" + res.data.data.msg;   
@@ -143,7 +142,7 @@ export default {
                seachabout(){//查询
                       this.getfindpage()
                },
-               getfindpage(){//训练列表
+               getfindpage(){
                    var parms={
                            currentPage:this.currpage,
                            pageSize:this.pageSize,
@@ -152,10 +151,6 @@ export default {
                            type:Number(this.type)
                    }
                   findpage(parms).then(res=>{
-                        
-                          console.log(res)
-                          console.log(parms)
-
                         if(res.data.code==0){
                               this.modelarry=res.data.data.list
                               this.paggtatol=res.data.data.total

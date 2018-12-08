@@ -111,8 +111,6 @@ export default {
       methods:{
             getuserinfo(){
                 user_fing_account().then(res=>{
-                      console.log("---")
-                      console.log(res)
                       var user=res.data.data
                       if(res.data.code==0){
                            this.formuserAdd.username= user.username
@@ -128,10 +126,8 @@ export default {
                       }
                 })
           },
-           getrolelist(){//角色列表
+           getrolelist(){
                     rolelist().then(res=>{
-                        console.log("jiaose")
-                        console.log(res)
                         if(res.data.code==0){
                                 this.tableData=res.data.data
                         }
@@ -145,8 +141,6 @@ export default {
                                   this.formuserAdd.userType=Number(this.formuserAdd.userType) 
                                   var parms=this.formuserAdd
                                    updateaccountedit(parms).then(res=>{
-                                           console.log("----")
-                                           console.log(res)
                                            if(res.data.code==0){
                                                this.$message({
                                                    type:'success',

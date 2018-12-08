@@ -66,13 +66,8 @@ export default {
             }
          },
          methods:{
-                  getmodeltype(){//获取模型分类
-
-                    
-
+                  getmodeltype(){
                       modeltype().then(res=>{
-                               console.log("--模块类型--")
-                               console.log(res)
                                if(res.data.code==0){
                                      this.modelnamedata=res.data.data
                                }
@@ -91,23 +86,12 @@ export default {
                              type:Number(this.SelectType)
                         }
                           projectSharefinduserName(params).then(res=>{
-                                         console.log("------------")
-                                          console.log(res)
                                           if(res.data.code==0){
                                                 this.sharedata=res.data.data.list  
                                           }
-                                      // res.data.data.list.forEach((item,index)=>{
-                                      //        var imgurl=item.imgUrl.split(",")
-                                      //        this.sharedata[index].imgUrl= imgurl 
-                                      // })    
-                                  // console.log("999999")
-                                  // console.log(this.sharedata)
                           })
                  },
                  lookapi(index){
-                       console.log(index)   
-                      //  this.$router.push({name:"ModelformDetail",parms:{publishId:index,sharetype:false}})
-
                      this.$router.push({name:"ModelformDetail",params:{id:index.publishId,projectId:index.projectId,isshare:false}})           
                  },
 

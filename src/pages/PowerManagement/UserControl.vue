@@ -283,7 +283,6 @@ export default {
             }
           deletbatch(parms).then(res=>{
                     if(res.data.code==0){
-                      // this.reload(); 
                      setTimeout(()=>{
                         this.getuserlistpage();
                      },1000)
@@ -295,7 +294,6 @@ export default {
    },
    handleSelectionChange(val) {
                  this.multipleSelection=[]
-                  console.log(val)
                  val.forEach((item,index)=>{
                     this.multipleSelection.push(item.uid)
                  })
@@ -340,16 +338,13 @@ export default {
       this.formuserAdd.userIdentity = String(index.userIdentity);
       this.formuserAdd.userStatus = String(index.userStatus);
       this.formuserAdd.userType = String(index.userType);
-      //  this.formuserAdd.roleIds=index.roleId
       var usertypedata = index.roleId.split(",");
       this.formuserAdd.roleIds = usertypedata;
-      // var usertypedata=usertype.split(',')
       this.formuserAdd.userMobile = index.userMobile;
       this.formuserAdd.userEmail = index.userEmail;
       this.formuserAdd.userRemind = index.userRemind;
     },
     getrolelist() {
-      //角色列表
       rolelist().then(res => {
         if (res.data.code == 0) {
           this.tableData = res.data.data;
@@ -456,7 +451,6 @@ export default {
         });
     },
     Seach_user() {
-      //查询
       this.getuserlistpage();
     }
   },

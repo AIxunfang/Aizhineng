@@ -166,10 +166,6 @@ export default {
             }
         },
         methods:{
-                // getCheckedProp(index){
-                //     console.log(index)
-                // },
-
               checkboxdata(val,index,event){
                        this.selectdata=index 
                 },
@@ -198,7 +194,7 @@ export default {
                         }
                     })
              },
-             delectrole(index){//角色删除
+             delectrole(index){
                     var parms={
                           id:this.tableData[index].id
                     }
@@ -223,10 +219,7 @@ export default {
                      this.addvisibledialog=true 
                      this.isadd=true
               },
-              distribute(index){//点击的分配
-              //    this.treedata[3]._isChecked=true 
-                 console.log("shuju")
-                   console.log(index)
+              distribute(index){
                     this.id=index.id
                     this.addroleformInline.roleType=index.roleType
                     this.rolesname=index.roleName
@@ -236,60 +229,14 @@ export default {
                            id:index.id
                        }
                     findpermissions(parms).then(res=>{
-                           console.log("=====")
-                            console.log(res)
                             if(res.data.code==0){
                                  for(var i=0;i<res.data.data.length;i++){
-                                        // if(res.data.data[i][0].checked==true){
                                                 this.treedata.push(res.data.data[i][0])
-                                        // }
-
-                                      //  this.powerdata=this.treedata
                                  }
-                                // console.log(this.powerdata)
-                                  
-                            //  for(var k=0;k<this.powerdata.length;k++){
-                                         
-                            //           }
-                          //  console.log( this.powerdata)
-                            // this.powerdata.forEach(index,item=>{
-                            //        item.checked=this.treedata[index]._isChecked
-                            // })
-                        //  let res1 =this.powerdata.filter((x)=>{
-                        //       console.log("77777777777")
-                        //       console.log(x)
-                        //     //  return arr1.includes(x)
-                        //     })
-                         
-
-
-                        //  var tmp=[]
-                          console.log(this.treedata)
-
-
-                            // for(var k=0;k<this.powerdata.length;k++){
-                            //      for(var h=0;h<this.treedata.length;h++){
-                            //           if(this.powerdata[k].id==this.treedata[h].id){
-                            //             console.log('----------------------------权限--------------------------')
-                            //                 console.log(this.treedata[h])
-                            //                 //  this.powerdata[k].checked=true
-                            //                  this.treedata[h]._isChecked=true 
-
-                            //           }
-                            //      }
-                            // }
-
-                       }
-                           
-
-
-
-                    })
-
-                   
+                       }  
+                    })   
               },
              sendpower(){
-                    console.log(this.selectdata)
                    const permissionIds=[]
                     for(var i=0;i<this.selectdata.length;i++){
                           if(this.selectdata[i]._isChecked==true){
@@ -305,8 +252,6 @@ export default {
 
                       }
                     updatepermission(parms).then(res=>{
-                                    console.log("====权限===")
-                                    console.log(res)
                                     if(res.data.code==0){
                                        this.$message({
                                            type:"success",
@@ -318,8 +263,6 @@ export default {
                                        this.$message.error(res.data.message)
                                     }
                     })
-
-                     console.log(parms)
              },
 
         },

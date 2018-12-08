@@ -143,7 +143,6 @@ export default {
                                pageSize:this.pageSize,
                        }
                         approvegethistory(parms).then(res=>{
-                                 console.log(res)
                                  if(res.data.code==0){
                                      this.historytableData=res.data.data.list 
                                      this.paggtatol=res.data.data.total
@@ -151,7 +150,6 @@ export default {
                         })  
                    },
                    editrouse(index){
-                       console.log(index)
                        if(index.auditType==1){
                             this.$router.push({name:'trainingResourceApplyedit',params:{id:index.projectId,cpu:index.cpu,gpu:index.gpu,memory:index.memory}})
                        }
@@ -162,7 +160,6 @@ export default {
                         this.getapprovegethistory()  
                    },
                    Details(index){
-                      console.log(index)
                       this.dialogVisible=true
                        this.auditTime=index.auditTime
                        this.message=index.message

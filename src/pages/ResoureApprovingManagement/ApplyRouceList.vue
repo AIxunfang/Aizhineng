@@ -213,14 +213,10 @@ export default {
                    
                },
                submitrefouse(){
-                     
                       this.refouse.message=this.refouseValidateForm.message
-                     console.log(this.refouse)
                      this.$refs['refouseValidateForm'].validate((valid)=>{
                          if(valid){
                                approveupdata(this.refouse).then(res=>{
-                                 console.log("jujie")
-                                  console.log(res)
                                    if(res.data.code==0){
                                             this.$message('已经拒绝');
                                             this.refousedialogVisible=false;
@@ -233,17 +229,12 @@ export default {
 
                          }
                      })
-
-
-
                },
                pageIndexChange(index){
                        this.currPage=index
                        this.getapprovelist()
 
                }
-
-
         },
         mounted(){
               this.getapprovelist() 

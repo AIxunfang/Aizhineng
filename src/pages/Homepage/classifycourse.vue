@@ -68,7 +68,6 @@ export default {
     //     // this.$router.push()
     // },
     routerPush(router) {
-        console.log(router)
         this.$router.push(router)
     },
     getcourseStructurepage() {
@@ -78,8 +77,6 @@ export default {
         pageSize: 100
       };
       courseStructurepage(params).then(res => {
-        console.log(res);
-
         if (res.data.code == 0) {
           res.data.data.list.forEach((item, index) => {
             console.log(this.$route.params.id);
@@ -98,8 +95,6 @@ export default {
       };
       courseClassificationpage(parms).then(res => {
         if (res.data.code == 0) {
-          console.log("分类");
-          console.log(res);
           if (res.data.code == 0) {
             this.systemdata = res.data.data.list;
             this.systemdata.forEach((item, index) => {
@@ -109,8 +104,6 @@ export default {
                 courseClassificationId: item.courseClassificationId
               };
               courseContentpage(parms).then(res => {
-                console.log("内容");
-                console.log(res);
                 if (res.data.code == 0) {
                   this.$set(
                     this.systemdata[index],
@@ -125,44 +118,31 @@ export default {
       });
     },
     stytemclick(index) {
-      console.log("------");
-      console.log(index);
      const courseClassification=   sessionStorage.setItem('courseClass', JSON.stringify(index))   
-     
       if (index.childrenlength > 0) {
         this.$router.push({
           name: "chunkcou",
           params: { id: index.courseClassificationId }
         });
          let defaultText = this.defaultText
-        // defaultText = defaultText + 'fdsgfsdg'
         if(!this.defaultText) {
             defaultText = []
         }
         defaultText.push({ title: '课程模块',router:'/chunkcou/'+index.courseClassificationId })
         this.commitDefaultText(defaultText)
       }
-
-
-
-      //  this.$router.push({name:"chunkcou",params:{id:index.courseClassificationId}})
     },
    clickfrist(){
               let defaultText = this.defaultText
             defaultText=[]
- 
-         this.$router.push('/Firstpage')
+           this.$router.push('/Firstpage')
 
    },
-
-
     goback() {
       this.$router.go(-1);
     }
   },
   mounted() {
-    console.log(this.$route.params.id);
-    console.log(this.defaultText)
     this.getcourseStructurepage();
     this.getclass();
   }

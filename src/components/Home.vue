@@ -137,8 +137,8 @@ export default {
       valuetouter: "",
       isCollapse: false,
       adisewidth: "200px",
-      Username: "", //显示的用户名\
-      dialogmessage: false, //个人信息修改弹框
+      Username: "", 
+      dialogmessage: false, 
       tocken: null,
       formInline: {
         UserName: "",
@@ -155,17 +155,15 @@ export default {
           { pattern: /^[a-zA-Z0-9_]{0,}$/, message: "不能输入中文" }
         ]
       },
-      routerurl: {} //跳转路由的数组
+      routerurl: {} 
     };
   },
   watch: {
     valuetouter: function(value, newvalue) {
       if (value == "/") {
-        console.log("jinlai");
       }
     }
   },
-
   methods: {
     getnoice() {
       announcementweb().then(res => {
@@ -187,8 +185,6 @@ export default {
         status: this.status
       };
       indexnotifys(params).then(res => {
-        console.log("xiao");
-        console.log(res);
         if (res.data.code == 0) {
           this.gridData = res.data.data.list;
           this.gridData.forEach((item, index) => {
@@ -274,7 +270,6 @@ export default {
                old:this.formInline.oldpassword,
                password:this.formInline.newpassword,
         }
-      //提交密码
       this.$refs["passwordrules"].validate(valid => {
         if (valid) {
                updatepassword(parms).then(res=>{
@@ -290,7 +285,7 @@ export default {
                                },2000)
                           }
                })    
-         } 
+           } 
       });
     },
     getmenulist() {

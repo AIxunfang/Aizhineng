@@ -230,15 +230,12 @@ export default {
   methods: {
     myevent() {},
     verifyname() {
-      //验证名字是不是重复
-      console.log("shiqu");
       var parms = {
         userAccount: this.Username.name,
         trainingName: this.modelparameter.modelname,
         projectId:this.modelparameter.pid
       };
       checktrainingName(parms).then(res => {
-        console.log(res);
         if (res.data.code == 0) {
           if (res.data.data == true) {
             this.Namerepeat = true;
@@ -252,8 +249,7 @@ export default {
       this.modelparameter.resource = "";
       let obj = {};
       obj = this.projectdata.find(item => {
-        //这里的userList就是上面遍历的数据源
-        return item.projectId === index; //筛选出匹配数据
+        return item.projectId === index; 
       });
       this.projectcpu = obj.projectCpu;
       this.projectgpu = obj.projectGpu;
@@ -263,7 +259,6 @@ export default {
       this.verifyname()
     },
     getmodeltype() {
-      //获取模型分类
       modeltype().then(res => {
         if (res.data.code == 0) {
           this.modelnamedata = res.data.data;
@@ -272,8 +267,7 @@ export default {
       });
     },
     handleClicktab(tab, event) {
-      console.log(tab);
-      console.log(event);
+
     },
 
     getfindimage() {
@@ -282,7 +276,6 @@ export default {
       });
     },
     getfindprojects() {
-      //项目列表
       const uid = sessionStorage.getItem("uid");
       var parms = {
         uid: uid
@@ -301,17 +294,14 @@ export default {
     },
 
     changecodeval(val) {
-      //解析参数选中的值
       this.comprehensionarry = [];
-      this.comprehensionshow = false; //改变选择的值的之后,,
+      this.comprehensionshow = false; 
       this.sendcodepy = val.join("/");
     },
     changecodevalchirden(val) {
-      //  console.log(this.selectedOptionsscriptchireden.join("/"))
       this.trainingParamShell = val.join("/");
     },
     analysis() {
-      //解析参数
       var parm = {
         pyPath: this.sendcodepy,
         projectId: this.modelparameter.pid,
@@ -334,18 +324,14 @@ export default {
       });
     },
     handleItemChangedata(val) {
-      //打开switch开关时候,选择目录的时候
       this.datapath = "";
       this.datapath = val.join("/");
-      //点击选择项目获得解析
       var parms = {
         currentPath: this.datapath,
         projectId: this.modelparameter.pid,
         type:'data'
       };
-      console.log(parms);
       dirsAndFiles(parms).then(res => {
-        //这个是后台的接口发的参数
         if (res.data.code == 0) {
           var indexArr = [];
           var data = this.optionsscriptdata;
@@ -389,7 +375,6 @@ export default {
       });
     },
     creatmodel() {
-      //创建模块
       const uid = sessionStorage.getItem("uid");
       this.modelparameter.comprehensionarry.forEach((item, index) => {
         if (item.tfParamType == 1) {
@@ -413,10 +398,7 @@ export default {
       };
       this.$refs["modelparameter"].validate(valid => {
         if (valid) {
-          console.log(parms)
           createtraining(parms).then(res => {
-            console.log("chuangjian");
-            console.log(res);
             if (res.data.code == 0) {
               this.$message({
                 message: "创建模块成功",
@@ -433,21 +415,14 @@ export default {
       });
     },
     handleItemChange(val) {
-      console.log("active-change");
-      console.log(val); //我说的是这个
       this.meupath = "";
       this.meupath = val.join("/");
-      //点击选择项目获得解析
       var parms = {
         currentPath: this.meupath,
         projectId: this.modelparameter.pid,
         type:'code'
       };
       dirsAndFiles(parms).then(res => {
-        //这个是后台的接口发的参数
-
-        console.log("code");
-        console.log(res);
         if (res.data.code == 0) {
           var indexArr = [];
           var data = this.optionsscript;

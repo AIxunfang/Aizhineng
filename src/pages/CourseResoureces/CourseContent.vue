@@ -197,9 +197,7 @@ export default {
       if (!value) return true;
       return data.label.indexOf(value) !== -1;
     },
-
     selecty(val) {
-      console.log(val);
       this.formStructuredata.type = val;
       this.isadd = true;
       switch (val) {
@@ -217,7 +215,6 @@ export default {
       }
     },
     handleAvatarSuccess(res, file) {
-       console.log(res)
       this.imageUrlshow = URL.createObjectURL(file.raw);
       if (res.code == 0) {
         this.formStructuredata.uri = res.data.imageUri;
@@ -227,7 +224,6 @@ export default {
       }
     },
     beforeAvatarUpload(file) {
-      //上传前加一个参数.
       const token = sessionStorage.getItem("token");
       this.dataform.token = token;
     },
@@ -258,7 +254,6 @@ export default {
         }
       });
     },
-    //局部刷新
     focusdata() {
       this.optionstixis = [];
 
@@ -268,8 +263,6 @@ export default {
       };
       courseStructurepage(params).then(res => {
         if (res.data.code == 0 && res.data.data.list.length !== 0) {
-          console.log(res);
-
           let lists = res.data.data.list;
           lists.forEach((item, index) => {
             this.optionstixis.push({
@@ -324,8 +317,6 @@ export default {
                         ].children[contentindex].id
                       };
                       videoResourcepage(parms).then(res => {
-                        console.log("视频");
-                        console.log(res);
                         let videocas = [];
                         if (res.data.code == 0) {
                           videocas = res.data.data.list;
@@ -349,7 +340,7 @@ export default {
       });
     },
     editconcent(node, data) {
-      this.getcourseStructurepage()//刷新体系菜单
+      this.getcourseStructurepage()
       this.isadd = false;
       this.formStructuredata.uri = data.itemcon.imageUri;
       this.formStructuredata.url = data.itemcon.imageUrl;
@@ -422,7 +413,6 @@ export default {
               courseStructureId: data.id
             };
             delectcourseStructure(parms).then(res => {
-              console.log(res);
               if (res.data.code == 0) {
                 this.focusdata();
               } else {
@@ -452,7 +442,6 @@ export default {
               }
             });
           } else if (node.level == 4) {
-            console.log(data);
             var parms = {
               courseResourceId: data.id
             };
@@ -471,15 +460,12 @@ export default {
         });
     },
     changeseleval(val) {
-      //选择系,在选择类,
-      console.log(val);
       var parms = {
         currentPage: 1,
         pageSize: 10000,
         courseStructureId: val
       };
       courseClassificationpage(parms).then(res => {
-        console.log(res);
         if (res.data.code == 0) {
           this.datamodel = res.data.data.list;
         }
@@ -497,14 +483,10 @@ export default {
       this.formStructuredata.order = Number(this.formStructuredata.order);
       this.formStructuredata.type = Number(this.formStructuredata.type);
       var parms = this.formStructuredata;
-      console.log(parms);
       if (this.isadd) {
-        // deletethis.formStructuredata.parentId;
         this.$refs["formStructuredata"].validate(valid => {
           if (valid) {
             courseaddcourse(parms).then(res => {
-              console.log(parms);
-              console.log(res);
               if (res.data.code == 0) {
                 this.$message({
                   type: "success",
@@ -520,10 +502,7 @@ export default {
           }
         });
       } else {
-        console.log("编辑");
-        console.log(this.formStructuredata);
         updatecourse(this.formStructuredata).then(res => {
-          console.log(res);
           if (res.data.code == 0) {
             this.$message({
               type: "success",

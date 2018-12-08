@@ -71,7 +71,7 @@ export default {
                                       sessionStorage.setItem('token',res.data.data.token) 
                                       sessionStorage.setItem('uid',res.data.data.user.uid)  
                                    if(res.data.data.user.userType ===0){
-                                        this.$router.push('/Firstpage')   //方便扩展
+                                        this.$router.push('/Firstpage')   
                                    }else if(res.data.data.user.userType===1){
                                         this.$router.push('/Managefristpage')   
                                    }
@@ -88,11 +88,8 @@ export default {
 
   },
   mounted() {
-     // console.log(this.$t('message.hello'))
       getIp((ip) => {
                 this.uloginIp = ip;
-                console.log('-------ip地址--------------')
-                console.log(this.uloginIp)
                sessionStorage.setItem('getip',ip)
         })
 

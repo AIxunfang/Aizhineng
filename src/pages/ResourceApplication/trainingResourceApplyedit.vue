@@ -89,9 +89,7 @@ export default {
                                   }
                             })  
                     },
-                        //下拉框选中事件
-                 selectGet(vId){//这个vId也就是value值
-                         console.log(vId)
+                 selectGet(vId){
                         let obj = {};
                         obj = this.projectdata.find((item)=>{//这里的projectdata就是上面遍历的数据源
                             return item.projectId === vId;//筛选出匹配数据
@@ -113,7 +111,6 @@ export default {
                         this.$refs['formInline'].validate((valid)=>{
                        if(valid){
                              approveupdataapprove(parms).then(res=>{
-                                console.log(res)
                                  if(res.data.code==0){
                                        this.$message({
                                            type:"success",
@@ -130,7 +127,6 @@ export default {
              },
              mounted(){
                     this.getapprovegetproject()
-                    console.log(this.$route.params)
                     this.formInline.projectId=this.$route.params.id
                     this.formInline.cpu=this.$route.params.cpu;
                      this.formInline.gpu=this.$route.params.gpu;

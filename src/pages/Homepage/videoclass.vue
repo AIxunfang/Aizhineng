@@ -71,8 +71,6 @@ export default {
                          courseContentId:this.$route.params.videoid
             }
             videoResourcepage(parms).then(res=>{
-               console.log('视频')
-                console.log(res)
                     if(res.data.code==0){      
                             if(res.data.data.list.length>0){
                                    this.videourlshowdata=res.data.data.list
@@ -95,10 +93,7 @@ export default {
               var parms={
                     courseContentId:this.$route.params.videoid
               }
-              console.log(parms)
              findcourseMaterial(parms).then(res=>{
-                     console.log("====")
-                     console.log(res)
                      if(res.data.code==0){
                           window.location.href= `${baseUrl}`+'/file/'+res.data.data.materialUrl
                      }
@@ -107,12 +102,6 @@ export default {
 
     },
     mounted(){
-        console.log(this.$route.params.videoid)
-        //  if(this.$route.params.CourseDesc==undefined){
-        //      return;
-        //  }else{
-        //      console.log(this.$route.params.CourseDesc)
-        //  }
          this. getvideo()
     }
 
