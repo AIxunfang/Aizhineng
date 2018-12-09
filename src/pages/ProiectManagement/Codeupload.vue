@@ -139,8 +139,6 @@ export default {
            }
        },
        methods:{
-  
-
               goback(){//返回上一页
                     this.$router.go(-1)
               },
@@ -171,6 +169,7 @@ export default {
            changefilename(file, fileList){
            },
             handleAvatarSuccess(res, file){
+                sessionStorage.setItem('progresstype', 'success')
                     if(res.code==0){
                            this.disabledupload=false
                            this.progressshow=false
@@ -190,6 +189,7 @@ export default {
             progressfunc(event, file, fileList) {
               this.progressshow=true
               this.disabledupload=true  //如果正在上传禁止上传其他的
+               sessionStorage.setItem('progresstype', 'pedding')
                this.percentage = parseInt(event.percent);
            var progress= localStorage.setItem('percentage', this.percentage);
             if (this.percentage == 100) {

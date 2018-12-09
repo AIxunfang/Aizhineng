@@ -28,12 +28,19 @@ Vue.use(uploader)//vue 上传
 
 
 router.beforeEach((to, from, next ) => {
-
+    const status=sessionStorage.getItem('progresstype')
+    console.log(status)
+    if( status=='success' ){
+        if(to.path == '/Codeupload' ){
+              to.meta.keepAlive=false
+        }else{
+            
+        }
+    }
   if(to.path == '/Login') {
      sessionStorage.removeItem('user')
   }
   let user = JSON.stringify(sessionStorage.getItem('user'))
-  console.log(user == 'null')
   if(user == 'null' && to.path != '/Login') {
     next({path: '/Login'})
   } else {

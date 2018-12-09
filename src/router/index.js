@@ -111,6 +111,10 @@ export default new Router({
         {path:"/chunkcou/:id",name:"chunkcou",component:chunkcou},
         {path:'/videoclass/:videoid/:CourseDesc',name:"videoclass",component:videoclass},
         {path:'Codeupload' ,name:"Codeupload", component:Codeupload,
+        meta: {
+          keepAlive: true // 需要被缓存
+         }
+
        },
       ]
     },
