@@ -1,0 +1,229 @@
+<template>
+  <el-row class="FormationDrill">
+      <el-col :span='24'>
+            <div class="navigationbar"> 
+               <span class="navigationname">模块调度管理<i class="el-icon-arrow-right" aria-hidden="true"></i>
+                    队列列表
+                </span>
+            </div>
+              <div class="seachframe">
+                    <div  class="formdata">
+                            <el-form :inline="true" size="mini" >
+                                 <el-form-item>
+                                  <el-select v-model="queueStatus"  @change="handleCityFilter"  size="mini">
+                                     <el-option label="排队中" value="1"> </el-option>
+                                     <el-option label="已执行" value="2"> </el-option>
+                                      <el-option label="已删除" value="3"> </el-option>
+                                  </el-select>
+                                 </el-form-item>
+                                  <el-form-item  >
+                                        <el-input v-model="userName" size="mini"  @keyup.native.enter="seeabout()" placeholder="请输入用户名"></el-input>         
+                                  </el-form-item>
+                                  <el-form-item>
+                                    <el-button type="primary" icon="el-icon-search"  size="mini" @click.native="seeabout"    >查询</el-button>
+                                  </el-form-item>
+                            </el-form>
+                      </div>
+                </div>
+      </el-col>
+      <el-col :span="24">
+               <div style="margin:20px;">
+                    <el-table
+                      :data="queuetableData"
+                      border
+                       stripe
+                      size="mini"
+                      style="width: 100%">
+                      <el-table-column
+                        prop="userAccount"
+                          width="180"
+                          
+                        label="用户名">
+                     </el-table-column>
+                      <el-table-column
+                        prop="trainingName"
+                        label="训练名称"
+                        width="180">
+                      </el-table-column>
+                      <el-table-column
+                        label="训练创建时间"   
+                        >
+                     <template slot-scope="scope">
+                        {{timeFormattershowsecod(scope.row.queueCreateTime)}}
+                     </template>
+                      </el-table-column>
+                      <el-table-column
+                        label="队列状态">
+                     <template slot-scope="scope">
+                            <span v-if="scope.row.queueStatus==1">列队中</span>
+                             <span v-if="scope.row.queueStatus==2">已执行</span>
+                             <span v-if="scope.row.queueStatus==3">已删除</span>
+                     </template>
+                     </el-table-column>
+                      <el-table-column
+                        label="优先级"
+                        width="120">
+                      <template       slot-scope="scope">
+                            <span v-if='queueStatus==1' >
+                              <el-popover
+                                placement="left"
+                                width="100"
+                                trigger="click">
+                              <el-input v-model="queueOrdernumber" onkeyup="(this.v=function(){this.value=this.value.replace(/[^0-9-]+/,'');}).call(this)" ></el-input><i class="fa fa-check-square editsubmit fa-3x" aria-hidden="true" @click="submitsort(scope.$index,scope.row)"  style="cursor:pointer" ></i>
+                                  <div slot="reference" class="name-wrapper">
+                                      <span slot="reference" style="text-decoration:underline;color:blue;cursor:pointer"  @click="editsort(scope.$index,scope.row)" >{{scope.row.queueOrder}}</span>
+                                   </div>
+                              </el-popover>
+                             </span>
+                             <span v-else>
+                                  {{scope.row.queueOrder}}
+                             </span>
+                      </template>
+                   </el-table-column>
+                       <el-table-column
+                        label="操作"
+                        width="180">
+                        <template slot-scope="scope">
+                              <el-button type="danger" icon="el-icon-delete" size="mini" @click="delectqueue(scope.row)" ></el-button>
+                        </template>
+                      </el-table-column>
+                </el-table>
+               </div>  
+               <el-col :span="24">
+                   <div class="paagenumber">
+                              <el-pagination
+                                    background
+                                    layout="prev, pager, next, total"
+                                    :page-size='pageSize'
+                                    @current-change="pageIndexChange"
+                                    :total="paggtatol">
+                              </el-pagination>
+                        </div> 
+               </el-col>
+      </el-col>
+  </el-row>
+</template>
+<script>
+import{queuefindpage,deletequeue,queueupdateorder,emptydelect} from '@/api/api'
+import { timeFormattershowsecod } from "@/assets/js/common";
+export default {
+         data(){
+            return{
+                queueOrdernumber:"",
+                userName:'',
+                timeFormattershowsecod,
+                currentPage:1,
+                pageSize:10,
+                queueStatus:'1',
+                queuetableData:[],
+                visible2:false,
+                trainingId:'',
+                paggtatol:null,
+            }
+         },
+      methods:{
+            getqueuefindpage(){
+                   var parms={
+                            currentPage:this.currentPage,
+                            pageSize:this.pageSize,
+                            queueStatus: Number(this.queueStatus),
+                            keyword:this.userName
+                   }
+                   
+                  queuefindpage(parms).then(res=>{
+                              if(res.data.code==0){
+                                   this.queuetableData=res.data.data.list 
+                                   this.paggtatol=res.data.data.total    
+                              }
+                     
+                  })
+            },
+            editsort(index,event){
+                   this.queueOrdernumber=event.queueOrder
+                    this.trainingId=event.trainingId
+           },
+           submitsort(index,event){
+                   var parms={
+                         queueOrder: Number(this.queueOrdernumber),
+                         trainingId:this.trainingId
+
+                   }
+                   var _this=this
+                   console.log(parms)
+                 var reg =/^\+?[1-9][0-9]*$/
+                 if(!reg.test(this.queueOrdernumber)){
+                       this.$message.error("输入数字")
+                 }else if(this.queueOrdernumber>=10000){
+                         this.$message.error("最大为9999")
+                 }else{
+                      queueupdateorder(parms).then(res=>{
+                            console.log(res)
+                            if(res.data.code==0){
+                               _this.$message({
+                                  type:"success",
+                                  message:"设置成功"
+                               })
+                               _this.getqueuefindpage()
+                            }else{
+                                _this.$message.error(res.data.message)
+                            }
+                         
+                      })
+                 }
+           },
+          pageIndexChange(index){
+                  this.currentPage=index
+                  this.getqueuefindpage()
+          },
+           seeabout(){
+                     this.getqueuefindpage()
+           },
+           handleCityFilter(val){
+                this.queueStatus=val
+                this.getqueuefindpage()
+
+           },
+           delectqueue(index){
+                  var parms={
+                      trainingId:index.trainingId
+                  }
+
+                 if(this.queueStatus==3){
+                       emptydelect(parms).then(res=>{
+                         if(res.data.code==0){
+                               this.getqueuefindpage()
+                            }
+                       }) 
+                 }else{      
+                        deletequeue(parms).then(res=>{
+                                    if(res.data.code==0){
+                                          this.getqueuefindpage()
+                                    }
+                        })
+                 }
+           }
+ 
+      },
+      mounted(){
+               this.getqueuefindpage()
+      }
+}
+</script>
+<style lang="scss" scoped>
+
+</style>
+<style>
+     .el-popper .el-input{
+          width: 70px;
+     }
+            .editsubmit{
+                vertical-align: middle;
+               color: #409eff;
+        }
+        .formmenu  .el-input--suffix{
+               width:202px;
+        }
+    .el-popover{
+          min-width: 107px;
+      }
+</style>

@@ -1,0 +1,284 @@
+<template>
+  <el-row class="addmodel">
+      <el-col :span='24'>
+             <div class="navigationbar"> 
+              <span class="navigationname">发布管理<i class="el-icon-arrow-right" aria-hidden="true"></i>
+                    模型发布
+              </span>
+            </div>
+         </el-col>
+         <el-col :span="24">
+             <div class="selectmodelform">
+                <el-form :inline="true" :model="mdoelform" size='small'  label-width='100px'    class="addmodelforminline"  ref="mdoelform"  :rules="rules">
+                     <div>
+                        <el-form-item label="发布名称" prop="publishName" >
+                             <el-input v-model="mdoelform.publishName"></el-input>
+                        </el-form-item>
+                        <el-form-item label="  镜像名称" prop='publishImage'>
+                             <el-input v-model="mdoelform.publishImage" readonly="readonly"></el-input>
+                        </el-form-item>
+                     </div>
+                     <div> 
+                        <el-form-item label="选择项目"  prop="projectId">
+                            <el-select v-model="mdoelform.projectId" placeholder="选择项目" @change="changeproject">
+                                <el-option 
+                                     v-for="item in projectdata"
+                                     :key="item.id"
+                                     :label="item.projectNameZh" 
+                                     :value="item.projectId" 
+                                 ></el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="选择训练"  prop="trainingId">
+                            <el-select v-model="mdoelform.trainingId" placeholder="选择模型">
+                            <el-option 
+                                v-for="item in peojectmodeldata"
+                                :key="item.id"
+                                 :label="item.trainingName" 
+                                 :value="item.trainingId"
+                                 ></el-option>
+ 
+                            </el-select>
+                        </el-form-item>
+                   </div> 
+                   <div>
+                       <el-form-item label="发布描述">
+                         <el-input
+                            style="width:519px"
+                            type="textarea"
+                            :rows="2"
+                            placeholder="请输入内容"
+                            v-model="mdoelform.publishRemind">
+                        </el-input>
+                       </el-form-item>
+                   </div>
+                    <div>
+                         <el-form-item label="选择参数" prop="selectedOptionsscript"> 
+                                           <el-cascader
+                                              @change="changecodeval"
+                                              v-model="mdoelform.selectedOptionsscript"
+                                              :options="optionsscript"
+                                              :show-all-levels="false"
+                                               @active-item-change="handleItemChange"
+                                               :clearable="true"
+                                          ></el-cascader>
+                         </el-form-item>
+                         <el-form-item>
+                             <el-button size="mini" type="primary" @click="analysis()">解析参数</el-button>
+                         </el-form-item>
+                          <div  v-show="comprehensionshow"  style="margin-left:20px">
+                                    <el-form-item>
+                                        <span>解析无数据!请重新选择python脚本</span>
+                                    </el-form-item>
+                            </div>
+                    </div>
+                     <div    class="variablename"  v-for="(item,index) in mdoelform.comprehensionarry" :key="item.index"  >
+                                <el-form-item label="变量"  >
+                                        <el-input readonly="readonly" v-model="item.tfParamKey"> </el-input>
+                                </el-form-item>
+                                <el-form-item  label="值" 
+                                    :rules="{
+                                     required: true, message: '值不能为空', trigger: 'change'
+                                        }"  
+                                      :prop="'comprehensionarry.' + index + '.tfParamValue'"           
+                                              >
+                                           <el-input v-model="item.tfParamValue"> </el-input>
+                                </el-form-item>
+                     </div> 
+                </el-form>
+                 <div> <el-button @click="puhbishmodel" size="small" type="primary" style="float:right;margin-right: 50px ;50px;50px; "> 模型发布 </el-button>  </div>
+             </div>
+         </el-col>
+  </el-row>
+</template>
+<script>
+import{findimage,dirsAndFiles,paramanalysis,publishfindprojects,publishfindprojectstraining,publishcreatemodel} from '@/api/api'
+export default {
+        data(){
+            return{
+              comprehensionshow:false,
+              meupath:"",
+              sendcodepy:"",//发送给后台的py文件
+              optionsscript:[
+                        {
+                       value:"code",
+                       label:"code",
+                        children:[], 
+                       }
+               ],
+
+                mdoelform:{
+                            publishName:'',
+                            publishImage:'',
+                            projectId:"",
+                            trainingId:'', 
+                            selectedOptionsscript:[],
+                            comprehensionarry:[],
+                            publishRemind:'',
+                            publishExecuteShell:"",
+                            publishParamShell:"",
+                },
+                selectedOptions:[],
+                Username:'',
+                uid:'',
+                rules:{
+                       publishName:[{ required: true, message: "输入发布名称", trigger: 'blur' }],
+                       projectId:[{required: true, message: "选择项目", trigger: 'blur' }],
+                       trainingId:[{required: true, message: "选择训练模型", trigger: 'blur' }],
+                       selectedOptionsscript:[{required: true, message: "选择解析参数", trigger: 'change' }]
+                },
+                projectdata:[],
+                peojectmodeldata:[],
+            }
+      },
+      methods:{
+              getfindimage(){
+                      findimage().then(res=>{
+                             this.mdoelform.publishImage=res.data.data[0]
+                      })
+               },
+
+
+
+          changecodeval(val){//解析参数选中的值
+                      this.comprehensionarry=[]
+                      this.comprehensionshow=false//改变选择的值的之后,,
+                    this.sendcodepy=val.join('/')
+             },
+
+             handleItemChange(val){
+                      this.meupath='';
+                      this.meupath=val.join('/') 
+             //点击选择项目获得解析
+                     var parms={
+                              currentPath:this.meupath,
+                              projectId:this.mdoelform.projectId,
+                              type:'code'
+                             }  
+
+                             console.log(parms)
+           dirsAndFiles(parms).then(res=>{
+             //这个是后台的接口发的参数
+                if(res.data.code==0){
+                          var indexArr = []
+                          var data = this.optionsscript;
+                          var _this=this
+                          for(var i=0;i<val.length;i++){
+                            var flagI = "";
+                            data.map((item,index)=>{
+                              if(item.value == val[i]){
+                                indexArr.push(index)
+                                flagI = index
+                              }
+                            })
+                            data = data[flagI].children;
+                          }
+                          if(eval("_this.optionsscript["+indexArr.join("].children[")+"]").children.length > 0){
+                            return;
+                          }
+                              for(var i=0;i<res.data.data.dirs.length;i++){
+                                          eval("_this.optionsscript["+indexArr.join("].children[")+"]").children.push({
+                                                    value:res.data.data.dirs[i],
+                                                    label:res.data.data.dirs[i],
+                                                    children:[]
+                                          })       
+                                  }
+                                  for(var k=0;k<res.data.data.files.length;k++){  
+                                            eval("_this.optionsscript["+indexArr.join("].children[")+"]").children.push({
+                                                    value:res.data.data.files[k],
+                                                    label:res.data.data.files[k]
+                                            })
+                                      }
+                                  }
+                         })
+              },
+              analysis(){//解析参数
+                  var parm={
+                        pyPath:this.sendcodepy,
+                        projectId:this.mdoelform.projectId
+
+                  }
+                  this.mdoelform.comprehensionarry=[]
+                paramanalysis(parm).then(res=>{
+                       if(res.data.code==0){
+                          if(res.data.data.length==0){
+                               this.comprehensionshow=true
+                          }else{
+                              this.comprehensionshow=false
+                          }     
+                           res.data.data.forEach((item,index) => {
+                                 this.mdoelform.comprehensionarry.push(item) 
+                           });
+                           
+                       }
+                })      
+             },
+            getpublishfindprojects(){
+                  var parms={
+                       uid:this.uid
+                  }
+                publishfindprojects(parms).then(res=>{
+                      if(res.data.code==0){
+                           this.projectdata=res.data.data
+                      }
+            
+                })
+            },
+          changeproject(value){
+                  console.log(value)
+                   var parms={
+                        projectId:value
+                   }
+                   publishfindprojectstraining(parms).then(res=>{
+                         if(res.data.code==0){
+                             this.peojectmodeldata=res.data.data
+                         }
+                   })
+          },
+        puhbishmodel(){
+                    this.mdoelform.uid=this.uid
+                    this.mdoelform.userAccount=this.Username.name
+                    this.mdoelform.publishExecuteShell=this.sendcodepy
+                    this.mdoelform.publishParamShell=this.sendcodepy
+                    this.mdoelform.tfParams=this.mdoelform.comprehensionarry
+                    var parms= this.mdoelform
+                    this.$refs['mdoelform'].validate((valid) =>{
+                            publishcreatemodel(parms).then(res=>{
+                                    if(res.data.code==0){
+                                        this.$message({
+                                                type:'success',
+                                                message:"发布成功"
+
+                                        })
+                                        setTimeout(()=>{
+                                            this.$router.push("/Modelform")  
+                                        },1000)
+                                    }else{
+                                        this.$message.error(res.data.message)
+                                    }
+                             })
+                    })
+             }
+      },
+      mounted(){
+                 
+                   this.uid = sessionStorage.getItem('uid')
+                   this.Username = JSON.parse(sessionStorage.getItem("user"));
+                   this.getpublishfindprojects()
+                   this.getfindimage()
+      }
+}
+</script>
+<style lang="scss" scoped>
+     .addmodel{
+        .selectmodelform{
+             margin: 40px;
+        }   
+     }
+</style>
+<style>
+        .addmodelforminline .el-input__inner{
+                     width: 202px;
+                  }
+       
+</style>

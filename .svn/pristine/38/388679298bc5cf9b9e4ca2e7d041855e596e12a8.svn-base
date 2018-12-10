@@ -1,0 +1,127 @@
+<template>
+   <el-row> 
+           <el-col :span="24">
+              <div class="navigationbar"> 
+                <span class="navigationname">个人中心<i class="el-icon-arrow-right" aria-hidden="true"></i>
+                      日志管理
+                  </span>
+
+              </div>
+           </el-col>
+           <el-col :span="24">
+                 <div style="margin:20px">
+
+              <el-form :inline="true" :model="formlogodata" size="mini" class="demo-form-inline">
+                      <el-form-item  v-show="usertype==1">
+                        <el-input v-model="formlogodata.username" placeholder="输入用户名"></el-input>
+                      </el-form-item>
+                      <el-form-item label="起始时间:">
+                              <el-date-picker
+                                  v-model="formlogodata.formdata"
+                                  type="daterange"
+                                  value-format="yyyy-MM-dd"
+                                  range-separator="至"
+                                  start-placeholder="开始日期"
+                                  end-placeholder="结束日期">
+                            </el-date-picker>
+                      </el-form-item>
+                      <el-form-item>
+                        <el-button type="primary" @click="onSubmit">查询</el-button>
+                      </el-form-item>
+              </el-form>
+                         <el-table
+                          border
+                          size="mini"
+                          stripe
+                          :data="LogtableData"
+                          style="width: 100%">
+                          <el-table-column
+                            prop="username"
+                            label="用户名"
+                            width="180">
+                          </el-table-column>
+                          <el-table-column
+                            prop="ip"
+                            label="登录IP"
+                            width="180">
+                          </el-table-column>
+                          <el-table-column
+                          width="180"
+                            prop="createDate"
+                            label="操作时间">
+                          </el-table-column>
+                          <el-table-column
+                            prop="operation"
+                            label="操作">
+                          </el-table-column>
+                      </el-table>
+                 </div>
+           </el-col>
+          <el-col :span="24">
+              <div class="paagenumber">
+                   <el-pagination
+                        background
+                        layout="prev, pager, next, total"
+                        :page-size='pageSize'
+                        @current-change="pageIndexChange"
+                        :total="paggtatol">
+                  </el-pagination>
+              </div>
+         </el-col>
+
+   </el-row>
+</template>
+<script>
+ import{logList} from '@/api/api'
+export default {
+           data(){
+               return{
+                     usertype:'',
+                     currPage:1,
+                     pageSize:10,
+                     operation:'',
+                     username:'', 
+                     LogtableData:[],
+                     paggtatol:null,
+                     formlogodata:{
+                            formdata:[]
+                     }
+
+               }
+           },
+           methods:{
+                 getloglist(){
+                    var parms={
+                            userAccount:this.formlogodata.username,
+                            currPage:this.currPage,
+                            pageSize:this.pageSize,
+                            operation:this.operation,    
+                             startTime:this.formlogodata.formdata[0],
+                             endTime:this.formlogodata.formdata[1],
+                    }  
+                     logList(parms).then(res=>{
+                              if(res.data.code==0){
+                                   this.LogtableData=res.data.data.pageInfo.list
+                                   this.paggtatol=res.data.data.pageInfo.total
+                                   this.usertype=res.data.data.userType
+                              }
+                     })     
+
+                 },
+                 pageIndexChange(idenx){
+                        this.currPage=idenx
+                        this.getloglist() 
+                 },
+                 onSubmit(){
+                        this.getloglist()
+                 }
+
+           },
+           mounted(){
+                 this.getloglist()
+           }
+}
+</script>
+<style lang="scss" scoped>
+
+</style>

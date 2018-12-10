@@ -1,0 +1,247 @@
+<template>
+    <el-row>
+              <el-col :span="24">
+                  <div class="navigationbar"> 
+                    <span class="navigationname">资源审批管理<i class="el-icon-arrow-right" aria-hidden="true"></i>
+                          申请列表
+                      </span>
+                   </div>
+                  <div class="seachframe">
+                    <div  class="formdata">
+                            <el-form :inline="true"  size="small">
+                                  <el-form-item  >
+                                        <el-input v-model="userName"  @keyup.native.enter="seeabout()"></el-input>         
+                                  </el-form-item>
+                                  <el-form-item>
+                                    <el-button type="primary" icon="el-icon-search"  size="small" @click.native="seeabout"    >查询</el-button>
+                                  </el-form-item>
+                            </el-form>
+                      </div>
+                </div>
+            </el-col>
+            <el-col :span="24">
+                    <div style="margin:20px;">
+                              <el-table
+                                 border
+                                 size="mini"
+                                :data="usertableData"
+                                style="width: 100%">
+                                <el-table-column
+                                  label="申请日期"
+                                  width="155">
+                                 <template slot-scope="scope">
+                                     <span> {{timeFormattershowsecod(scope.row.createTime)}} </span>
+                                 </template>
+                                </el-table-column>
+                                <el-table-column
+                                  prop="userAccount"
+                                  label="用户姓名">
+                                </el-table-column>
+                                <el-table-column
+                                  prop="projectNameZh"
+                                  label="项目名称"
+                                >
+                                </el-table-column>
+                                <el-table-column
+                                  prop="globalCpu"
+                                  label="初始CPU"
+                                  width="80">
+                                </el-table-column>   
+                                <el-table-column
+                                  prop="globalGpu"
+                                  label="初始GPU"
+                                  width="80">
+                                </el-table-column>                         
+                                <el-table-column
+                                  prop="globalMemory"
+                                  label="初始内存"
+                                  width="80">
+                                </el-table-column>   
+                                <el-table-column
+                                  label="审批类型"
+                                  width="80">
+                                <template slot-scope="scope">
+                                   <span v-if="scope.row.auditType==1">训练</span>
+                                    <span v-else>发布</span>
+                                </template>
+                                </el-table-column>
+                                <el-table-column
+                                  prop="cpu"
+                                  label="申请CPU"
+                                  width="80">
+                                </el-table-column>
+                              <el-table-column
+                                  prop="gpu"
+                                  label="申请GPU"
+                                  width="80">
+                                </el-table-column>
+                                <el-table-column
+                                  prop="memory"
+                                  label="申请内存"
+                                  width="80">
+                                </el-table-column>
+                                <el-table-column
+                                  label="操作"
+                                  width="150"
+                                 >
+                                 <template slot-scope="scope">
+                                      <el-button-group> 
+                                          <span v-if="scope.row.auditStatus==0">
+                                              <el-button type="primary" size="mini"  @click="agreement(scope.row)">同意</el-button>
+                                              <el-button  type="info"  size="mini"   @click="Refusedto(scope.row)">拒绝</el-button>
+                                          </span>
+                                           <span  v-if="scope.row.auditStatus==1" >
+                                                <el-button type="success"  disabled size="mini">已同意</el-button>
+                                           </span>
+                                          <span  v-if="scope.row.auditStatus==2" >
+                                                <el-button type="info"  disabled size="mini">已拒绝</el-button>
+                                           </span>
+                                      </el-button-group>
+                                 </template>
+                                </el-table-column>
+                            </el-table>     
+                    </div>
+                  <el-dialog
+                  title="拒绝理由"
+                  :visible.sync="refousedialogVisible"
+                  width="30%"
+                  >
+                 <el-form :model="refouseValidateForm" ref="refouseValidateForm" label-width="50px" class="demo-ruleForm">
+                    <el-form-item
+                      label="原因"
+                      prop="message"
+                      :rules="[
+                        { required: true, message: '原因不能为空'},
+                      ]"
+                    >
+                      <el-input   type="textarea"  v-model="refouseValidateForm.message" ></el-input>
+                    </el-form-item>
+                 </el-form>
+                  <span slot="footer" class="dialog-footer">
+                    <el-button @click="refousedialogVisible = false" size="mini">取 消</el-button>
+                    <el-button type="primary" @click="submitrefouse" size="mini">确 定</el-button>
+                  </span>
+                </el-dialog>
+            </el-col>
+         <el-col :span='24'>
+         <div class="paagenumber">
+             <el-pagination
+                        background
+                        layout="prev, pager, next, total"
+                        :page-size='pageSize'
+                        @current-change="pageIndexChange"
+                        :total="paggtatol">
+            </el-pagination>
+         </div>
+      </el-col>
+
+    </el-row>
+</template>
+<script>
+import { timeFormattershowsecod } from "@/assets/js/common";
+import{approvelist,approveupdata} from "@/api/api"
+export default {
+          data(){
+            return{
+                paggtatol:null,
+                 refousedialogVisible:false,
+                  timeFormattershowsecod,
+                  userName:'',
+                  currPage:1,
+                  pageSize:10,
+                  usertableData:[],
+                  refouseValidateForm:{
+                         message:'',
+                  },
+                  refouse:null,
+             }
+          },
+        methods:{
+                getapprovelist(){
+                      var parms={
+                             userName:this.userName,
+                             currPage:this.currPage,
+                             pageSize:this.pageSize
+                      } 
+                     approvelist(parms).then(res=>{
+                       console.log("yonghuliebiao")
+                           console.log(res)
+                           if(res.data.code==0){
+                                 this.usertableData=res.data.data.list  
+                                 this.paggtatol=res.data.data.total
+                           }  
+                     }) 
+                },
+               agreement(index){
+                     console.log(index)
+                     var parms={
+                            auditStatus:1,
+                            auditType:index.auditType,
+                            gpu:index.gpu,
+                            memory:index.memory,
+                            cpu:index.cpu,
+                            projectId:index.projectId
+                       }
+
+                       console.log(parms)
+                     approveupdata(parms).then(res=>{
+                             
+                              console.log(res)
+                               if(res.data.code==0){
+                                     this.$message({
+                                        type:"success",
+                                        message:"已同意"
+                                     })
+                                   this.getapprovelist()   
+                               }
+                     })
+
+               },
+              seeabout(){
+                  this.getapprovelist()
+              },
+               Refusedto(index){
+                   this.refousedialogVisible=true;
+                    this.refouse={
+                            auditStatus:2,
+                            auditType:index.auditType,
+                            gpu:index.gpu,
+                            memory:index.memory,
+                            cpu:index.cpu,
+                            projectId:index.projectId
+                       }
+                   
+               },
+               submitrefouse(){
+                      this.refouse.message=this.refouseValidateForm.message
+                     this.$refs['refouseValidateForm'].validate((valid)=>{
+                         if(valid){
+                               approveupdata(this.refouse).then(res=>{
+                                   if(res.data.code==0){
+                                            this.$message('已经拒绝');
+                                            this.refousedialogVisible=false;
+                                             this.getapprovelist()
+                                    }else{
+                                        this.$message.error(res.data.message)
+                                    }
+                                  
+                               }) 
+
+                         }
+                     })
+               },
+               pageIndexChange(index){
+                       this.currPage=index
+                       this.getapprovelist()
+
+               }
+        },
+        mounted(){
+              this.getapprovelist() 
+             
+        }
+}
+</script>
+<style lang="scss" scoped>
+
+</style>

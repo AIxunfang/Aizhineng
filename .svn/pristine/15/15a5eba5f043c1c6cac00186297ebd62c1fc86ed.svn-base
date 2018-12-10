@@ -105,7 +105,7 @@ export default {
               -webkit-text-size-adjust:100%;
               //  background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
               background: url(../../assets/img/loginnackurl.jpg) no-repeat;
-            background-position: 0px -120px;
+            background-position: 0px -80px;
                 overflow: hidden;
 
          .fromtable{

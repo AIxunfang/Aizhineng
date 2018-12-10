@@ -32,9 +32,9 @@ router.beforeEach((to, from, next ) => {
     console.log(status)
     if( status=='success' ){
         if(to.path == '/Codeupload' ){
-               to.meta.keepAlive=false
+              to.meta.keepAlive=false
         }else{
-                to.meta.keepAlive=true
+            
         }
     }
   if(to.path == '/Login') {

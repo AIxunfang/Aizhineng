@@ -1,0 +1,372 @@
+<template>
+          <el-row>
+             <div class="navigationbar"> 
+               <span class="navigationname">课程资源<i class="el-icon-arrow-right" aria-hidden="true"></i>
+                      课程新增
+                </span>
+              </div>
+              <el-col :span="24">
+                     <el-col :span="12" class="formvideo">
+                        <el-form  label-position="top" label-width="80px"  :model="formvideo" size="small" :rules="rules" ref="formvideo">
+                             <el-form-item label="上传视频(只接受mp4格式)"  prop="videourlshow" ref="uploadurl">
+                                  <el-upload
+                                     class="avatar-uploader"
+                                     :action="`${baseUrl}`+'/course/upload/video'"
+                                    :show-file-list="false"
+                                    :on-success="handleAvatarSuccess"
+                                    :before-upload="beforeAvatarUpload" 
+                                    :data="dataform"
+                                     accept=".mp4"
+                                    >
+                                    <video  v-if="formvideo.videourlshow" :src="formvideo.videourlshow" class="avatar" controls="controls" id="videoplayer"></video>
+                                       <i v-else   class="el-icon-plus avatar-uploader-icon"  :class="{'el-icon-loading':this.loading==true  }">
+                                           <span v-if="this.loading==true "  >上传中......</span>
+                                       </i>
+                                 </el-upload>
+                              </el-form-item>
+                              <el-form-item label="视频名称:" prop="videoName">
+                                <el-input v-model="formvideo.videoName" placeholder="上传视频后会获取"></el-input>
+                              </el-form-item>
+                              <el-form-item label="视频描述:" prop="videoDesc">
+                                  <el-input v-model="formvideo.videoDesc"   type="textarea" :rows="2"></el-input>
+                              </el-form-item>
+                              <el-form-item label="视频难度:">
+                                  <el-radio-group v-model="formvideo.videoLevel">
+                                        <el-radio :label="1">初级</el-radio>
+                                        <el-radio :label="2">中级</el-radio>
+                                        <el-radio :label="3">高级</el-radio>
+                                  </el-radio-group>
+                              </el-form-item>
+                               <el-form-item  label="选择所属系"  prop="selectedOptions"  id="autore">
+                                    <div class="blockcaser">
+                                      <el-cascader
+                                              :options="optionselect"
+                                              v-model="formvideo.selectedOptions" 
+                                              @change="changeval"
+                                             
+                                        >
+                                      </el-cascader>
+                                    </div>
+                                    <div v-show="editisrrue">
+                                         <el-input v-model="editload"></el-input>
+                                    </div>
+                              </el-form-item>
+                              <el-form-item label="排序" prop="videoOrder">
+                                    <el-input v-model="formvideo.videoOrder"></el-input>
+                              </el-form-item>
+                        </el-form> 
+
+                          <el-button type="primary" size="small" style="float:right" @click="savedata">保存数据</el-button>
+                    </el-col>
+
+
+              </el-col>
+
+          </el-row>
+</template>
+<script>
+import {baseUrl} from '../../../static/baseurl'
+import {
+  courseStructurepage,
+  courseClassificationpage,
+  courseContentpage,
+  addvideoResource,
+  updatevideoResource,
+  listparentStructure,
+  videoResourcepage
+} from "@/api/api";
+export default {
+  data() {
+    return {
+      baseUrl,
+      editisrrue: false,
+      editload: "",
+      loading: false,
+      videotableData: [],
+      courseContentdata: [],
+      arryindex: "",
+      courseClassificationdata: [],
+
+      dataform: {
+        token: ""
+      },
+      rules: {
+        videourlshow: [
+          { required: true, message: "请长传视频", trigger: "change" }
+        ],
+
+        videoName: [
+          { required: true, message: "请输入视频名称", trigger: "change" }
+        ],
+        videoDesc: [
+          { required: true, message: "请输入视频描述", trigger: "blur" }
+        ],
+        selectedOptions: [
+          {
+            type: "array",
+            required: true,
+            message: "请选择所属体系",
+            trigger: "change"
+          }
+        ],
+        videoOrder: [
+          { required: true, message: "请输入视频名称", trigger: "blur" },
+          {
+            pattern: /^\+?[1-9][0-9]*$/,
+            message: "输入大于0的正整数"
+          }
+        ]
+      },
+      optionselect: [],
+      Stairarryindex: [],
+
+      formvideo: {
+        videourlshow: "",
+        videoName: "",
+        videoDesc: "",
+        videoLevel: 1,
+        videoOrder: "",
+        videoUrl: "",
+        videoUri: "",
+        videoDuration: "",
+        courseContentId: "",
+        selectedOptions: []
+      }
+    };
+  },
+  methods: {
+    handleAvatarSuccess(res, file) {
+      this.loading = false;
+      this.formvideo.videourlshow = URL.createObjectURL(file.raw);
+      if (file.status == "success") {
+        this.$refs.uploadurl.clearValidate();
+        const filename = file.name.slice(0, file.name.length - 4);
+        this.formvideo.videoName = filename;
+        this.formvideo.videoUrl = file.response.data.videoUrl;
+        this.formvideo.videoUri = file.response.data.videoUri;
+        setTimeout(() => {
+          const time = document.getElementById("videoplayer").duration / 60;
+          this.formvideo.videoDuration = Math.round(time);
+          console.log(this.formvideo.videoDuration);
+        }, 800);
+      }
+    },
+    changeval(val) {
+      this.formvideo.courseContentId = this.formvideo.selectedOptions[2];
+    },
+    focusdata() {
+      var params = {
+        currentPage: 1,
+        pageSize: 100
+      };
+      courseStructurepage(params).then(res => {
+        if (res.data.code == 0) {
+          let lists = res.data.data.list;
+          lists.forEach((item, index) => {
+            this.optionselect.push({
+              label: item.courseStructureName,
+              value: item.courseStructureId,
+              children: []
+            });
+            this.Stairarryindex = this.optionselect;
+          });
+          this.Stairarryindex.forEach((item, indexcas) => {
+            var parms = {
+              currentPage: 1,
+              pageSize: 1000,
+              courseStructureId: this.optionselect[indexcas].value
+            };
+            courseClassificationpage(parms).then(res => {
+              let cascChid = [];
+              cascChid = res.data.data.list;
+              var _this = this;
+              if (res.data.code == 0) {
+                cascChid.forEach((item, index) => {
+                  this.optionselect[indexcas].children.push({
+                    label: item.courseClassificationName,
+                    value: item.courseClassificationId,
+                    children: []
+                  });
+                  var parms = {
+                    currentPage: 1,
+                    pageSize: 1000,
+                    courseClassificationId: this.optionselect[indexcas]
+                      .children[index].value
+                  };
+                  let conentchid = [];
+                  courseContentpage(parms).then(res => {
+                    conentchid = res.data.data.list;
+                    conentchid.forEach((item, contentindex) => {
+                      this.optionselect[indexcas].children[index].children.push(
+                        {
+                          label: item.courseContentName,
+                          value: item.courseContentId
+                        }
+                      );
+                    });
+                  });
+                });
+              }
+            });
+          });
+        }
+      });
+    },
+    beforeAvatarUpload(file) {
+      this.loading = true;
+      const token = sessionStorage.getItem("token");
+      this.dataform.token = token;
+    },
+    savedata() {
+      var params = {
+        courseContentId: this.formvideo.courseContentId,
+        videoName: this.formvideo.videoName,
+        videoDesc: this.formvideo.videoDesc,
+        videoUrl: this.formvideo.videoUrl,
+        videoUri: this.formvideo.videoUri,
+        videoDuration: Number(this.formvideo.videoDuration),
+        videoOrder: Number(this.formvideo.videoOrder),
+        videoLevel: this.formvideo.videoLevel
+      };
+      if (this.$route.params.isadd == true) {
+        this.$refs["formvideo"].validate(valid => {
+          if (valid) {
+            addvideoResource(params).then(res => {
+              if (res.data.code == 0) {
+                this.$confirm(" 添加成功!是否继续添加?", "提示", {
+                  confirmButtonText: "确定",
+                  cancelButtonText: "返回列表",
+                  type: "success"
+                })
+                  .then(() => {
+                    this.$refs["formvideo"].resetFields();
+                    this.formvideo.videourlshow = "";
+                  })
+                  .catch(() => {
+                    this.$router.push("/VideoResource");
+                  });
+              } else {
+                this.$message.error("参数错误或重复添加失败");
+              }
+            });
+          }
+        });
+      } else {
+        updatevideoResource(this.formvideo).then(res => {
+          if (res.data.code == 0) {
+            this.$message({
+              type: "success",
+              message: "修改成功"
+            });
+            setTimeout(() => {
+              this.$router.push("/VideoResource");
+            }, 1000);
+          }
+        });
+      }
+    },
+    getvideoResourcepage() {
+      var params = {
+        currentPage: 1,
+        pageSize: 1000000000
+      };
+      videoResourcepage(params).then(res => {
+        if (res.data.code == 0) {
+          this.videotableData = res.data.data.list;
+
+          console.log(this.videotableData[this.$route.params.isadd]);
+          this.formvideo.videoId = this.videotableData[
+            this.$route.params.isadd
+          ].videoId;
+          this.formvideo.courseContentId = this.videotableData[
+            this.$route.params.isadd
+          ].courseContentId;
+          this.formvideo.videoName = this.videotableData[
+            this.$route.params.isadd
+          ].videoName;
+          this.formvideo.videoDesc = this.videotableData[
+            this.$route.params.isadd
+          ].videoDesc;
+          this.formvideo.videoUrl = this.videotableData[
+            this.$route.params.isadd
+          ].videoUrl;
+          this.formvideo.videoUri = this.videotableData[
+            this.$route.params.isadd
+          ].videoUri;
+          this.formvideo.videoDuration = this.videotableData[
+            this.$route.params.isadd
+          ].videoDuration;
+          this.formvideo.videoOrder = this.videotableData[
+            this.$route.params.isadd
+          ].videoOrder;
+          this.formvideo.videoLevel = this.videotableData[
+            this.$route.params.isadd
+          ].videoLevel;
+          this.formvideo.videourlshow =
+            `${baseUrl}`+"/file/" +
+            `${this.videotableData[this.$route.params.isadd].videoUrl} `;
+
+          var parms = {
+            type: 4,
+            id: this.videotableData[this.$route.params.isadd].videoId
+          };
+
+          listparentStructure(parms).then(res => {
+            if (res.data.code == 0) {
+              this.formvideo.selectedOptions = [
+                res.data.data[0].courseStructureId,
+                res.data.data[1].courseClassificationId,
+                res.data.data[2].courseContentId
+              ];
+            }
+          });
+        }
+      });
+    }
+  },
+  mounted() {
+    console.log(this.$route.params.isadd);
+    if (this.$route.params.isadd !== true) {
+      this.getvideoResourcepage();
+    }
+    this.focusdata();
+  }
+};
+</script>
+ <style  lang="scss"    scoped>
+.formvideo {
+  margin: 20px;
+}
+</style>
+<style>
+.formvideo .el-form-item__label {
+  padding: 0px 0px 0px 0px;
+}
+.blockcaser .el-cascader {
+  width: 100%;
+}
+.avatar-uploader .el-upload {
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.avatar-uploader .el-upload:hover {
+  border-color: #409eff;
+}
+.avatar-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 178px;
+  height: 178px;
+  line-height: 178px;
+  text-align: center;
+}
+.avatar {
+  width: 178px;
+  height: 178px;
+  display: block;
+}
+</style>
+

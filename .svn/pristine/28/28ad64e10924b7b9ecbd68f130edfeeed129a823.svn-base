@@ -1,0 +1,281 @@
+<template>
+ <el-row>
+         <el-col :span="24">
+           <div class="navigationbar"> 
+              <span class="navigationname">资源监控<i class="el-icon-arrow-right" aria-hidden="true"></i>
+                   资源监控
+              </span>
+            </div>
+        </el-col>
+        <el-col :span="24" style="padding:0px 20px">
+                <el-col :span="8">
+                        <ve-bar :data="rouce_bar_chartData"  :data-empty="dataEmptybar"    :height="dataheight" :settings="rouce_bar_chartSettings"  :extend="chartExtend"></ve-bar>  
+                </el-col>
+                <el-col :span="10" >
+                        <ve-pie :data="chartDatataring"  :data-empty="dataEmptypietarin"  :height="dataheight"  :settings="chartSettingspie" ></ve-pie>
+                         <div  style='text-align:center'>训练</div>
+                </el-col>
+                <el-col :span="6">
+                        <ve-pie :data="chartDatapublish" :data-empty="dataEmptypub"  :height="dataheight"  :settings="chartSettingspie"   :legend-visible="false" ></ve-pie>   
+                        <div  style='text-align:center'>发布</div>
+                </el-col>
+               
+        </el-col>
+       <el-col :span="24" style="padding: 20px 20px" >
+            <el-form :inline="true"   size="mini">
+                        <el-form-item>
+                                <el-select v-model="modeltype"  @change="changedata" >
+                                        <el-option label="训练" value="1"></el-option>
+                                        <el-option label="发布" value="2"></el-option>
+                                </el-select>
+                        </el-form-item>
+                        <el-form-item>
+                                 <el-select v-model="modelState"  @change="changedata" >
+                                        <el-option label="新建" value="1"></el-option>
+                                        <el-option label="进行中" value="2"></el-option>
+                                         <el-option label="成功" value="3"></el-option>
+                                          <el-option label="失败" value="4"></el-option>
+                                          <el-option label="队列中" value="5"></el-option>
+                                          <el-option label="已提交" value="6" v-show="modeltype==2"></el-option>
+                                </el-select>
+                        </el-form-item>
+                        <el-form-item>
+                                <el-input v-model="keyword" placeholder="用户名查询"></el-input>
+                        </el-form-item>
+                        <el-form-item>
+                             <el-button type="primary" @click="Seachuser" >查询</el-button>
+                        </el-form-item>
+         </el-form>   
+                <el-table
+                          border
+                          size="mini"
+                        :data="rouce_user_tableData"
+                        style="width: 100%">
+                        <el-table-column
+                                prop="userAccount"
+                                label="账号名称"
+                                width="180">
+                        </el-table-column>
+                        <el-table-column
+                                :prop="modeltype==1 ? 'projectNameZh' : 'projectName' "
+                                label="项目名称"
+                                width="180">
+                        </el-table-column>
+                         <el-table-column
+                                :prop="modeltype==1 ? 'trainingName' :'publishName'"
+                                :label="modeltype==1? '训练名称' : '发布名称'  ">
+
+                        </el-table-column>
+                         <el-table-column
+                            label="开始时间">
+                           <template slot-scope="scope">
+                                <span v-if="modeltype==1"> 
+                                   {{timeFormattershowsecod(scope.row.trainingCreateTime)}}
+                               </span> 
+                             <span v-else>
+                                   {{timeFormattershowsecod(scope.row.publishTime)}}   
+                             </span>
+                           </template>
+
+                        </el-table-column>
+                      <el-table-column
+                                :label="modelState==2&&modeltype==1?'操作':'结束时间'">
+                            <template slot-scope="scope">
+                                 <span v-if='modeltype==1' >
+                                              <span v-if="scope.row.trainingEndTime==null"></span>
+                                       <span v-else>
+                                           {{timeFormattershowsecod(scope.row.trainingEndTime)}}  
+                                       </span>
+                                       
+                                 </span>
+                                 <span v-else>
+                                        {{timeFormattershowsecod(scope.row.publishTime)}}   
+                                 </span>
+                               <span   v-if='modeltype==1&&modelState==2 ' >
+                                          <el-button type="primary" size='mini' @click='stoptaring(scope.row)'  >终止</el-button>
+                              </span>    
+
+                           </template>
+                        </el-table-column>
+                 </el-table>
+       </el-col>
+          <el-col :span="24">
+              <div class="paagenumber">
+                   <el-pagination
+                        background
+                        layout="prev, pager, next, total"
+                        :page-size='pageSize'
+                        @current-change="pageIndexChange"
+                        :total="paggtatol">
+                  </el-pagination>
+              </div>
+         </el-col>
+
+ </el-row>
+</template>
+<script>
+import { timeFormattershowsecod } from "@/assets/js/common";
+import { findresource, monitorfindpage,trainingterminate } from "@/api/api";
+export default {
+  data() {
+    return {
+      dataEmptybar: false,
+      dataEmptypietarin: false,
+      dataEmptypub: false,
+      paggtatol: null,
+      timeFormattershowsecod,
+      rouce_user_tableData: [],
+      currentPage: 1,
+      pageSize: 5,
+      modeltype: "1",
+      modelState: "3",
+      keyword: "",
+      dataheight: "240px",
+      chartSettingspie: {
+        radius: 60,
+        offsetY: 150
+      },
+      chartDatataring: {
+        columns: ["状态", "数量"],
+        rows: []
+      },
+      chartDatapublish: {
+        columns: ["状态", "数量"],
+        rows: []
+      },
+      rouce_bar_chartSettings: {
+        stack: {
+          xxx: ["使用", "未使用"]
+        }
+      },
+      rouce_bar_chartData: {
+        columns: ["类型", "使用", "未使用"],
+        rows: []
+      },
+      chartExtend: {
+        series(v) {
+          v.forEach(i => {
+            i.barWidth = 10;
+          });
+          return v;
+        },
+        color: ["red", "#409eff"],
+        offsetY: 100
+      }
+    };
+  },
+  methods: {
+    getrouce() {
+      findresource().then(res => {
+        console.log("-----ziyuan----");
+        console.log(res);
+        if (res.data.code == 0) {
+          this.rouce_bar_chartData.rows = [
+            {
+              类型: "训练cpu",
+              使用: res.data.data.all_training_used_cpu,
+              未使用:
+                res.data.data.all_training_limit_cpu -
+                res.data.data.all_training_used_cpu
+            },
+            {
+              类型: "发布cpu",
+              使用: res.data.data.all_publish_used_cpu,
+              未使用:
+                res.data.data.all_publish_limit_cpu -
+                res.data.data.all_publish_used_cpu
+            },
+            {
+              类型: "训练gpu",
+              使用: res.data.data.all_training_used_gpu,
+              未使用:
+                res.data.data.all_training_limit_gpu -
+                res.data.data.all_training_used_gpu
+            },
+            {
+              类型: "发布gpu",
+              使用: res.data.data.all_publish_used_gpu,
+              未使用:
+                res.data.data.all_publish_limit_gpu -
+                res.data.data.all_publish_used_gpu
+            },
+            {
+              类型: "训练内存",
+              使用: res.data.data.all_training_used_memory,
+              未使用:
+                res.data.data.all_training_limit_memory -
+                res.data.data.all_training_used_memory
+            },
+            {
+              类型: "发布内存",
+              使用: res.data.data.all_publish_used_memory,
+              未使用:
+                res.data.data.all_publish_limit_memory -
+                res.data.data.all_publish_used_memory
+            }
+          ];
+          this.chartDatataring.rows = [
+            { 状态: "成功", 数量: res.data.data.all_success_training },
+            { 状态: "训练中", 数量: res.data.data.all_in_training },
+            { 状态: "失败", 数量: res.data.data.all_error_training },
+            { 状态: "列队中", 数量: res.data.data.all_in_queue_training },
+            { 状态: "新建", 数量: res.data.data.all_new_training },
+            { 状态: "已提交", 数量: res.data.data.all_submit_training }
+          ];
+          this.chartDatapublish.rows = [
+            { 状态: "成功", 数量: res.data.data.all_success_publish },
+            { 状态: "发布中", 数量: res.data.data.all_in_publish },
+            { 状态: "失败", 数量: res.data.data.all_error_publish },
+            { 状态: "列队中", 数量: res.data.data.all_in_queue_publish },
+            { 状态: "新建", 数量: res.data.data.all_new_publish },
+            { 状态: "已提交", 数量: res.data.data.all_submit_publish }
+          ];
+        }
+      });
+    },
+    changedata() {
+      this.getmonitorfindpage();
+    },
+    getmonitorfindpage() {
+      var parms = {
+        currentPage: this.currentPage,
+        pageSize: 5,
+        status: Number(this.modelState),
+        type: Number(this.modeltype),
+        keyword: this.keyword
+      };
+      monitorfindpage(parms).then(res => {
+        if (res.data.code == 0) {
+          this.rouce_user_tableData = res.data.data.list;
+          this.paggtatol = res.data.data.total;
+        }
+      });
+    },
+  stoptaring(index){
+            var parms={
+                    trainingId: index.trainingId
+              }   
+            trainingterminate(parms).then(res=>{
+                  if(res.data.code==0){
+                      this.getmonitorfindpage()    
+                  }else{
+                        this.$message.error(res.data.message)
+                  }
+            }) 
+  },
+    Seachuser() {
+      this.getmonitorfindpage();
+    },
+    pageIndexChange(index) {
+      this.currentPage = index;
+      this.getmonitorfindpage();
+    }
+  },
+  mounted() {
+    this.getrouce();
+    this.getmonitorfindpage();
+  }
+};
+</script>
+<style lang="scss" scoped>
+</style>
