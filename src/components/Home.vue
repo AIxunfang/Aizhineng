@@ -166,7 +166,7 @@ export default {
       passwordrules: {
         oldpassword: [
           { required: true, message: "请输入原始密码", trigger: "blur" }
-        ],
+         ],
         newpassword: [
           { required: true, message: "请输入新密码", trigger: "blur" },
           { min: 6, max: 20, message: "密码最短6位最长20位", trigger: "blur" },
