@@ -47,9 +47,7 @@
                                 </span>
                             </div>
                             <div class="projectdiecribetion"><span>模块描述:</span>{{item.trainingRemind}}</div>
-                              <el-tooltip :content="item.projectNameZh" placement="top-start" effect="light">     
                                <div class="projectdiecribetion"><span>所属项目:</span>{{item.projectNameZh}}</div>
-                              </el-tooltip>
                          </div>
                   </div>
                    <div class="projectbottom">

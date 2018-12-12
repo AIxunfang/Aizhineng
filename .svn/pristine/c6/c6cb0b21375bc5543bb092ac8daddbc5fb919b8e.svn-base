@@ -190,7 +190,6 @@
      display: inline-block;
       width: 100%;
       height:116px;
-      border-radius: 5px;
 }
 .courseStructureName{
  
@@ -202,7 +201,7 @@
       margin-top: 5px;
       border-bottom: solid  #d8d8d8;
       border-width: thin;
-      
+
 }
 .coursename{
     color:#3dacf3;
@@ -237,8 +236,4 @@
 }
 .el-badge__content.is-dot{
     margin-top:10px;
-}
-.has-gutter{
-    font-size: smaller;
-    font-family: '微软雅黑';
 }
