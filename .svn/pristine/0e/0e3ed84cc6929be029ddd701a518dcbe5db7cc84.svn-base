@@ -1,0 +1,232 @@
+<template>
+   <el-row class="uploadpage">
+     <el-col :span="24">
+         <el-col :span='24'>
+             <div class="navigationbar"> 
+              <span class="navigationname">项目管理<i class="el-icon-arrow-right" aria-hidden="true"></i>
+                   项目列表
+              </span>
+            </div>
+            <div class="seachframe">
+                 <div  class="formdata">
+                        <el-form :inline="true" >
+                              <el-form-item  >
+                                    <el-input v-model="projectName"></el-input>         
+                              </el-form-item>
+                              <el-form-item>
+                                <el-button type="primary" icon="el-icon-search"  size="small"  @click="seeabout" >查询</el-button>
+                              </el-form-item>
+                        </el-form>
+                   </div>
+            </div>
+      </el-col> 
+      <el-col :span="24">
+              <div class="projectaddbox  projectmodel">
+                    <div class="prijectaddpic"  @click="addrouter"></div>
+              </div>
+
+               <template  v-for="(item,index) in projectdata"  >
+                   <div  :key="item.id"    class="projectmodel">
+                  <div  class="projectdiscrb">
+                          <div class="projectdimg">
+                               <img  v-show='item.dataDirectory==0'   src="../../assets/img/personal.png" alt="文件logo" class="massterpic">
+                               <img  v-show='item.dataDirectory==1'   src="../../assets/img/public.png" alt="文件logo" class="massterpic">
+                         </div>
+                         <div  class="projectdisright">
+                           <el-tooltip :content="item.projectNameZh" placement="top-start" effect="light">
+                            <div  class="projectName">
+                                           <span class="project">  {{item.projectNameZh}}</span> 
+                                    <div style="display:inline-block; color:#67c23a;float:right">{{item.releaseStatus==1 ? '已发布': ''}}</div>
+                            </div>
+                          </el-tooltip>
+                            <div class="projectdiecribetion"><span>项目描述:</span>{{item.projectDesc}}</div>
+                               <!-- <div class="projectdiecribetion"><span> {{item.dataDirectory==0 ? '私有' : '公有'}}路径:</span>{{item.projectPublicPath}}</div> -->
+                               <div class="projectdiecribetion"><span> 创建时间:</span>{{timeFormattershowsecod(item.createTime)}}</div>
+                         </div>
+                  </div>
+                   <div class="projectbottom">
+                         <div class="menukey">
+                             <el-button  size="small"  icon="el-icon-edit-outline" @click="edititem(index)"  >编辑</el-button>
+                        </div>
+                          <div class="menukey">
+                                  <el-button  size="small"  icon="el-icon-delete"  @click="delectproject(index)">删除</el-button>
+                        </div>                        
+                          <div class="menukey">
+                             <el-button  size="small"  icon="el-icon-search" @click="Detailelook(index)">数据管理</el-button>
+                        </div>   
+                   </div>
+              </div>
+        </template>
+      </el-col>
+     </el-col>
+      <el-col :span='24'>
+              <page-compent  :pageSize='pageSize'     :pagetotal='paggtatol' @fanye="pageIndexChange" ></page-compent>
+      </el-col>
+   </el-row>
+</template>
+<script>
+import {projectlist,deleteprojectId} from "@/api/api" 
+import { timeFormattershowsecod} from "@/assets/js/common";
+import  pageCompent from '@/components/pagination'
+export default {
+      components:{
+            pageCompent
+      },
+        data(){
+          return{
+                timeFormattershowsecod,
+                projectName:'',
+                currPage:1,
+                pageSize:8,
+                projectdata:[],//项目数组
+                paggtatol:null,
+          }
+        },
+        methods:{
+                getprojectlist(){
+                      var parms={
+                            currPage:this.currPage,
+                            pageSize:this.pageSize,
+                            projectName:this.projectName,
+                      }
+                    projectlist(parms).then(res=>{
+                          if(res.data.code==0){
+                                 this.projectdata=res.data.data.list
+                                 this.paggtatol=res.data.data.total
+                          }
+                    })
+                },
+                seeabout(){//
+                     this.getprojectlist()
+                },
+               addrouter(){//点击添加,路由跳转
+                     this.$router.push('/AddProject')   
+                      sessionStorage.setItem('judge',  JSON.stringify({editjudge:true}))
+               },
+               Detailelook(index){//点击进详情页面
+                     this.$router.push('/projectdetail')  
+                      sessionStorage.setItem('prodetail',JSON.stringify(this.projectdata[index]))
+               },
+              pageIndexChange(index){//翻页
+                    this.currPage=index
+
+                    this.getprojectlist()    
+              },
+              delectproject(index){//删除项目
+                       var parms={
+                             projectId:this.projectdata[index].projectId
+                       }   
+                      this.$confirm('此操作将永久删除该项目, 是否继续?', '提示', {
+                                                confirmButtonText: '确定',
+                                                cancelButtonText: '取消',
+                                                type: 'warning'
+                                              }).then(() => {
+                                              deleteprojectId(parms).then(res=>{
+                                                            console.log(res)
+                                                    if(res.data.code==0){
+                                                               this.getprojectlist()
+                                                           }else{
+                                                               this.$message.error(res.data.message);
+                                                           }
+                                                      })
+                                              }).catch(() => {
+                                                this.$message({
+                                                  type: 'info',
+                                                  message: '已取消删除'
+                                                });          
+                                              }); 
+                    },
+                 edititem(index){//编辑项目
+                      this.$router.push({name:'editproject', params:{id:JSON.stringify(this.projectdata[index])}})
+                   }
+           },
+        mounted(){
+             this.getprojectlist()
+        }
+}
+</script>
+<style lang="scss" scoped>
+
+    .uploadpage{
+       .projectaddbox{
+            line-height: 139px;
+            text-align: center;
+            .prijectaddpic{
+                  display: inline-block;
+                  width: 65px;
+                  height: 65px;
+                  background: url(../../assets/img/add.png);
+                  vertical-align:middle;
+                  cursor:pointer;
+            }
+       }
+       .projectmodel{
+              border: 1px solid #e4e4e4;
+              margin:20px 0px 0px 20px;
+              float: left;
+              width: 357px;
+              height: 139px;
+              border-radius: 5px;
+              .projectdiscrb{
+                   height: 82px;
+                   border-bottom: 1px solid #e4e4e4;
+                   .massterpic{
+                      vertical-align: middle;
+                   }
+                   .projectdimg{
+                            display: inline-block;
+                            vertical-align: top;
+                            width: 97px;
+                            height: 83px;
+                            line-height: 83px;
+                            text-align: center;
+                   }
+                   .projectName{
+                       margin-top: 5px;
+                       display: inline-block;
+                       font-family: "Microsoft YaHei";
+                       color:#666666;
+                       font-size:12px;
+                       width:250px;
+                       text-overflow:ellipsis;//值为clip表示剪切，ellipsis时为显示省略号
+                        overflow:hidden; 
+                        white-space:nowrap;
+                   }
+                   .projectdiecribetion{
+                            display: inline-block;
+                            width:250px;
+                            font-size:12px;
+                            color:#989898;
+                            margin-top:5px;
+                            text-overflow:ellipsis;//值为clip表示剪切，ellipsis时为显示省略号
+                            overflow:hidden; 
+                            white-space:nowrap;
+                   }
+                   .projectdisright{
+                           display: inline-block;
+                           width: 250px;
+                           height: 83px;
+                   }
+              }
+              .projectbottom{
+                  height:57px;
+                  width:100%;
+                  .menukey{
+                       width:115px;
+                       display: inline-block;
+                       height: 57px;
+                       text-align: center;
+                       line-height: 57px;
+                       .el-button{
+                         border: none;
+                       }
+
+                  }
+              }
+
+       }
+
+    }
+
+</style>
+

@@ -1,0 +1,502 @@
+<template>
+<el-container>
+            <el-aside :width="adisewidth">
+                <el-menu
+                      :collapse="isCollapse"
+                      :default-active='$route.path' 
+                      active-text-color="#f18f17"
+                      text-color='#758c97'
+                      :unique-opened="true" 
+                      @select="selectmenu"
+                     >
+                  <div class="collapseicon"> <img src="../assets/img/logos.png" style="vertical-align:middle;width:28px;margin-left:10px;" />     <span  class="logoname"  v-show="this.isCollapse==false" >讯方AI学习计算平台</span></div>
+                    <template v-for=" (item,index) in routerurl">
+                      <el-menu-item :key="item[0].routeUrl" :index='item[0].routeUrl' v-if="item[0].secondPermissionList.length==0">
+                            <template slot='title'>
+                            <i  :class="item[0].permissionIcon" class="fa  menuicon"></i>
+                            <span>
+                                {{item[0].permissionName}}
+                            </span>
+                            </template>
+                        </el-menu-item>
+                            <el-submenu  :key="item.index"  :index='String(index)'   v-if="item[0].secondPermissionList.length !==0"    >
+                             <template slot='title'>
+                               <i  :class="item[0].permissionIcon" class="fa  menuicon"></i>   <span >{{item[0].permissionName}}</span>
+                            </template>
+                            <el-menu-item :key="item.index"  :index='item.routeUrl' v-for="item in item[0].secondPermissionList">
+                               <i  :class="item.permissionIcon" class="fa  menuicon"></i>{{item.permissionName}}
+                            </el-menu-item>
+                        </el-submenu> 
+                    </template>
+                </el-menu>
+            </el-aside>
+    <el-container>
+        <el-header  >
+             <span v-show="noiceshaow">
+              <i class="fa fa-volume-down fa-2x" aria-hidden="true" style="position:absolute;line-height: 60px;margin-left: 73px; "></i>
+               <P class="nocielan"><span class="nocicontent">{{ conctentnoice}}</span>  </P>
+               </span>
+
+                <i  class="fa fa-outdent"  aria-hidden="true"  @click="foldmenu" ></i>
+                  <div class='Exitoutfather'>
+                        <el-popover
+                           width="350"
+                            placement="bottom"
+                            trigger="click">
+                             <img src="../assets/img/goread.png"  style="margin-right:10px;cursor:pointer"  @click="markread" >
+                             <img src="../assets/img/unread.png" style="cursor:pointer"  @click="unread" >
+
+                            <el-table :data="gridData" height="150"  empty-text="暂无通知" size="mini" :highlight-current-row='true'>
+
+                                <el-table-column width="120"  label="通知">
+                                     <template slot-scope="scope">
+                                         <el-popover trigger="click" placement="top">
+                                             <span>{{scope.row.notifyContent}}</span>
+                                            <div slot="reference" class="name-wrapper" style="cursor:pointer;">
+                                               <el-badge :is-dot='scope.row.visable' class="item" ><span  @click="looknoice(scope.row)"> {{scope.row.notifyContent.slice(0,5)+'...'}}</span> </el-badge>
+                                             </div>
+                                         </el-popover>
+                                     </template>  
+                                </el-table-column>
+                                <el-table-column width="160" property="date" label="日期">
+                                    <template slot-scope="scope">
+                                          {{timeFormattershowsecod(scope.row.notifyTime)}}
+                                    </template>
+                                </el-table-column>
+                                <el-table-column width="50" property="address" >
+                                       <template slot-scope="scope" >
+                                             <i class="el-icon-error" style="cursor:pointer" @click="delectnoice(scope.row)"></i>   
+                                       </template>
+                                </el-table-column>
+                            </el-table>
+                          <span  class="noice"  slot="reference">
+                            <el-badge   :is-dot="noicemessage" class="item">
+                                 <i class="fa fa-bell-o fa-2x" aria-hidden="true" @click="findnoice"></i>
+                            </el-badge>
+                           </span>
+                       </el-popover>
+                        <span class="UserName">{{Username.name}}</span>
+                        <el-dropdown  @command="handleCommand"  trigger="click">   
+                          <span class="el-dropdown-link">
+                           <i class="fa fa-user-circle fa-2x Exitoutchidren" aria-hidden="true"  ></i> 
+                          </span>
+                            <el-dropdown-menu slot="dropdown">  
+                                <el-dropdown-item command="个人信息"><i class="fa fa-user-o dropmessage" aria-hidden="true"></i>个人信息</el-dropdown-item>
+                                <el-dropdown-item command="退出登录" divided><i class="fa fa-power-off dropmessage" aria-hidden="true"></i>退出登录</el-dropdown-item>   
+                            </el-dropdown-menu>
+                        </el-dropdown>
+                  </div>
+        </el-header>
+        <el-main>
+            <!-- <keep-alive  include="progress-Bar">
+                    <progress-Bar ></progress-Bar>
+            </keep-alive> -->
+          <div style="width:100%;height:20px ;position:fixed;z-index:99; float:right;" >
+                       <keep-alive  include="progress-Bar">
+                        <progress-Bar  :percentage='data.progress' :progressshow='data.progressshow' :noiceuser='data.noiceuser' ></progress-Bar>
+                   </keep-alive>
+            </div> 
+                 <keep-alive>
+                    <router-view v-if="$route.meta.keepAlive">
+                    </router-view>
+                 </keep-alive>
+                 <router-view v-if="!$route.meta.keepAlive"></router-view> 
+            <el-dialog 
+                title="个人信息"
+               :visible.sync="dialogmessage"
+                width="30%">
+                  <el-form :model="formInline" :rules="passwordrules"  ref="passwordrules"   class="demo-form-inline" label-width="100px">
+                    <el-form-item label="用户名">
+                        <el-input  v-model="formInline.UserName" :disabled="true" ></el-input>
+                    </el-form-item>
+                    <el-form-item  label="原始密码"  prop="oldpassword">
+                          <el-input   v-model="formInline.oldpassword"  type="password"  placeholder="6~20位非空白字符"></el-input>
+                    </el-form-item>
+                    <el-form-item label="新密码"    prop="newpassword">
+                           <el-input   v-model="formInline.newpassword" placeholder="6~20位非空白字符" ></el-input>
+                    </el-form-item>
+                </el-form>
+                   <span slot="footer" class="dialog-footer">
+                        <el-button @click="dialogmessage = false" size="mini">取 消</el-button>
+                        <el-button type="primary" size="mini" @click="Submitpassword"  >确 定</el-button>
+                    </span>
+            </el-dialog>
+        </el-main>
+    </el-container>
+</el-container>
+</template>
+<script>
+import progressBar from '@/components/progressbar'
+import { timeFormattershowsecod } from "@/assets/js/common";
+import Bus from '@/components/bus.js'
+import {
+  menulist,
+  notifynumber,
+  indexnotifys,
+  notifyupdate,
+  notifydelect,
+  announcementweb,
+  updatepassword
+} from "@/api/api";
+export default {
+       components:{
+           progressBar //组建引入
+       },
+  data() {
+    return {
+      data:{},
+      noiceshaow: false,
+      conctentnoice: "",
+      status: "",
+      timeFormattershowsecod,
+      gridData: [],
+      noicedialogVisible: false,
+      noicemessage: true,
+      valuetouter: "",
+      isCollapse: false,
+      adisewidth: "200px",
+      Username: "", 
+      dialogmessage: false, 
+      tocken: null,
+      formInline: {
+        UserName: "",
+        oldpassword: "",
+        newpassword: ""
+      },
+      passwordrules: {
+        oldpassword: [
+          { required: true, message: "请输入原始密码", trigger: "blur" }
+         ],
+        newpassword: [
+          { required: true, message: "请输入新密码", trigger: "blur" },
+          { min: 6, max: 20, message: "密码最短6位最长20位", trigger: "blur" },
+          { pattern: /^[a-zA-Z0-9_]{0,}$/, message: "不能输入中文" }
+        ]
+      },
+      routerurl: {} 
+    };
+  },
+     created() {
+    
+      // 用$on监听事件并接受数据
+      Bus.$on('send', (data) => {
+               this.data=data
+      })
+    },
+
+
+ 
+  methods: {
+    getnoice() {
+      announcementweb().then(res => {
+        if (res.data.code == 0) {
+          this.conctentnoice = res.data.data.announcementContent;
+          if (res.data.data.announcementStatus == 1) {
+            this.noiceshaow = true;
+          } else {
+            this.noiceshaow = false;
+          }
+        }
+      });
+    },
+
+    getindexnotifys() {
+      var params = {
+        currentPage: 1,
+        pageSize: 1000,
+        status: this.status
+      };
+      indexnotifys(params).then(res => {
+        if (res.data.code == 0) {
+          this.gridData = res.data.data.list;
+          this.gridData.forEach((item, index) => {
+            if (item.notifyStatus == 2) {
+              item.visable = true;
+            } else {
+              item.visable = false;
+            }
+          });
+        }
+      });
+    },
+    delectnoice(index) {
+      var parms = {
+        notificationId: index.notifyId
+      };
+      notifydelect(parms).then(res => {
+        if (res.data.code == 0) {
+          this.getindexnotifys();
+          this.getnoice()
+
+        }
+      });
+    },
+    markread() {
+      this.status = 1;
+      this.getindexnotifys();
+    },
+    unread() {
+      this.status = 2;
+      this.getindexnotifys();
+    },
+    findnoice() {
+      //查看
+      this.noicedialogVisible = true;
+      this.getindexnotifys();
+    },
+    looknoice(index) {
+      var parms = {
+        status: 1,
+        notificationId: index.notifyId
+      };
+      notifyupdate(parms).then(res => {
+      });
+      this.getindexnotifys();
+    },
+
+    getnotifynumber() {
+      //消息显示红点
+      notifynumber().then(res => {
+        if (res.data.code == 0) {
+          if (res.data.data.unread == 0) {
+            this.noicemessage = false;
+          } else {
+            this.noicemessage = true;
+          }
+        }
+      });
+    },
+
+    //折叠菜单
+    foldmenu() {
+      if (this.isCollapse == false) {
+        this.isCollapse = true;
+        this.adisewidth = "65px";
+      } else {
+        this.isCollapse = false;
+        console.log("2222");
+        this.adisewidth = "200px";
+      }
+    },
+    handleCommand(command) {
+      if (command == "退出登录") {
+        this.$router.push("/Login");
+      } else if (command == "个人信息") {
+        this.formInline.UserName = this.Username.name;
+        this.dialogmessage = true;
+      }
+    },
+    Submitpassword() {
+        var parms={
+               userAccount:this.formInline.UserName,
+               old:this.formInline.oldpassword,
+               password:this.formInline.newpassword,
+        }
+      this.$refs["passwordrules"].validate(valid => {
+        if (valid) {
+               updatepassword(parms).then(res=>{
+                          console.log(res)
+                          if(res.data.code==0){
+                               this.$message({
+                                 type:'success',
+                                 message:'修改成功退出从新登录'
+                               })
+                               this.dialogmessage=false
+                               setTimeout(()=>{
+                                   this.$router.push("/Login");   
+                               },2000)
+                          }
+               })    
+           } 
+      });
+    },
+    getmenulist() {
+      var parms = {
+        userAccount: this.Username.name
+      };
+      menulist(parms).then(res => {
+        if (res.data.code == 0) {
+          this.routerurl = res.data.data;
+        } else {
+          this.$router.push("/Login");
+        }
+      });
+    },
+
+    selectmenu(index, indexPath) {
+      console.log(index);
+      if (index == "/HdfsManagement/id") {
+        this.$router.push({ name: "HdfsManagement", params: { id: "/" } });
+        //  this.valuetouter = this.$route.params.id;
+        return;
+      } else if (index == "/FileManagement/id") {
+        this.$router.push({ name: "FileManagement", params: { id: "/" } });
+        return;
+      }
+
+      this.$router.push(index);
+    }
+  },
+
+
+
+  mounted() {
+    this.Username = JSON.parse(sessionStorage.getItem("user"));
+    this.tocken = sessionStorage.getItem("token");
+    this.getmenulist();
+    this.getnotifynumber();
+    this.getnoice();
+  }
+};
+</script>
+<style lang="scss" scoped>
+.el-container {
+  height: 100%;
+  .el-header {
+    background: url(../assets/img/headback.png);
+    color: #333;
+    height: 60px;
+    line-height: 60px;
+    i {
+      color: #fff;
+      cursor: pointer;
+    }
+    .Exitoutchidren {
+      float: right;
+      margin-top: 18px;
+      position: relative;
+      margin-right: 15px;
+    }
+    .UserName {
+      line-height: 28px;
+      height: 28px;
+      float: right;
+      top: 25%;
+      position: relative;
+      color: #fff;
+      font-family: Microsoft YaHei !important;
+      font-size: 16px;
+    }
+    .Exitoutfather {
+      float: right;
+      height: 60px;
+      line-height: 60px;
+    }
+    .el-dropdown-link {
+      cursor: pointer;
+      color: #409eff;
+    }
+    .el-icon-arrow-down {
+      font-size: 12px;
+    }
+  }
+  .el-aside {
+    height: 100%;
+    background: #3c3c3c;
+    color: #fff;
+    font-family: "Microsoft YaHei", "Arial Narrow", sans-serif;
+    .el-menu {
+      height: 100%;
+      // //background-color: #232424;
+      background: #021f31;
+      border: none;
+
+      .el-submenu {
+        //	border-bottom: 1px solid #3c3c3c;
+        .el-menu-item {
+          background-color: #353535;
+          font-family: "Microsoft YaHei", "Arial Narrow", sans-serif;
+        }
+      }
+      .el-menu-item.is-active {
+        background: #1d2e35;
+      }
+      .el-submenu :hover {
+        background: #035c86;
+      }
+
+      .collapseicon {
+        height: 60px;
+        background: #1b2c3e;
+        border: 1px solid #3c3c3c;
+        .logoname {
+          display: inline-block;
+          height: 60px;
+          line-height: 62px;
+          font-size: 14px;
+        }
+      }
+    }
+  }
+  .noice {
+    display: inline-block;
+    vertical-align: top;
+    margin-top: 7px;
+    .item {
+      margin-right: 10px;
+    }
+  }
+
+  .nocielan {
+    width: 500px;
+    margin: 0 auto;
+    overflow: hidden;
+    position: absolute;
+    line-height: 60px;
+    margin-left: 100px;
+  }
+  .nocicontent {
+    padding-left: 100px;
+    font-size: 16px;
+    color: #fff;
+    display: inline-block;
+    white-space: nowrap;
+    font-family: "微软雅黑";
+    animation: 50s wordsLoop linear infinite normal;
+  }
+  @keyframes wordsLoop {
+    0% {
+      transform: translateX(200px);
+      -webkit-transform: translateX(200px);
+    }
+    100% {
+      transform: translateX(-100%);
+      -webkit-transform: translateX(-100%);
+    }
+  }
+
+  @-webkit-keyframes wordsLoop {
+    0% {
+      transform: translateX(200px);
+      -webkit-transform: translateX(200px);
+    }
+    100% {
+      transform: translateX(-100%);
+      -webkit-transform: translateX(-100%);
+    }
+  }
+}
+</style>
+<style scoped>
+.dropmessage {
+  display: inline-block;
+  margin-right: 10px;
+}
+</style>
+<style>
+.el-menu-item :hover {
+  background: #035c86;
+}
+
+.item .el-badge__content .is-dot {
+  margin-top: 11px;
+}
+.nocielan ::before {
+  content: "公告:";
+}
+
+</style>
+
+
+
+

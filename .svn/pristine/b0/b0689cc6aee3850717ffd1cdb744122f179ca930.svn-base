@@ -1,0 +1,245 @@
+
+.el-main{
+  padding: 0px;
+} 
+.elcontent{
+    padding: 20px;
+}
+.navigationname{
+     margin-left: 20px;
+}
+.navigationbar{
+     height: 40px; 
+     background: #0a435e;
+     width: 100%;
+     color: #fff;
+     line-height: 40px;
+}
+/* 分页 */
+.paagenumber{   
+         text-align: center;
+         bottom: 10px;
+         width: 100%; 
+         margin-top: 20px; 
+       
+}
+/* 返回上一页 */
+.codehead{
+      height: 80px;
+      margin: 20px 20px 0px 20px;
+      line-height: 80px;
+      color:#909399;
+}
+/* 训练模块联系 */
+.modeldataname{
+  font-family: "Microsoft YaHei";
+  color:#666666;
+  line-height: 40px;
+  border: 1px solid #e4e4e4;
+  height: 40px;
+  background: #efefef;
+} 
+ /* 头部的搜索框 */
+ .seachframe{
+  height: 60px;
+  border-bottom : 1px solid #d8d8d8;
+  margin: 20px 20px 0px 20px;
+  line-height: 60px;
+}
+.formdata{
+   display: inline-block;
+   height: 40px;
+   vertical-align: middle;
+}
+/* 全局资源的头部 */
+.modelconfig{
+  display: inline-block;
+  width: 300px;
+  height: 210px;
+  border: 1px solid #d8d8d8;
+  border-radius: 10px;
+  vertical-align: top;
+}
+.viewpie{
+    display: inline-block;
+    width:280px;
+    height: 150px;
+}
+.datamiddle{
+    height: 182px;
+    line-height: 182px;
+    text-align: center;
+
+}
+  .modelconfig i{
+     color: red;
+     margin-left: 20px;
+  }
+ .resoureName{
+     height: 40px;
+     line-height: 40px;
+     font-family: "Microsoft YaHei";
+     font-size: 16px;
+     border-bottom: 1px solid #d8d8d8;
+ }
+ .resoureName span{
+  display: inline-block;
+  margin-left: 8px;
+  color: red;
+ }
+
+ .resoureName .usedoing{
+  float: right;
+  margin-right: 10px;
+  color: #C9C9C9;
+  font-family: "Microsoft YaHei";
+  font-size: 16px;
+ }
+
+.elcolmoddel{
+  text-align: center;
+  margin-top: 60px;
+}
+.projectaddbox{
+  line-height: 139px;
+  text-align: center;
+  .prijectaddpic{
+        display: inline-block;
+        width: 65px;
+        height: 65px;
+        background: url(../../assets/img/add.png);
+        vertical-align:middle;
+        cursor:pointer;
+  }
+}
+.projectmodel{
+    border: 1px solid #e4e4e4;
+    margin:20px 0px 0px 20px;
+    float: left;
+    width: 357px;
+    height: 139px;
+    border-radius: 5px;
+    .projectdiscrb{
+         height: 82px;
+         border-bottom: 1px solid #e4e4e4;
+         .massterpic{
+             vertical-align: middle;
+         }
+         .projectdimg{
+                 display: inline-block;
+                 vertical-align: top;
+                  width: 97px;
+                  height: 83px;
+                  line-height: 83px;
+                  text-align: center;
+         }
+         .projectName{
+             margin-top: 5px;
+             display: inline-block;
+             font-family: "Microsoft YaHei";
+             color:#666666;
+             font-size:16px;
+             width:250px;
+         }
+         .projectdiecribetion{
+                  display: inline-block;
+                  width:250px;
+                  font-size:14px;
+                  color:#989898;
+                  margin-top:5px;
+                  text-overflow:ellipsis;//值为clip表示剪切，ellipsis时为显示省略号
+                  overflow:hidden; 
+                  white-space:nowrap;
+                  font-family: "微软雅黑"
+         }
+         .projectdisright{
+                 display: inline-block;
+                 width: 250px; 
+                 height: 83px;
+         }
+    }
+    .projectbottom{
+        height:57px;
+        width:100%;
+        .menukey{
+             width:115px;
+             display: inline-block;
+             height: 57px;
+             text-align: center;
+             line-height: 57px;
+             .el-button{
+               border: none;
+             }
+        }
+       .startdisabled{
+              opacity:0.5;//设置蒙版效果
+              pointer-events:none;//禁止鼠标事件
+             // cursor: not-allowed; 
+       } 
+    }
+
+}
+.stytemstyle{
+    width:235px;
+    height: 182px;border:1px solid #ebebeb;
+    margin:20px 0px 0px 20px;  
+    border-radius: 5px;
+    cursor: pointer;
+    float: left;
+}
+.stytemcover{
+     display: inline-block;
+      width: 100%;
+      height:116px;
+      border-radius: 5px;
+}
+.courseStructureName{
+ 
+      font-size: 12px;
+      font-family: "微软雅黑";
+      height: 30px;
+      line-height: 30px;
+      text-align: center;
+      margin-top: 5px;
+      border-bottom: solid  #d8d8d8;
+      border-width: thin;
+      
+}
+.coursename{
+    color:#3dacf3;
+    font-family: "微软雅黑";
+    height: 20px;
+    line-height: 20px;
+    text-align: center;
+    width: 237px;
+    margin-top: 5px;
+}
+.couseStryname{
+    display: inline-block;
+    width: 180px;
+    border-radius: 5px;
+    color: #717b82;
+    // background: -webkit-linear-gradient(left,#3caef4 , #5783e4); /* Safari 5.1 - 6.0 */
+    // background: -o-linear-gradient(right, #3caef4 , #5783e4); /* Opera 11.1 - 12.0 */
+    // background: -moz-linear-gradient(right, #3caef4 , #5783e4); /* Firefox 3.6 - 15 */
+    // background: linear-gradient(to right, #3caef4 , #5783e4); /* 标准的语法 */ 
+}
+.el-menu-item,
+.el-submenu__title {
+  height: 44px;
+  line-height: 44px;
+}
+.el-submenu .el-menu-item {
+  height: 36px;
+  line-height: 36px;
+}
+.menuicon{
+    margin:5px;
+}
+.el-badge__content.is-dot{
+    margin-top:10px;
+}
+.has-gutter{
+    font-size: smaller;
+    font-family: '微软雅黑';
+}
