@@ -32,6 +32,11 @@
                          <el-form-item label="GPU" prop="gpu">
                             <el-input v-model="formInline.gpu"></el-input>
                         </el-form-item>
+                        <el-form-item label='备注'>
+                              <el-input type='textarea' v-model='formInline.applyMessage'    placeholder="输入备注内容"></el-input>
+                        </el-form-item>
+
+
                 </div>
                    <div  style="margin:20px;"> 
                         <el-form-item>
@@ -57,6 +62,7 @@ export default {
                            cpu:'',
                            gpu:"",
                            storge:'',
+                           applyMessage:"",
                       },
              rules:{
                  projectId:[
@@ -94,6 +100,7 @@ export default {
                         this.formInline.cpu=obj.projectCpu
                         this.formInline.storge=obj.projectMemory
                         this.formInline.gpu=obj.projectGpu
+                         
                         },
                      submitappliction(){
                            var parms={
@@ -101,7 +108,8 @@ export default {
                                 cpu:this.formInline.cpu,
                                 gpu:this.formInline.gpu,
                                 auditType:1,
-                                memory:this.formInline.storge
+                                memory:this.formInline.storge,
+                                applyMessage:this.formInline.applyMessage
                             }
 
                         this.$refs['formInline'].validate((valid)=>{
@@ -113,9 +121,10 @@ export default {
                                            message:"已提交申请"
                                        })
                                        this.$refs['formInline'].resetFields();
+                                       this.formInline.applyMessage='';
                                  }else{
                                       this.$message.error(res.data.message)
-                                   }
+                                    }
                                 }) 
                         }
                      })

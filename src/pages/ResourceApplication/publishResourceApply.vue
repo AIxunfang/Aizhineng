@@ -28,6 +28,10 @@
                          <el-form-item label="内存" prop="storge" >
                             <el-input v-model="formInline.storge"></el-input>
                         </el-form-item>
+                        <el-form-item label='备注'>
+                               <el-input type='textarea' v-model='formInline.applyMessage'    placeholder="输入备注内容"></el-input>
+                        </el-form-item>
+
                 </div>
                 <div  style="margin:20px;">  
                 <el-form-item>
@@ -49,8 +53,8 @@ export default {
                 formInline:{
                        cpu:'',
                        storge:'',
-                       projectId:""
-
+                       projectId:"",
+                       applyMessage:''
                 },
               rules:{
                  projectId:[
@@ -95,7 +99,8 @@ export default {
                                 cpu:this.formInline.cpu,
                                 gpu:0,
                                 auditType:2,
-                                memory:this.formInline.storge
+                                memory:this.formInline.storge,
+                                applyMessage:this.formInline.applyMessage
                        }
 
                    this.$refs['formInline'].validate((valid) =>{
@@ -107,6 +112,7 @@ export default {
                                           message:"已提交申请"
                                       })
                                         this.$refs['formInline'].resetFields();
+                                        this.formInline.applyMessage=''
                                 }else{
                                      this.$message.error("该发布名称已提交申请")
                                 }

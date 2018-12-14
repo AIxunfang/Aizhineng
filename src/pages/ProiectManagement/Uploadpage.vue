@@ -39,10 +39,7 @@
                                     <div style="display:inline-block; color:#67c23a;float:right">{{item.releaseStatus==1 ? '已发布': ''}}</div>
                             </div>
                           </el-tooltip>
-            
-
                             <div class="projectdiecribetion"><span>项目描述:</span>{{item.projectDesc}}</div>
-                            
                                <!-- <div class="projectdiecribetion"><span> {{item.dataDirectory==0 ? '私有' : '公有'}}路径:</span>{{item.projectPublicPath}}</div> -->
                                <div class="projectdiecribetion"><span> 创建时间:</span>{{timeFormattershowsecod(item.createTime)}}</div>
                          </div>
@@ -63,14 +60,12 @@
       </el-col>
      </el-col>
       <el-col :span='24'>
-         <div class="paagenumber">
-              <page-compent  :pagetotal='paggtatol' @fanye="pageIndexChange" ></page-compent>
-         </div>
+              <page-compent  :pageSize='pageSize'     :pagetotal='paggtatol' @fanye="pageIndexChange" ></page-compent>
       </el-col>
    </el-row>
 </template>
 <script>
-import {projectlist,deleteprojectId} from "@/api/api"
+import {projectlist,deleteprojectId} from "@/api/api" 
 import { timeFormattershowsecod} from "@/assets/js/common";
 import  pageCompent from '@/components/pagination'
 export default {

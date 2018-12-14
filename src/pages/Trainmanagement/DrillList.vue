@@ -68,22 +68,18 @@
               </div>
       </el-col>
          <el-col :span="24">
-              <div class="paagenumber">
-                   <el-pagination
-                        background
-                        layout="prev, pager, next, total"
-                        :page-size='pageSize'
-                        @current-change="pageIndexChange"
-                        :total="paggtatol">
-                  </el-pagination>
-              </div>
+                   <page-compent  :pageSize='pageSize'      :pagetotal='paggtatol'  @fanye="pageIndexChange" ></page-compent>
          </el-col>
   </el-row>
 </template>
 <script>
 import {baseUrl} from '../../../static/baseurl'
 import {findpage,trainingstart,trainingdelete,modeldownload,trainingterminate} from '@/api/api'
+import  pageCompent from '@/components/pagination'
 export default {
+      components:{
+            pageCompent
+      },
        data(){
            return{
                  baseUrl,
@@ -156,6 +152,7 @@ export default {
                         if(res.data.code==0){
                               this.modelarry=res.data.data.list
                               this.paggtatol=res.data.data.total
+                              console.log(this.paggtatol)
                         }
                   })
                },

@@ -87,11 +87,16 @@
                                  <template slot-scope="scope">
                                       <el-button-group> 
                                           <span v-if="scope.row.auditStatus==0">
-                                              <el-button type="primary" size="mini"  @click="agreement(scope.row)">同意</el-button>
-                                              <el-button  type="info"  size="mini"   @click="Refusedto(scope.row)">拒绝</el-button>
+                                                <el-tooltip :content="scope.row.applyMessage" placement="top" effect="light">
+                                                   <el-button type="primary" size="mini"  @click="agreement(scope.row)">同意</el-button>
+                                                   </el-tooltip>
+                                                   <el-button  type="info"  size="mini"   @click="Refusedto(scope.row)">拒绝</el-button>
+                                              
                                           </span>
                                            <span  v-if="scope.row.auditStatus==1" >
-                                                <el-button type="success"  disabled size="mini">已同意</el-button>
+                                               
+                                                   <el-button type="success"  disabled size="mini">已同意</el-button>
+                                              
                                            </span>
                                           <span  v-if="scope.row.auditStatus==2" >
                                                 <el-button type="info"  disabled size="mini">已拒绝</el-button>

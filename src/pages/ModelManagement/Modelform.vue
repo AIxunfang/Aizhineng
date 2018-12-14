@@ -57,21 +57,17 @@
               </div>
       </el-col>
           <el-col :span="24">
-              <div class="paagenumber">
-                   <el-pagination
-                        background
-                        layout="prev, pager, next, total"
-                        :page-size='pageSize'
-                        @current-change="pageIndexChange"
-                        :total="paggtatol">
-                  </el-pagination>
-              </div>
+                <page-compent  :pageSize='pageSize'      :pagetotal='paggtatol'  @fanye="pageIndexChange" ></page-compent>
          </el-col>
   </el-row>
 </template>
 <script>
    import {publishfindpage,publishstart,publishdelete,projectSharedelete} from '@/api/api'
+   import pageCompent from '@/components/pagination'
 export default {
+      components:{
+            pageCompent
+      },
       data(){
            return{
                 paggtatol:null,
@@ -79,8 +75,7 @@ export default {
                 pageSize:8,
                 publishName:"",
                 distributelist:[],
-                loding:[]
-                
+                loding:[] 
            }
       },
       methods:{

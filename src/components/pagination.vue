@@ -1,8 +1,9 @@
 <template>
-    <div>
+    <div class="paagenumber">
             <el-pagination
                     background
                       layout="prev, pager, next"
+                      :page-size='pageSize'
                       @current-change="pageIndexChange"
                       :total="pagetotal"
                      >
@@ -13,6 +14,7 @@
 export default {
          props:[
               'pagetotal',
+              'pageSize',
            ], 
         methods:{
               pageIndexChange(idx){

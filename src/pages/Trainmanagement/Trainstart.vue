@@ -143,10 +143,7 @@ export default {
       var params = {
         trainingId: this.$route.params.id
       };
-       console.log("详情")
-      
       finddetai(params).then(res => {
-         console.log(res)
         if (res.data.code == 0) {
           this.tarinmodelobj = res.data.data.trainingModel;
           this.tfParams = res.data.data.tfParams;

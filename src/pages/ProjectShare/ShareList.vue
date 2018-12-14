@@ -41,15 +41,7 @@
       </div>
     </el-col>
     <el-col :span="24">
-      <div class="paagenumber">
-        <el-pagination
-          background
-          layout="prev, pager, next, total"
-          :page-size="pageSize"
-          @current-change="pageIndexChange"
-          :total="paggtatol"
-        ></el-pagination>
-      </div>
+       <page-compent  :pageSize='pageSize' :pagetotal='paggtatol'  @fanye="pageIndexChange" ></page-compent>
     </el-col>
   </el-row>
 </template>
@@ -59,7 +51,11 @@ import {
   projectSharupdate,
   projectSharedelete
 } from "@/api/api";
+import pageCompent from '@/components/pagination'
 export default {
+  components:{
+       pageCompent
+  },
   data() {
     return {
       currPage: 1,
@@ -68,7 +64,7 @@ export default {
       paggtatol: null
     };
   },
-  methods: {
+  methods: { 
     getprojectSharelist() {
       var parms = {
         currPage: this.currPage,
@@ -103,7 +99,10 @@ export default {
         }
       });
     },
-    pageIndexChange(index) {},
+    pageIndexChange(index) {
+        this.currentPage=index
+        this.getprojectSharelist()
+    },
     delectshare(index) {
       var parms = {
         publishId: index.publishId
