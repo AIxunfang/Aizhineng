@@ -8,6 +8,9 @@
                               </span>
                         </div>
             </el-col>
+            <el-col :span="24">
+               <el-button type="primary" size="small"  style="margin:20px  20px 0px;"  @click="addcouses"  >新增</el-button>
+            </el-col>
            <el-col :span="24">
                     <el-form style="margin: 20px   20px 0px 20px" :inline="true"  size="small">
                            <el-form-item   >
@@ -20,7 +23,7 @@
                                                 </el-option>
                                           </el-select> 
                           </el-form-item>
-                           <el-form-item    >
+                           <el-form-item >
                                         <el-select v-model="formStructuredata.selectTypemodel" placeholder="请选择分类"  @change="changeclass"  >
                                                   <el-option
                                                          v-for="item in datamodel"
@@ -33,11 +36,8 @@
                     </el-form>
            </el-col>
 
-            <el-col :span="24">
-               <el-button type="primary" size="small"  style="margin:0px  20px;"  @click="addcouses"  >新增</el-button>
-            </el-col>
             <el-col :span="24" >
-                     <div style="margin:20px">
+                     <div style="margin: 0px  20px">
                        <el-table
                         size="mini"
                          border
