@@ -96,9 +96,11 @@ export default {
                      if(res.data.code==0){
                          if(res.data.data===null){
                                 this.$message('暂无课程资料')
+                                aler('666')
                          }else{
                               window.location.href= `${baseUrl}`+'/file/'+res.data.data.materialUrl
                           }
+                        // window.location.href= `${baseUrl}`+'/file/'+res.data.data.materialUrl
                      }
              })
         },
